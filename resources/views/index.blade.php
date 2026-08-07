@@ -19,7 +19,7 @@
 <header class="site-header">
   <div class="wrap">
     <a class="brand" href="{{ route('home') }}">
-      <span class="brand-mark">CM</span>
+      <img class="brand-mark" src="{{ asset('images/cmdcenterlogo.png') }}" alt="Command Center Kota Magelang" />
       <span class="brand-name">Command Center Kota Magelang</span>
     </a>
     <div class="header-right">
@@ -101,7 +101,5 @@
   </div>
   <div class="footer-bottom">© 2026 Pemerintah Kota Magelang. Seluruh hak cipta dilindungi.</div>
 </footer>
-
-<script src="{{ asset('js/app.js') }}"></script>
 </body>
 </html>

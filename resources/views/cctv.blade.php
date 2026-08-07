@@ -7,14 +7,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+@vite(['resources/css/style.css', 'resources/js/app.js'])
 </head>
 <body>
 
 <header class="site-header">
   <div class="wrap">
     <a class="brand" href="{{ route('home') }}">
-      <span class="brand-mark">CM</span>
+      <img class="brand-mark" src="{{ asset('images/cmdcenterlogo.png') }}" alt="Command Center Kota Magelang" />
       <span class="brand-name">Command Center <span class="brand-city">Kota Magelang</span><span class="brand-subtitle">Pusat Kendali &amp; Data Kota</span></span>
     </a>
     <div class="header-right">
@@ -78,7 +78,5 @@
   </div>
   <div class="footer-bottom">© 2026 Pemerintah Kota Magelang. Seluruh hak cipta dilindungi.</div>
 </footer>
-
-<script src="{{ asset('js/app.js') }}"></script>
 </body>
 </html>
