@@ -13,25 +13,25 @@
 
 <header class="site-header">
   <div class="wrap">
-    <a class="brand" href="index.html">
+    <a class="brand" href="{{ route('home') }}">
       <span class="brand-mark">CM</span>
       <span class="brand-name">Command Center <span class="brand-city">Kota Magelang</span><span class="brand-subtitle">Pusat Kendali &amp; Data Kota</span></span>
     </a>
     <div class="header-right">
       <nav class="main-nav" aria-label="Navigasi utama">
-        <a href="index.html">Beranda</a>
-        <a href="tentang.html">Tentang</a>
+        <a href="{{ route('home') }}">Beranda</a>
+        <a href="{{ route('tentang') }}">Tentang</a>
       </nav>
-      <a class="btn btn-primary" href="login.html">Login Sistem</a>
+      <a class="btn btn-primary" href="{{ route('login') }}">Login Sistem</a>
       <button class="nav-toggle" aria-label="Buka menu">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
       </button>
     </div>
   </div>
   <nav class="mobile-nav" aria-label="Navigasi mobile">
-    <a href="index.html">Beranda</a>
-    <a href="tentang.html">Tentang</a>
-    <a class="btn btn-primary" href="login.html">Login Sistem</a>
+    <a href="{{ route('home') }}">Beranda</a>
+    <a href="{{ route('tentang') }}">Tentang</a>
+    <a class="btn btn-primary" href="{{ route('login') }}">Login Sistem</a>
   </nav>
 </header>
 
@@ -60,10 +60,10 @@
     <div>
       <h5>Navigasi</h5>
       <ul>
-        <li><a href="index.html">Beranda</a></li>
-        <li><a href="tentang.html">Tentang</a></li>
-        <li><a href="cctv.html">CCTV Publik</a></li>
-        <li><a href="login.html">Login Sistem</a></li>
+        <li><a href="{{ route('home') }}">Beranda</a></li>
+        <li><a href="{{ route('tentang') }}">Tentang</a></li>
+        <li><a href="{{ route('cctv') }}">CCTV Publik</a></li>
+        <li><a href="{{ route('login') }}">Login Sistem</a></li>
       </ul>
     </div>
     <div>

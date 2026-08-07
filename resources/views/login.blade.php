@@ -13,14 +13,14 @@
 
 <header class="site-header site-header--shadow">
   <div class="wrap">
-    <a class="brand" href="index.html">
+    <a class="brand" href="{{ route('home') }}">
       <span class="brand-mark">CM</span>
       <span class="brand-name">Command Center Kota Magelang</span>
     </a>
     <div class="header-right">
       <nav class="main-nav" aria-label="Navigasi utama">
-        <a href="index.html">Beranda</a>
-        <a href="tentang.html">Tentang</a>
+        <a href="{{ route('home') }}">Beranda</a>
+        <a href="{{ route('tentang') }}">Tentang</a>
       </nav>
       <button class="nav-toggle" aria-label="Buka menu">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
@@ -28,8 +28,8 @@
     </div>
   </div>
   <nav class="mobile-nav" aria-label="Navigasi mobile">
-    <a href="index.html">Beranda</a>
-    <a href="tentang.html">Tentang</a>
+    <a href="{{ route('home') }}">Beranda</a>
+    <a href="{{ route('tentang') }}">Tentang</a>
   </nav>
 </header>
 
