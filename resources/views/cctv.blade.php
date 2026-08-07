@@ -79,6 +79,6 @@
   <div class="footer-bottom">© 2026 Pemerintah Kota Magelang. Seluruh hak cipta dilindungi.</div>
 </footer>
 
-<script src="app.js"></script>
+<script src="{{ asset('js/app.js') }}"></script>
 </body>
 </html>
