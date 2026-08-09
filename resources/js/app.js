@@ -235,14 +235,7 @@ function renderServiceCards(targetSelector) {
 function bindLoginForm() {
   const form = document.querySelector('#login-form');
   if (!form) return;
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const msg = document.querySelector('.login-form-msg');
-    if (msg) {
-      msg.style.display = 'block';
-      msg.textContent = 'Demo: ini adalah tampilan contoh, integrasi autentikasi sesungguhnya belum terhubung.';
-    }
-  });
+  // Let the form submit natively to Laravel backend
 }
 
 document.addEventListener('DOMContentLoaded', () => {

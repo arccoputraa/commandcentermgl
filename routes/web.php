@@ -20,11 +20,33 @@ Route::get('/login', function () {
 })->name('login');
 
 Route::get('/layanan', function (Request $request) {
-    return view('layanan', ['dept' => $request->query('dept')]);
+    $dept = $request->query('dept');
+    
+    // Fallback to generic layanan if specific view doesn't exist
+    if ($dept && view()->exists("layanan.{$dept}")) {
+        return view("layanan.{$dept}");
+    }
+    
+    return view('layanan', ['dept' => $dept]);
 })->name('layanan');
 
-Route::get('/{page}', function (string $page) {
+Route::post('/login', [\App\Http\Controllers\AuthController::class, 'authenticate'])->name('login.post');
+Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
+
+// Admin Routes (protected)
+Route::middleware('auth')->prefix('admin')->group(function () {
+    Route::get('/', [\App\Http\Controllers\AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/users', [\App\Http\Controllers\AdminController::class, 'users'])->name('admin.users.index');
+});
+
+Route::get('/{page}', function (Request $request, string $page) {
     $viewName = preg_replace('/\.(blade\.php|html)$/', '', $page);
+
+    if ($page !== $viewName) {
+        $queryString = $request->getQueryString();
+        $url = '/' . $viewName . ($queryString ? '?' . $queryString : '');
+        return redirect()->to($url);
+    }
 
     if (in_array($viewName, ['index', 'tentang', 'cctv', 'login', 'layanan'], true) && view()->exists($viewName)) {
         return view($viewName);

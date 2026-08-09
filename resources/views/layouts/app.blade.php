@@ -3,15 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Layanan &amp; Data Publik — Command Center Kota Magelang</title>
+<title>@yield('title', 'Command Center Kota Magelang')</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-@vite(['resources/css/style.css', 'resources/js/app.js'])
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+@vite(['resources/css/style.css', 'resources/css/dashboard.css', 'resources/js/app.js'])
 </head>
-<body data-dept-page>
+<body class="@yield('body_class')">
 
-<header class="site-header">
+<header class="site-header @yield('header_class')">
   <div class="wrap">
     <a class="brand" href="{{ route('home') }}">
       <img class="brand-mark" src="{{ asset('images/cmdcenterlogo.png') }}" alt="Command Center Kota Magelang" />
@@ -36,35 +37,7 @@
 </header>
 
 <main>
-  <section class="page-hero">
-    <div class="wrap">
-      <div class="breadcrumb"><a href="{{ route('home') }}">Beranda</a> / Layanan / <span data-dept-name>...</span></div>
-      <div class="dept-hero-icon" data-dept-icon></div>
-      <h1 data-dept-name>...</h1>
-      <p data-dept-office>...</p>
-      <div class="dept-meta">
-        <span class="chip">Data terbuka</span>
-        <span class="chip">Diperbarui berkala</span>
-      </div>
-    </div>
-  </section>
-
-  <section class="block">
-    <div class="wrap content-narrow">
-      <h2>Tentang Layanan</h2>
-      <p data-dept-about>...</p>
-
-      <div class="stat-grid" data-dept-stats></div>
-
-      <h2>Dataset &amp; Dokumen Publik</h2>
-      <p>Unduh dataset terbaru yang dipublikasikan oleh perangkat daerah terkait.</p>
-      <ul class="dataset-list" data-dept-datasets></ul>
-
-      <h2>Layanan Lain</h2>
-      <p>Jelajahi data publik dari perangkat daerah lainnya.</p>
-      <div class="dept-nav" data-dept-nav></div>
-    </div>
-  </section>
+  @yield('content')
 </main>
 
 <footer class="site-footer">

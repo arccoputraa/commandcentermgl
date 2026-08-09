@@ -63,12 +63,20 @@
           <h2>Login Sistem</h2>
           <p class="sub">Masukkan username dan password akun resmi Anda.</p>
 
-          <form id="login-form" novalidate>
+          <form id="login-form" method="POST" action="{{ route('login.post') }}">
+            @csrf
+            
+            @if($errors->any())
+              <div style="background-color: #fee2e2; color: #dc2626; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 14px;">
+                {{ $errors->first() }}
+              </div>
+            @endif
+
             <div class="input-group">
               <label for="username">Username / Email</label>
               <div class="input-wrap">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                <input type="text" id="username" name="username" autocomplete="username" required placeholder="Masukkan username">
+                <input type="email" id="username" name="email" value="{{ old('email') }}" autocomplete="email" required placeholder="Masukkan username/email">
               </div>
             </div>
 
@@ -87,7 +95,6 @@
               Masuk Sistem
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </button>
-            <div class="login-form-msg" role="status"></div>
           </form>
         </div>
       </section>

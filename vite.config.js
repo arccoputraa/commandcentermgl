@@ -5,7 +5,9 @@ export default defineConfig({
     plugins: [
         laravel({
             input: [
-                'resources/css/style.css', // Ubah bagian ini
+                'resources/css/style.css',
+                'resources/css/dashboard.css',
+                'resources/css/admin.css',
                 'resources/js/app.js'
             ],
             refresh: true,

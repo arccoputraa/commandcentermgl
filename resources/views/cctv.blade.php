@@ -69,10 +69,10 @@
     <div>
       <h5>Layanan</h5>
       <ul>
-        <li><a href="layanan.html?dept=perizinan">Perizinan</a></li>
-        <li><a href="layanan.html?dept=kesehatan">Kesehatan</a></li>
-        <li><a href="layanan.html?dept=keuangan">Keuangan</a></li>
-        <li><a href="layanan.html?dept=kependudukan">Kependudukan</a></li>
+        <li><a href="{{ route('layanan', ['dept' => 'perizinan']) }}">Perizinan</a></li>
+        <li><a href="{{ route('layanan', ['dept' => 'kesehatan']) }}">Kesehatan</a></li>
+        <li><a href="{{ route('layanan', ['dept' => 'keuangan']) }}">Keuangan</a></li>
+        <li><a href="{{ route('layanan', ['dept' => 'kependudukan']) }}">Kependudukan</a></li>
       </ul>
     </div>
   </div>
