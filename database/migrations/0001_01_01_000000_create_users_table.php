@@ -15,6 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('nip')->unique()->nullable();
+            $table->foreignId('division_id')->nullable()->constrained('divisions')->nullOnDelete();
+            $table->string('role')->default('user'); // admin, user
+            $table->string('status')->default('aktif'); // aktif, nonaktif
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
