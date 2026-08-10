@@ -25,6 +25,11 @@ class AuthController extends Controller
                 'description' => 'Login ke dalam sistem admin.',
             ]);
 
+            $user = Auth::user();
+            if ($user->division && strtolower($user->division->name) === 'perizinan') {
+                return redirect()->route('perizinan.dashboard');
+            }
+
             return redirect()->route('admin.dashboard');
         }
 

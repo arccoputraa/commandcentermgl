@@ -17,22 +17,22 @@
     <div class="dashboard-stats-grid">
         <div class="stat-card color-blue">
             <h3 class="stat-card-title">Total Layanan / Dokumen</h3>
-            <p class="stat-card-value">3,169</p>
+            <p class="stat-card-value">{{ number_format($stats['total']) }}</p>
             <p class="stat-card-desc">Total data tercatat di sistem</p>
         </div>
         <div class="stat-card color-green">
             <h3 class="stat-card-title">Selesai / Disetujui</h3>
-            <p class="stat-card-value">2,850</p>
+            <p class="stat-card-value">{{ number_format($stats['disetujui']) }}</p>
             <p class="stat-card-desc">Dokumen telah diterbitkan</p>
         </div>
         <div class="stat-card color-orange">
             <h3 class="stat-card-title">Dalam Proses</h3>
-            <p class="stat-card-value">274</p>
+            <p class="stat-card-value">{{ number_format($stats['proses']) }}</p>
             <p class="stat-card-desc">Sedang dalam tahap verifikasi</p>
         </div>
         <div class="stat-card color-red">
             <h3 class="stat-card-title">Perlu Tindak Lanjut / Ditolak</h3>
-            <p class="stat-card-value">45</p>
+            <p class="stat-card-value">{{ number_format($stats['ditolak']) }}</p>
             <p class="stat-card-desc">Dikembalikan ke pemohon / diarsipkan</p>
         </div>
     </div>
@@ -100,7 +100,7 @@
                                 <p class="summary-item-title">Total Pengajuan</p>
                             </div>
                         </div>
-                        <p class="summary-item-value">3,169</p>
+                        <p class="summary-item-value">{{ number_format($stats['total']) }}</p>
                     </div>
                     <div class="summary-list-item">
                         <div class="summary-item-left">
@@ -111,7 +111,7 @@
                                 <p class="summary-item-title">Layanan Baru</p>
                             </div>
                         </div>
-                        <p class="summary-item-value">1,800</p>
+                        <p class="summary-item-value">{{ number_format($stats['baru']) }}</p>
                     </div>
                     <div class="summary-list-item">
                         <div class="summary-item-left">
@@ -122,7 +122,7 @@
                                 <p class="summary-item-title">Perpanjangan</p>
                             </div>
                         </div>
-                        <p class="summary-item-value">1,324</p>
+                        <p class="summary-item-value">{{ number_format($stats['perpanjangan']) }}</p>
                     </div>
                     <div class="summary-list-item">
                         <div class="summary-item-left">
@@ -133,7 +133,7 @@
                                 <p class="summary-item-title">Lainnya</p>
                             </div>
                         </div>
-                        <p class="summary-item-value">45</p>
+                        <p class="summary-item-value">{{ number_format($stats['lainnya']) }}</p>
                     </div>
                 </div>
             </div>
@@ -141,36 +141,23 @@
             <div class="summary-widget" style="margin-top: 24px;">
                 <h3 class="summary-widget-title" style="font-size: 16px;">Informasi &amp; Publikasi</h3>
                 <div style="margin-top: 16px;">
+                    @forelse($publikasi as $pub)
                     <div class="pub-info-item">
                         <div class="pub-info-header">
-                            <p class="pub-info-title">Publikasi Data Perizinan Q1</p>
-                            <span class="table-badge success">Rilis</span>
+                            <p class="pub-info-title">{{ $pub->judul }}</p>
+                            <span class="table-badge success">{{ $pub->format }}</span>
                         </div>
-                        <p class="pub-info-meta">Diperbarui 2 hari yang lalu</p>
+                        <p class="pub-info-meta">Diperbarui {{ $pub->updated_at->diffForHumans() }}</p>
+                        @if($pub->dokumen)
+                            <a href="{{ Storage::url($pub->dokumen) }}" target="_blank" style="font-size: 13px; color: var(--blue); text-decoration: none; margin-top: 4px; display: inline-block;">
+                                <i class="fa-solid fa-download"></i> Unduh Dokumen
+                            </a>
+                        @endif
                     </div>
-                    <div class="pub-info-item">
-                        <div class="pub-info-header">
-                            <p class="pub-info-title">Publikasi Data Perizinan Q2</p>
-                            <span class="table-badge success">Rilis</span>
-                        </div>
-                        <p class="pub-info-meta">Diperbarui 4 hari yang lalu</p>
-                    </div>
-                    <div class="pub-info-item">
-                        <div class="pub-info-header">
-                            <p class="pub-info-title">Publikasi Data Perizinan Q3</p>
-                            <span class="table-badge success">Rilis</span>
-                        </div>
-                        <p class="pub-info-meta">Diperbarui 6 hari yang lalu</p>
-                    </div>
-                    <div class="pub-info-item">
-                        <div class="pub-info-header">
-                            <p class="pub-info-title">Publikasi Data Perizinan Q4</p>
-                            <span class="table-badge success">Rilis</span>
-                        </div>
-                        <p class="pub-info-meta">Diperbarui 8 hari yang lalu</p>
-                    </div>
+                    @empty
+                    <p style="color: #94A3B8; font-size: 14px; text-align: center;">Belum ada publikasi.</p>
+                    @endforelse
                 </div>
-                <button class="btn btn-primary" style="width: 100%; margin-top: 16px;">Unduh Rekap Data (PDF)</button>
             </div>
         </div>
     </div>
@@ -195,51 +182,28 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @forelse($dataPerizinan as $data)
                     <tr>
-                        <td class="strong">DOC-2023-001</td>
-                        <td>Layanan Umum</td>
-                        <td>Baru</td>
-                        <td>Pembangunan</td>
-                        <td>01 Okt 2023</td>
-                        <td><span class="table-badge success">Disetujui</span></td>
+                        <td class="strong">{{ $data->no_dokumen }}</td>
+                        <td>{{ $data->jenisIzin->jenis_izin ?? 'N/A' }}</td>
+                        <td>{{ $data->jenis_permohonan }}</td>
+                        <td>{{ $data->jenisIzin->kategori ?? '-' }}</td>
+                        <td>{{ $data->tanggal->format('d M Y') }}</td>
+                        <td>
+                            @php
+                                $badge = 'warning';
+                                if($data->status == 'Disetujui') $badge = 'success';
+                                if($data->status == 'Ditolak') $badge = 'danger';
+                            @endphp
+                            <span class="table-badge {{ $badge }}">{{ $data->status }}</span>
+                        </td>
                         <td><a href="#" style="color:var(--blue); font-weight:500;">Lihat Detail</a></td>
                     </tr>
+                    @empty
                     <tr>
-                        <td class="strong">DOC-2023-005</td>
-                        <td>Rekomendasi</td>
-                        <td>Perpanjangan</td>
-                        <td>Kesehatan</td>
-                        <td>05 Okt 2023</td>
-                        <td><span class="table-badge warning">Proses</span></td>
-                        <td><a href="#" style="color:var(--blue); font-weight:500;">Lihat Detail</a></td>
+                        <td colspan="7" style="text-align: center; color: #94A3B8;">Belum ada data perizinan.</td>
                     </tr>
-                    <tr>
-                        <td class="strong">DOC-2023-012</td>
-                        <td>Izin Usaha</td>
-                        <td>Baru</td>
-                        <td>Perdagangan</td>
-                        <td>12 Okt 2023</td>
-                        <td><span class="table-badge success">Disetujui</span></td>
-                        <td><a href="#" style="color:var(--blue); font-weight:500;">Lihat Detail</a></td>
-                    </tr>
-                    <tr>
-                        <td class="strong">DOC-2023-018</td>
-                        <td>IMB</td>
-                        <td>Baru</td>
-                        <td>Pembangunan</td>
-                        <td>18 Okt 2023</td>
-                        <td><span class="table-badge danger">Ditolak</span></td>
-                        <td><a href="#" style="color:var(--blue); font-weight:500;">Lihat Detail</a></td>
-                    </tr>
-                    <tr>
-                        <td class="strong">DOC-2023-022</td>
-                        <td>Layanan Umum</td>
-                        <td>Perpanjangan</td>
-                        <td>Pendidikan</td>
-                        <td>22 Okt 2023</td>
-                        <td><span class="table-badge warning">Proses</span></td>
-                        <td><a href="#" style="color:var(--blue); font-weight:500;">Lihat Detail</a></td>
-                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -264,7 +228,7 @@ document.addEventListener('DOMContentLoaded', function() {
             labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'],
             datasets: [{
                 label: 'Jumlah Layanan',
-                data: [120, 190, 150, 220, 180, 250, 210, 290, 260, 310, 280, 340],
+                data: {!! json_encode(array_values($chartData['total_bulanan'])) !!},
                 backgroundColor: '#155DFC',
                 borderRadius: 4,
             }]
@@ -287,7 +251,7 @@ document.addEventListener('DOMContentLoaded', function() {
         data: {
             labels: ['Selesai', 'Proses', 'Ditolak'],
             datasets: [{
-                data: [2850, 274, 45],
+                data: [{{ $stats['disetujui'] }}, {{ $stats['proses'] }}, {{ $stats['ditolak'] }}],
                 backgroundColor: ['#009966', '#E17100', '#E7000B'],
                 borderWidth: 0,
                 cutout: '70%'
@@ -307,10 +271,10 @@ document.addEventListener('DOMContentLoaded', function() {
     new Chart(ctxTrenStatus, {
         type: 'line',
         data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'],
             datasets: [
-                { label: 'Disetujui', data: [80, 120, 100, 150, 130, 170], borderColor: '#009966', backgroundColor: '#009966', tension: 0.4 },
-                { label: 'Proses', data: [20, 30, 25, 40, 35, 50], borderColor: '#E17100', backgroundColor: '#E17100', tension: 0.4 }
+                { label: 'Disetujui', data: {!! json_encode(array_values($chartData['disetujui_bulanan'])) !!}, borderColor: '#009966', backgroundColor: '#009966', tension: 0.4 },
+                { label: 'Proses', data: {!! json_encode(array_values($chartData['proses_bulanan'])) !!}, borderColor: '#E17100', backgroundColor: '#E17100', tension: 0.4 }
             ]
         },
         options: {
@@ -331,7 +295,7 @@ document.addEventListener('DOMContentLoaded', function() {
         data: {
             labels: ['Baru', 'Perpanjangan', 'Lainnya'],
             datasets: [{
-                data: [1800, 1324, 45],
+                data: [{{ $stats['baru'] }}, {{ $stats['perpanjangan'] }}, {{ $stats['lainnya'] }}],
                 backgroundColor: ['#155DFC', '#00BC7D', '#CAD5E2'],
                 borderWidth: 0,
                 cutout: '70%'

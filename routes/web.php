@@ -22,6 +22,53 @@ Route::get('/login', function () {
 Route::get('/layanan', function (Request $request) {
     $dept = $request->query('dept');
     
+    if ($dept === 'perizinan') {
+        $dataPerizinan = \App\Models\PerizinanData::with('jenisIzin')
+                            ->orderBy('created_at', 'desc')
+                            ->limit(10)
+                            ->get();
+        $publikasi = \App\Models\PerizinanPublikasi::where('status', 'Aktif')
+                            ->orderBy('created_at', 'desc')
+                            ->get();
+                            
+        // Hitung statistik untuk cards
+        $stats = [
+            'total' => \App\Models\PerizinanData::count(),
+            'disetujui' => \App\Models\PerizinanData::where('status', 'Disetujui')->count(),
+            'proses' => \App\Models\PerizinanData::where('status', 'Proses')->count(),
+            'ditolak' => \App\Models\PerizinanData::where('status', 'Ditolak')->count(),
+            'baru' => \App\Models\PerizinanData::where('jenis_permohonan', 'Baru')->count(),
+            'perpanjangan' => \App\Models\PerizinanData::where('jenis_permohonan', 'Perpanjangan')->count(),
+            'lainnya' => \App\Models\PerizinanData::whereNotIn('jenis_permohonan', ['Baru', 'Perpanjangan'])->count(),
+        ];
+        
+        // Data untuk grafik bulanan tahun ini
+        $currentYear = date('Y');
+        $monthlyData = \App\Models\PerizinanData::selectRaw("CAST(strftime('%m', tanggal) AS INTEGER) as month, status, count(*) as total")
+                            ->whereYear('tanggal', $currentYear)
+                            ->groupBy('month', 'status')
+                            ->get();
+                            
+        $chartData = [
+            'total_bulanan' => array_fill(1, 12, 0),
+            'disetujui_bulanan' => array_fill(1, 12, 0),
+            'proses_bulanan' => array_fill(1, 12, 0)
+        ];
+        
+        foreach ($monthlyData as $row) {
+            $chartData['total_bulanan'][$row->month] += $row->total;
+            if ($row->status == 'Disetujui') {
+                $chartData['disetujui_bulanan'][$row->month] += $row->total;
+            } elseif ($row->status == 'Proses') {
+                $chartData['proses_bulanan'][$row->month] += $row->total;
+            }
+        }
+        
+        if (view()->exists('layanan.perizinan')) {
+            return view('layanan.perizinan', compact('dataPerizinan', 'publikasi', 'dept', 'stats', 'chartData'));
+        }
+    }
+    
     // Fallback to generic layanan if specific view doesn't exist
     if ($dept && view()->exists("layanan.{$dept}")) {
         return view("layanan.{$dept}");
@@ -51,6 +98,35 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     Route::get('/roles', [\App\Http\Controllers\RoleController::class, 'index'])->name('admin.roles.index');
     Route::put('/roles/{role}', [\App\Http\Controllers\RoleController::class, 'update'])->name('admin.roles.update');
     Route::delete('/roles/{role}', [\App\Http\Controllers\RoleController::class, 'destroy'])->name('admin.roles.destroy');
+});
+
+// Perizinan Routes (protected)
+Route::middleware('auth')->prefix('perizinan')->group(function () {
+    Route::get('/', [\App\Http\Controllers\PerizinanController::class, 'dashboard'])->name('perizinan.dashboard');
+    
+    // Data Perizinan
+    Route::get('/data', [\App\Http\Controllers\PerizinanController::class, 'dataIndex'])->name('perizinan.data.index');
+    Route::get('/data/create', [\App\Http\Controllers\PerizinanController::class, 'dataCreate'])->name('perizinan.data.create');
+    Route::post('/data', [\App\Http\Controllers\PerizinanController::class, 'dataStore'])->name('perizinan.data.store');
+    Route::get('/data/{data}/edit', [\App\Http\Controllers\PerizinanController::class, 'dataEdit'])->name('perizinan.data.edit');
+    Route::put('/data/{data}', [\App\Http\Controllers\PerizinanController::class, 'dataUpdate'])->name('perizinan.data.update');
+    Route::delete('/data/{data}', [\App\Http\Controllers\PerizinanController::class, 'dataDestroy'])->name('perizinan.data.destroy');
+
+    // Jenis Izin & SLA
+    Route::get('/jenis', [\App\Http\Controllers\PerizinanController::class, 'jenisIndex'])->name('perizinan.jenis.index');
+    Route::get('/jenis/create', [\App\Http\Controllers\PerizinanController::class, 'jenisCreate'])->name('perizinan.jenis.create');
+    Route::post('/jenis', [\App\Http\Controllers\PerizinanController::class, 'jenisStore'])->name('perizinan.jenis.store');
+    Route::get('/jenis/{jenis}/edit', [\App\Http\Controllers\PerizinanController::class, 'jenisEdit'])->name('perizinan.jenis.edit');
+    Route::put('/jenis/{jenis}', [\App\Http\Controllers\PerizinanController::class, 'jenisUpdate'])->name('perizinan.jenis.update');
+    Route::delete('/jenis/{jenis}', [\App\Http\Controllers\PerizinanController::class, 'jenisDestroy'])->name('perizinan.jenis.destroy');
+
+    // Publikasi Masyarakat
+    Route::get('/publikasi', [\App\Http\Controllers\PerizinanController::class, 'publikasiIndex'])->name('perizinan.publikasi.index');
+    Route::get('/publikasi/create', [\App\Http\Controllers\PerizinanController::class, 'publikasiCreate'])->name('perizinan.publikasi.create');
+    Route::post('/publikasi', [\App\Http\Controllers\PerizinanController::class, 'publikasiStore'])->name('perizinan.publikasi.store');
+    Route::get('/publikasi/{publikasi}/edit', [\App\Http\Controllers\PerizinanController::class, 'publikasiEdit'])->name('perizinan.publikasi.edit');
+    Route::put('/publikasi/{publikasi}', [\App\Http\Controllers\PerizinanController::class, 'publikasiUpdate'])->name('perizinan.publikasi.update');
+    Route::delete('/publikasi/{publikasi}', [\App\Http\Controllers\PerizinanController::class, 'publikasiDestroy'])->name('perizinan.publikasi.destroy');
 });
 
 Route::get('/{page}', function (Request $request, string $page) {
