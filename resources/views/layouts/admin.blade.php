@@ -16,8 +16,10 @@
     <!-- Sidebar -->
     <aside class="admin-sidebar">
         <div class="sidebar-header">
-            <img src="{{ asset('img/logo-mgl.png') }}" alt="Logo Kota Magelang" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Lambang_Kota_Magelang.png/403px-Lambang_Kota_Magelang.png'">
-            <h2>Command Center<br><small>Kota Magelang</small></h2>
+            <div class="logo-container">
+                <img src="{{ asset('img/logo-mgl.png') }}" alt="Logo" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Lambang_Kota_Magelang.png/403px-Lambang_Kota_Magelang.png'">
+            </div>
+            <h2>MagelangCC</h2>
         </div>
         <nav class="sidebar-menu">
             <a href="{{ route('admin.dashboard') }}" class="menu-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
@@ -26,10 +28,10 @@
             <a href="{{ route('admin.users.index') }}" class="menu-item {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-users"></i> Daftar Pengguna
             </a>
-            <a href="#" class="menu-item">
+            <a href="{{ route('admin.roles.index') }}" class="menu-item {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-shield-halved"></i> Hak Akses
             </a>
-            <a href="#" class="menu-item">
+            <a href="{{ route('admin.divisions.index') }}" class="menu-item {{ request()->routeIs('admin.divisions.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-building"></i> Daftar Divisi
             </a>
             <a href="#" class="menu-item">
@@ -53,17 +55,16 @@
     <main class="admin-main">
         <!-- Topbar -->
         <header class="admin-topbar">
-            <div class="topbar-search">
-                <i class="fa-solid fa-search" style="color: var(--admin-text-muted);"></i>
-                <input type="text" placeholder="Cari data...">
+            <div class="topbar-left">
+                <h2 class="topbar-title">Command Center</h2>
             </div>
             <div class="topbar-profile">
                 <div class="profile-info">
-                    <h4>{{ Auth::user()->name ?? 'Administrator' }}</h4>
-                    <p>{{ Auth::user()->role ?? 'Admin' }}</p>
+                    <h4>{{ Auth::user()->name ?? 'Admin Utama' }}</h4>
+                    <p>{{ Auth::user()->role ?? 'Administrator' }}</p>
                 </div>
                 <div class="profile-img">
-                    {{ substr(Auth::user()->name ?? 'A', 0, 1) }}
+                    <i class="fa-regular fa-user"></i>
                 </div>
             </div>
         </header>
@@ -74,7 +75,155 @@
         </div>
     </main>
 
+    <!-- Modals -->
+    @include('admin.components.modal-roles')
+    @include('admin.components.modal-divisions')
+
     <!-- Scripts -->
     @stack('scripts')
+    <script>
+        function openModal(id) {
+            document.getElementById(id).classList.add('show');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+
+        function openRoleModal(type, name, division, role, status, id, permissionsStr) {
+            let permissions = [];
+            try {
+                if (permissionsStr) permissions = JSON.parse(permissionsStr);
+            } catch (e) {
+                console.error("Failed to parse permissions", e);
+            }
+            
+            if (type === 'create') {
+                document.getElementById('editRoleModalTitle').innerText = 'Tambah Hak Akses';
+                document.getElementById('editRoleUserSelect').value = '';
+                document.getElementById('editRoleUserSelect').disabled = false;
+                document.getElementById('hiddenEditRoleUserId').disabled = true;
+                
+                document.getElementById('editRoleDivision').value = '';
+                document.getElementById('editRoleRole').value = 'user';
+                
+                // uncheck all
+                document.querySelectorAll('#modalEditRole .custom-checkbox').forEach(cb => cb.checked = false);
+                
+                updateEditRoleFormAction(''); // disable submit until user is selected
+                openModal('modalEditRole');
+            } else if (type === 'edit') {
+                document.getElementById('editRoleModalTitle').innerText = 'Edit Hak Akses';
+                document.getElementById('editRoleUserSelect').value = id;
+                document.getElementById('editRoleUserSelect').disabled = true; // prevent changing user during edit
+                
+                // Set hidden input since select is disabled (disabled fields don't submit)
+                document.getElementById('hiddenEditRoleUserId').value = id;
+                document.getElementById('hiddenEditRoleUserId').disabled = false;
+                
+                document.getElementById('editRoleDivision').value = division;
+                document.getElementById('editRoleRole').value = role.toLowerCase();
+                
+                // check boxes
+                document.querySelectorAll('#modalEditRole .custom-checkbox').forEach(cb => {
+                    cb.checked = permissions.includes(cb.value);
+                });
+                
+                updateEditRoleFormAction(id);
+                openModal('modalEditRole');
+            } else if (type === 'detail') {
+                document.getElementById('detailRoleName').innerText = name;
+                document.getElementById('detailRoleDivision').innerText = division;
+                document.getElementById('detailRoleRole').innerText = role;
+                document.getElementById('detailRoleStatus').innerText = status;
+                
+                let statusBadge = document.getElementById('detailRoleStatus');
+                if (status.toLowerCase() === 'aktif') {
+                    statusBadge.className = 'badge-status';
+                    statusBadge.style.background = '#ECFDF5';
+                    statusBadge.style.color = '#009966';
+                    statusBadge.style.borderColor = '#A4F4CF';
+                } else {
+                    statusBadge.className = 'badge-status';
+                    statusBadge.style.background = 'rgba(238, 93, 80, 0.1)';
+                    statusBadge.style.color = 'var(--admin-danger)';
+                    statusBadge.style.borderColor = 'var(--admin-danger)';
+                }
+                
+                // render badges
+                let badgesHtml = '';
+                if (permissions && permissions.length > 0) {
+                    permissions.forEach(p => {
+                        let label = p.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                        badgesHtml += `<span class="badge-permission">${label}</span>`;
+                    });
+                } else {
+                    badgesHtml = '<span style="color: #94A3B8; font-size: 13px; font-style: italic;">Tidak ada hak akses khusus</span>';
+                }
+                document.getElementById('detailRolePermissionsList').innerHTML = badgesHtml;
+                
+                openModal('modalDetailRole');
+            } else if (type === 'delete') {
+                document.getElementById('deleteRoleSubtitle').innerText = `Hak akses untuk ${name} akan dihapus dari sistem.`;
+                document.getElementById('deleteRoleForm').action = `/admin/roles/${id}`;
+                openModal('modalDeleteRole');
+            }
+        }
+
+        function openDivisionModal(type, id, name, desc, usersCount, status, divType) {
+            if (type === 'create') {
+                document.getElementById('editDivisionForm').action = '/admin/divisions';
+                document.getElementById('editDivisionMethod').value = 'POST';
+                document.getElementById('editDivisionModalTitle').innerText = 'Tambah Divisi/Sektor';
+                document.getElementById('editDivisionName').value = '';
+                document.getElementById('editDivisionDesc').value = '';
+                document.getElementById('editDivisionStatus').value = 'aktif';
+                document.getElementById('editDivisionType').value = 'internal';
+                openModal('modalEditDivision');
+            } else if (type === 'edit') {
+                document.getElementById('editDivisionForm').action = '/admin/divisions/' + id;
+                document.getElementById('editDivisionMethod').value = 'PUT';
+                document.getElementById('editDivisionModalTitle').innerText = 'Edit Divisi/Sektor';
+                document.getElementById('editDivisionName').value = name;
+                document.getElementById('editDivisionDesc').value = desc;
+                document.getElementById('editDivisionStatus').value = status.toLowerCase();
+                document.getElementById('editDivisionType').value = divType.toLowerCase();
+                openModal('modalEditDivision');
+            } else if (type === 'detail') {
+                document.getElementById('detailDivisionName').innerText = name;
+                document.getElementById('detailDivisionDesc').innerText = desc || 'Tidak ada deskripsi';
+                document.getElementById('detailDivisionUsers').innerText = usersCount + ' user';
+                document.getElementById('detailDivisionType').innerText = divType;
+                document.getElementById('detailDivisionStatus').innerText = status;
+                
+                let statusBadge = document.getElementById('detailDivisionStatus');
+                if (status.toLowerCase() === 'aktif') {
+                    statusBadge.className = 'badge-status';
+                    statusBadge.style.background = '#ECFDF5';
+                    statusBadge.style.color = '#009966';
+                    statusBadge.style.borderColor = '#A4F4CF';
+                } else {
+                    statusBadge.className = 'badge-status';
+                    statusBadge.style.background = 'rgba(238, 93, 80, 0.1)';
+                    statusBadge.style.color = 'var(--admin-danger)';
+                    statusBadge.style.borderColor = 'var(--admin-danger)';
+                }
+                openModal('modalDetailDivision');
+            } else if (type === 'delete') {
+                document.getElementById('deleteDivisionSubtitle').innerText = `Divisi ${name} akan dihapus dari daftar.`;
+                document.getElementById('deleteDivisionForm').action = `/admin/divisions/${id}`;
+                openModal('modalDeleteDivision');
+            }
+        }
+
+        // Close when clicking outside modal container
+        document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+            backdrop.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('show');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

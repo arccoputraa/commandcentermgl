@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 
-#[Fillable(['name'])]
+#[Fillable(['name', 'description', 'status', 'type'])]
 class Division extends Model
 {
     public function users()

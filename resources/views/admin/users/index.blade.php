@@ -3,7 +3,7 @@
 @section('content')
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
         <h1 class="page-title" style="margin-bottom: 0;">Daftar Pengguna</h1>
-        <button class="btn btn-primary"><i class="fa-solid fa-plus"></i> Tambah Pengguna</button>
+        <a href="{{ route('admin.users.create') }}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Tambah Pengguna</a>
     </div>
 
     <div class="admin-card">
@@ -33,9 +33,9 @@
                         </span>
                     </td>
                     <td>
-                        <button class="btn btn-outline btn-sm"><i class="fa-solid fa-eye"></i></button>
-                        <button class="btn btn-outline btn-sm"><i class="fa-solid fa-pen"></i></button>
-                        <button class="btn btn-outline btn-sm" style="color: var(--admin-danger); border-color: var(--admin-danger);"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn btn-outline btn-sm" onclick="openRoleModal('detail', '{{ $user->name }}', '{{ $user->division->name ?? 'Tidak Ada' }}', '{{ ucfirst($user->role) }}', '{{ ucfirst($user->status) }}', {{ $user->id }})"><i class="fa-solid fa-eye"></i></button>
+                        <button class="btn btn-outline btn-sm" onclick="openRoleModal('edit', '{{ $user->name }}', '{{ $user->division->name ?? 'Tidak Ada' }}', '{{ ucfirst($user->role) }}', '{{ ucfirst($user->status) }}', {{ $user->id }})"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn btn-outline btn-sm" style="color: var(--admin-danger); border-color: var(--admin-danger);" onclick="openRoleModal('delete', '{{ $user->name }}', '', '', '', {{ $user->id }})"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 </tr>
                 @empty
