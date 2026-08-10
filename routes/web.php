@@ -37,6 +37,20 @@ Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])-
 Route::middleware('auth')->prefix('admin')->group(function () {
     Route::get('/', [\App\Http\Controllers\AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/users', [\App\Http\Controllers\AdminController::class, 'users'])->name('admin.users.index');
+    Route::get('/users/create', [\App\Http\Controllers\AdminController::class, 'create'])->name('admin.users.create');
+    Route::post('/users', [\App\Http\Controllers\AdminController::class, 'store'])->name('admin.users.store');
+    Route::delete('/users/{user}', [\App\Http\Controllers\AdminController::class, 'destroy'])->name('admin.users.destroy');
+    
+    // Divisions
+    Route::get('/divisions', [\App\Http\Controllers\DivisionController::class, 'index'])->name('admin.divisions.index');
+    Route::post('/divisions', [\App\Http\Controllers\DivisionController::class, 'store'])->name('admin.divisions.store');
+    Route::put('/divisions/{division}', [\App\Http\Controllers\DivisionController::class, 'update'])->name('admin.divisions.update');
+    Route::delete('/divisions/{division}', [\App\Http\Controllers\DivisionController::class, 'destroy'])->name('admin.divisions.destroy');
+
+    // Roles / Permissions
+    Route::get('/roles', [\App\Http\Controllers\RoleController::class, 'index'])->name('admin.roles.index');
+    Route::put('/roles/{role}', [\App\Http\Controllers\RoleController::class, 'update'])->name('admin.roles.update');
+    Route::delete('/roles/{role}', [\App\Http\Controllers\RoleController::class, 'destroy'])->name('admin.roles.destroy');
 });
 
 Route::get('/{page}', function (Request $request, string $page) {
