@@ -38,7 +38,7 @@
 <main>
   <section class="page-hero">
     <div class="wrap">
-      <div class="breadcrumb"><a href="index.html">Beranda</a> / CCTV Publik</div>
+      <div class="breadcrumb"><a href="{{ route('home') }}">Beranda</a> / CCTV Publik</div>
       <h1>Monitoring CCTV Publik</h1>
       <p>Seluruh titik CCTV publik Kota Magelang yang terhubung ke Command Center, lengkap dengan status koneksi masing-masing kamera.</p>
     </div>
