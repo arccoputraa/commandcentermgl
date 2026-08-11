@@ -81,7 +81,7 @@ Route::post('/login', [\App\Http\Controllers\AuthController::class, 'authenticat
 Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
 
 // Admin Routes (protected)
-Route::middleware('auth')->prefix('admin')->group(function () {
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/', [\App\Http\Controllers\AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/users', [\App\Http\Controllers\AdminController::class, 'users'])->name('admin.users.index');
     Route::get('/users/create', [\App\Http\Controllers\AdminController::class, 'create'])->name('admin.users.create');
