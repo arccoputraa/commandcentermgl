@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 @vite(['resources/css/style.css', 'resources/css/dashboard.css', 'resources/js/app.js'])
+@yield('extraStyles')
 </head>
 <body class="@yield('body_class')">
 
@@ -67,5 +68,6 @@
   </div>
   <div class="footer-bottom">© 2026 Pemerintah Kota Magelang. Seluruh hak cipta dilindungi.</div>
 </footer>
+@yield('extraScripts')
 </body>
 </html>
