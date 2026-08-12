@@ -18,7 +18,7 @@
     <aside class="admin-sidebar">
         <div class="sidebar-header">
             <div class="logo-container">
-                <img src="{{ asset('img/logo-mgl.png') }}" alt="Logo" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Lambang_Kota_Magelang.png/403px-Lambang_Kota_Magelang.png'">
+                <img src="{{ asset('images/cmdcenterlogo.png') }}" alt="Logo Command Center" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Lambang_Kota_Magelang.png/403px-Lambang_Kota_Magelang.png'">
             </div>
             <h2>MagelangCC</h2>
         </div>
@@ -35,13 +35,13 @@
             <a href="#" class="menu-item">
                 <i class="fa-solid fa-bullhorn"></i> Informasi Terbaru
             </a>
-        </nav>
-        <div class="sidebar-menu" style="flex-grow: 0; padding-top: 0;">
-            <a href="#" class="menu-item">
+            <a href="{{ route('profile.index') }}" class="menu-item {{ request()->routeIs('profile.index') ? 'active' : '' }}">
                 <i class="fa-solid fa-user-circle"></i> Profil
             </a>
-            <a href="#" class="menu-item" style="color: var(--admin-danger);" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                <i class="fa-solid fa-sign-out-alt"></i> Keluar
+        </nav>
+        <div class="sidebar-menu" style="flex-grow: 0; padding-top: 0;">
+            <a href="#" class="menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <i class="fa-solid fa-sign-out-alt"></i> Logout
             </a>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                 @csrf

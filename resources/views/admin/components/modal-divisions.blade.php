@@ -95,8 +95,8 @@
         <form id="deleteDivisionForm" method="POST" action="">
             @csrf
             @method('DELETE')
-            <h3 class="modal-title" style="margin-bottom: 8px;">Hapus Divisi/Sektor?</h3>
-            <p id="deleteDivisionSubtitle" class="modal-subtitle">Divisi ini akan dihapus dari daftar.</p>
+            <h3 class="modal-title" style="margin-bottom: 16px; font-size: 22px; font-weight: 700; color: #1e293b;">Hapus Divisi/Sektor?</h3>
+            <p id="deleteDivisionSubtitle" class="modal-subtitle" style="margin-bottom: 32px; font-size: 15px; color: #64748b;">Divisi ini akan dihapus dari daftar.</p>
             
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline" onclick="closeModal('modalDeleteDivision')">Batal</button>

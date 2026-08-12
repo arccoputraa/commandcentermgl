@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Keuangan - Majelis-go</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        sidebar: '#0b1121',
+                        'sidebar-hover': '#1e293b',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f4f7f9; }
+        .sidebar { background-color: #0c1222; }
+        .menu-item { color: #8c9bb1; transition: all 0.2s; }
+        .menu-item:hover { color: #ffffff; background-color: #1a2333; }
+        .menu-item.active { 
+            background-color: #1a2333; 
+            color: #ffffff; 
+            border-left: 4px solid #3b82f6; 
+        }
+        .menu-item.active i { color: #3b82f6; }
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            padding: 24px;
+            border: 1px solid #e5e7eb;
+        }
+        .card-label { font-size: 0.85rem; color: #64748b; margin-bottom: 8px; font-weight: 500; }
+        .card-value { font-size: 1.5rem; font-weight: 700; color: #0f172a; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden text-slate-800">
+
+    <!-- Sidebar -->
+    <aside class="sidebar w-64 flex-shrink-0 flex flex-col justify-between h-full text-white border-r border-gray-800">
+        <div>
+            <!-- Logo -->
+            <div class="h-16 flex items-center px-6 border-b border-gray-800/60">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-[#1e293b] rounded flex items-center justify-center text-blue-400 border border-gray-700">
+                        <i class="ph ph-squares-four text-lg"></i>
+                    </div>
+                    <span class="font-semibold text-lg tracking-wide">Majelis-<span class="text-emerald-400">go</span></span>
+                </div>
+            </div>
+
+            <!-- Menu -->
+            <div class="px-4 py-4">
+                <p class="text-xs font-semibold text-gray-500 mb-3 px-2 uppercase tracking-wider">Menu</p>
+                <nav class="flex flex-col gap-1">
+                    <a href="#" class="menu-item active flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium">
+                        <i class="ph ph-chart-pie-slice text-lg"></i>
+                        Dashboard Keuangan
+                    </a>
+                    <a href="#" class="menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium">
+                        <i class="ph ph-wallet text-lg"></i>
+                        Data Anggaran & Realisasi
+                    </a>
+                    <a href="#" class="menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium">
+                        <i class="ph ph-coins text-lg"></i>
+                        Pendapatan Daerah / PAD
+                    </a>
+                    <a href="#" class="menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium">
+                        <i class="ph ph-receipt text-lg"></i>
+                        Data Pajak Daerah
+                    </a>
+                    <a href="#" class="menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium">
+                        <i class="ph ph-users text-lg"></i>
+                        Manajemen User
+                    </a>
+                </nav>
+            </div>
+        </div>
+        
+        <!-- Bottom Action -->
+        <div class="p-4 border-t border-gray-800/60">
+            <a href="#" class="menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium hover:text-red-400 hover:bg-red-500/10 transition">
+                <i class="ph ph-sign-out text-lg"></i>
+                Keluar
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full bg-[#f4f7f9] overflow-hidden">
+        <!-- Top Navbar -->
+        <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 flex-shrink-0 z-10 shadow-sm">
+            <h1 class="text-lg font-bold text-gray-800">Command Center</h1>
+            <div class="flex items-center gap-3 cursor-pointer py-1 px-2 rounded-lg transition group">
+                <div class="text-right">
+                    <p class="text-sm font-bold text-gray-800">Divisi Keuangan</p>
+                    <p class="text-[11px] text-gray-500 uppercase tracking-wide font-semibold mt-0.5">Administrator</p>
+                </div>
+                <div class="w-9 h-9 bg-[#f1f5f9] text-gray-600 rounded-full flex items-center justify-center font-bold border border-gray-200 group-hover:bg-gray-200 transition">
+                    <i class="ph ph-user text-lg"></i>
+                </div>
+                <i class="ph ph-caret-down text-gray-400 text-sm"></i>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="flex-1 overflow-y-auto p-8">
+            <!-- Header -->
+            <div class="mb-6">
+                <h2 class="text-[22px] font-bold text-gray-900 mb-1">Dashboard Keuangan</h2>
+                <p class="text-[13px] text-gray-500">Ringkasan informasi keuangan, pendapatan daerah, dan realisasi anggaran.</p>
+            </div>
+
+            <!-- Search and Filter Bar -->
+            <div class="flex items-center gap-3 mb-6 bg-white p-2 rounded-xl border border-gray-200 shadow-sm">
+                <div class="flex-1 relative flex items-center">
+                    <i class="ph ph-magnifying-glass absolute left-4 text-gray-400 text-lg"></i>
+                    <input type="text" placeholder="Cari..." class="w-full pl-11 pr-4 py-2.5 rounded-lg bg-transparent border-none outline-none focus:ring-0 text-sm text-gray-700">
+                </div>
+                <div class="w-[1px] h-8 bg-gray-200"></div>
+                <button class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition flex items-center gap-2 mr-1">
+                    Terapkan Filter
+                </button>
+            </div>
+
+            <!-- Metrics Grid Row 1 -->
+            <div class="grid grid-cols-4 gap-4 mb-4">
+                <div class="card">
+                    <p class="card-label">Total Pendapatan</p>
+                    <p class="card-value">Rp 23,4 M</p>
+                </div>
+                <div class="card">
+                    <p class="card-label">Total Belanja</p>
+                    <p class="card-value">Rp 18,9 M</p>
+                </div>
+                <div class="card">
+                    <p class="card-label">Sisa Anggaran</p>
+                    <p class="card-value">Rp 4,5 M</p>
+                </div>
+                <div class="card bg-[#f8fafc] border-gray-200 shadow-none">
+                    <p class="card-label">Target Pendapatan</p>
+                    <p class="card-value">Rp 21,1 M</p>
+                </div>
+            </div>
+
+            <!-- Metrics Grid Row 2 -->
+            <div class="grid grid-cols-4 gap-4 mb-6">
+                <div class="card">
+                    <p class="card-label">Realisasi Pendapatan</p>
+                    <p class="card-value">Rp 2,3 M</p>
+                </div>
+                <div class="card">
+                    <p class="card-label">Persentase Realisasi</p>
+                    <p class="card-value text-blue-600">109,2%</p>
+                </div>
+                <div class="card">
+                    <p class="card-label">Pendapatan Pajak Daerah</p>
+                    <p class="card-value">Rp 1,6 M</p>
+                </div>
+                <div class="card flex flex-col justify-center bg-gray-50/50">
+                    <p class="card-label">Terakhir Diperbarui</p>
+                    <p class="card-value flex items-center gap-2 text-xl mt-1">
+                        <i class="ph-fill ph-calendar-blank text-gray-400"></i>
+                        03 Jul 2024
+                    </p>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="grid grid-cols-2 gap-4">
+                <!-- Chart 1 -->
+                <div class="card">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-bold text-gray-800 text-[15px]">Realisasi Belanja</h3>
+                        <button class="text-gray-400 hover:text-gray-600 transition"><i class="ph ph-dots-three text-2xl"></i></button>
+                    </div>
+                    <div class="relative h-[250px] w-full">
+                        <canvas id="realisasiBelanjaChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 2 -->
+                <div class="card">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-bold text-gray-800 text-[15px]">Pendapatan Asli Daerah (PAD)</h3>
+                        <button class="text-gray-400 hover:text-gray-600 transition"><i class="ph ph-dots-three text-2xl"></i></button>
+                    </div>
+                    <div class="relative h-[250px] w-full">
+                        <canvas id="pendapatanPADChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // Chart configurations
+        Chart.defaults.font.family = 'Inter, sans-serif';
+        Chart.defaults.color = '#94a3b8';
+        Chart.defaults.scale.grid.color = '#f1f5f9';
+
+        // Realisasi Belanja Chart (Horizontal Bar)
+        const ctxBelanja = document.getElementById('realisasiBelanjaChart').getContext('2d');
+        new Chart(ctxBelanja, {
+            type: 'bar',
+            data: {
+                labels: ['Dinas Pendidikan', 'Dinas Kesehatan', 'Dinas PUPR', 'Sekretariat Daerah', 'Lainnya'],
+                datasets: [{
+                    label: 'Realisasi',
+                    data: [85, 72, 60, 45, 30],
+                    backgroundColor: '#3b82f6',
+                    borderRadius: 4,
+                    barPercentage: 0.5,
+                    categoryPercentage: 0.8
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1e293b',
+                        padding: 12,
+                        titleFont: { size: 13, weight: 'normal' },
+                        bodyFont: { size: 14, weight: 'bold' },
+                        displayColors: false
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: { display: true, borderDash: [4, 4], drawBorder: false },
+                        border: { display: false },
+                        ticks: { display: false } // Hide bottom numbers to match clean look if needed
+                    },
+                    y: {
+                        grid: { display: false, drawBorder: false },
+                        border: { display: false },
+                        ticks: { color: '#475569', font: { size: 12 } }
+                    }
+                }
+            }
+        });
+
+        // Pendapatan PAD Chart (Horizontal Bar)
+        const ctxPAD = document.getElementById('pendapatanPADChart').getContext('2d');
+        new Chart(ctxPAD, {
+            type: 'bar',
+            data: {
+                labels: ['Pajak Daerah', 'Retribusi Daerah', 'Hasil Pengelolaan', 'Lain-lain PAD'],
+                datasets: [{
+                    label: 'Pendapatan',
+                    data: [90, 40, 20, 15],
+                    backgroundColor: '#10b981',
+                    borderRadius: 4,
+                    barPercentage: 0.5,
+                    categoryPercentage: 0.8
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1e293b',
+                        padding: 12,
+                        titleFont: { size: 13, weight: 'normal' },
+                        bodyFont: { size: 14, weight: 'bold' },
+                        displayColors: false
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: { display: true, borderDash: [4, 4], drawBorder: false },
+                        border: { display: false },
+                        ticks: { display: false }
+                    },
+                    y: {
+                        grid: { display: false, drawBorder: false },
+                        border: { display: false },
+                        ticks: { color: '#475569', font: { size: 12 } }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

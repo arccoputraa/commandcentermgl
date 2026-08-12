@@ -33,8 +33,8 @@
                         </span>
                     </td>
                     <td>
-                        <button class="btn btn-outline btn-sm" onclick="openRoleModal('detail', '{{ $user->name }}', '{{ $user->division->name ?? 'Tidak Ada' }}', '{{ ucfirst($user->role) }}', '{{ ucfirst($user->status) }}', {{ $user->id }})"><i class="fa-solid fa-eye"></i></button>
-                        <button class="btn btn-outline btn-sm" onclick="openRoleModal('edit', '{{ $user->name }}', '{{ $user->division->name ?? 'Tidak Ada' }}', '{{ ucfirst($user->role) }}', '{{ ucfirst($user->status) }}', {{ $user->id }})"><i class="fa-solid fa-pen"></i></button>
+                        <a href="{{ route('admin.users.show', $user->id) }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-eye"></i></a>
+                        <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-pen"></i></a>
                         <button class="btn btn-outline btn-sm" style="color: var(--admin-danger); border-color: var(--admin-danger);" onclick="openRoleModal('delete', '{{ $user->name }}', '', '', '', {{ $user->id }})"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 </tr>

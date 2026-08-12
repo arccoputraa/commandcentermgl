@@ -67,6 +67,41 @@ class AdminController extends Controller
         return redirect()->route('admin.users.index')->with('success', 'Pengguna berhasil ditambahkan.');
     }
 
+    public function show(User $user)
+    {
+        $activities = \App\Models\ActivityLog::where('user_id', $user->id)->latest()->get();
+        return view('admin.users.show', compact('user', 'activities'));
+    }
+
+    public function edit(User $user)
+    {
+        $divisions = Division::all();
+        return view('admin.users.edit', compact('user', 'divisions'));
+    }
+
+    public function update(Request $request, User $user)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'nip' => 'nullable|string|max:50',
+            'division_id' => 'nullable|exists:divisions,id',
+            'role' => 'required|in:admin,user',
+            'status' => 'required|in:aktif,nonaktif',
+        ]);
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'nip' => $request->nip,
+            'division_id' => $request->division_id,
+            'role' => $request->role,
+            'status' => $request->status,
+        ]);
+
+        return redirect()->route('admin.users.index')->with('success', 'Informasi pengguna berhasil diubah.');
+    }
+
     public function destroy(User $user)
     {
         $user->delete();
