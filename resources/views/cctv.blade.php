@@ -36,7 +36,7 @@
 </header>
 
 <main>
-  <section class="page-hero">
+  <section class="page-hero page-hero-image">
     <div class="wrap">
       <div class="breadcrumb"><a href="{{ route('home') }}">Beranda</a> / CCTV Publik</div>
       <h1>Monitoring CCTV Publik</h1>

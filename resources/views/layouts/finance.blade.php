@@ -27,8 +27,8 @@
             <a href="{{ route('finance.dashboard') }}" class="menu-item {{ request()->routeIs('finance.dashboard') ? 'active' : '' }}">
                 <i class="fa-solid fa-chart-line"></i> Dashboard Keuangan
             </a>
-            <a href="#" class="menu-item">
-                <i class="fa-solid fa-wallet"></i> Data Anggaran
+            <a href="{{ route('finance.budget.index') }}" class="menu-item {{ request()->routeIs('finance.budget.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-wallet"></i> Data Anggaran & Realisasi
             </a>
             <a href="#" class="menu-item">
                 <i class="fa-solid fa-money-bill-wave"></i> Pendapatan PAD
