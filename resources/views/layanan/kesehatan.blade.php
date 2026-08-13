@@ -48,8 +48,11 @@
             <!-- Map Placeholder -->
             <div class="dashboard-chart-card" style="padding: 16px;">
                 <h3 class="chart-header" style="margin-bottom: 16px;">Peta Sebaran Kasus</h3>
-                <div class="map-placeholder">
-                    [ Peta Interaktif Sebaran Kasus Kesehatan ]
+                <div class="map-placeholder" style="border-radius: 8px; overflow: hidden; position: relative; height: 300px; background: #f1f5f9;">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15828.910901596201!2d110.2078652!3d-7.4815454!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a8f4c4054a8e3%3A0xc3b4cc374be2e022!2sMagelang%2C%20Magelang%20City%2C%20Central%20Java!5e0!3m2!1sen!2sid!4v1715000000000!5m2!1sen!2sid" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    <div style="position: absolute; bottom: 16px; left: 0; right: 0; text-align: center;">
+                        <button style="background: #009966; color: white; border: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">Buka Peta Interaktif</button>
+                    </div>
                 </div>
             </div>
 
@@ -115,9 +118,60 @@
             </div>
             
             <div class="dashboard-chart-card" style="margin-top: 24px;">
-                <h3 class="chart-header">Fasilitas Tersedia</h3>
-                <div class="chart-placeholder" style="height: 120px;">
-                    [ Ketersediaan Tempat Tidur RS ]
+                <h3 class="chart-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+                    <i class="fa-solid fa-file-lines" style="color: #009966;"></i> Informasi Terbaru
+                </h3>
+                <div class="info-list">
+                    <div class="info-item" style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; transition: border-color 0.2s;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div style="display: flex; gap: 12px;">
+                                <i class="fa-solid fa-file-pdf" style="color: #ef4444; font-size: 20px; margin-top: 4px;"></i>
+                                <div>
+                                    <h4 style="font-size: 14px; font-weight: 600; color: #1e293b; margin: 0;">Publikasi Data Kesehatan Triwulan III</h4>
+                                    <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">Dokumen PDF - publikasi-kesehatan-q3.pdf</p>
+                                </div>
+                            </div>
+                            <span style="background: #ecfdf5; color: #009966; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 600;">Rilis</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                            <span style="font-size: 11px; color: #94a3b8;">Diperbarui 2 hari lalu</span>
+                            <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" style="font-size: 12px; font-weight: 600; color: #009966; text-decoration: none;">Lihat PDF</a>
+                        </div>
+                    </div>
+
+                    <div class="info-item" style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div style="display: flex; gap: 12px;">
+                                <i class="fa-solid fa-file-pdf" style="color: #ef4444; font-size: 20px; margin-top: 4px;"></i>
+                                <div>
+                                    <h4 style="font-size: 14px; font-weight: 600; color: #1e293b; margin: 0;">Update Program Imunisasi Kota</h4>
+                                    <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">Dokumen PDF - update-imunisasi-kota.pdf</p>
+                                </div>
+                            </div>
+                            <span style="background: #ecfdf5; color: #009966; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 600;">Rilis</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                            <span style="font-size: 11px; color: #94a3b8;">Diperbarui 3 hari lalu</span>
+                            <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" style="font-size: 12px; font-weight: 600; color: #009966; text-decoration: none;">Lihat PDF</a>
+                        </div>
+                    </div>
+
+                    <div class="info-item" style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div style="display: flex; gap: 12px;">
+                                <i class="fa-solid fa-file-pdf" style="color: #ef4444; font-size: 20px; margin-top: 4px;"></i>
+                                <div>
+                                    <h4 style="font-size: 14px; font-weight: 600; color: #1e293b; margin: 0;">Laporan Ringkas Stunting</h4>
+                                    <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">Dokumen PDF - laporan-stunting-ringkas.pdf</p>
+                                </div>
+                            </div>
+                            <span style="background: #ecfdf5; color: #009966; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 600;">Rilis</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                            <span style="font-size: 11px; color: #94a3b8;">Diperbarui 5 hari lalu</span>
+                            <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" style="font-size: 12px; font-weight: 600; color: #009966; text-decoration: none;">Lihat PDF</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

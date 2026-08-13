@@ -86,7 +86,6 @@
     .data-table {
         width: 100%;
         border-collapse: collapse;
-        min-width: 900px;
     }
     .data-table th {
         background: #f8fafc;
@@ -105,6 +104,9 @@
         color: #334155;
         border-bottom: 1px solid #e2e8f0;
         vertical-align: middle;
+    }
+    .data-table td:last-child {
+        white-space: nowrap;
     }
     .data-table tr:last-child td {
         border-bottom: none;

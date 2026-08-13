@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Dashboard Keuangan') - Command Center Magelang</title>
+<link rel="icon" href="{{ asset('images/cmdcenterlogo.png') }}" type="image/png">
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome -->
@@ -25,22 +26,25 @@
         </div>
         <nav class="sidebar-menu">
             <a href="{{ route('finance.dashboard') }}" class="menu-item {{ request()->routeIs('finance.dashboard') ? 'active' : '' }}">
-                <i class="fa-solid fa-chart-line"></i> Dashboard Keuangan
+                <i class="fa-solid fa-border-all"></i> Dashboard Keuangan
             </a>
             <a href="{{ route('finance.budget.index') }}" class="menu-item {{ request()->routeIs('finance.budget.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-wallet"></i> Data Anggaran & Realisasi
             </a>
-            <a href="#" class="menu-item">
-                <i class="fa-solid fa-money-bill-wave"></i> Pendapatan PAD
+            <a href="{{ route('finance.pad.index') }}" class="menu-item {{ request()->routeIs('finance.pad.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-suitcase"></i> Pendapatan Daerah / PAD
             </a>
-            <a href="#" class="menu-item">
-                <i class="fa-solid fa-file-invoice-dollar"></i> Data Pajak
+            <a href="{{ route('finance.tax.index') }}" class="menu-item {{ request()->routeIs('finance.tax.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-file-lines"></i> Data Pajak Daerah
             </a>
-            <a href="#" class="menu-item">
-                <i class="fa-solid fa-users"></i> Manajemen User
+            <a href="{{ route('finance.subbidang.index') }}" class="menu-item {{ request()->routeIs('finance.subbidang.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-building"></i> Sub Bidang / Unit Keuangan
+            </a>
+            <a href="{{ route('finance.information.index') }}" class="menu-item {{ request()->routeIs('finance.information.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-download"></i> Informasi Terbaru
             </a>
             <a href="{{ route('profile.index') }}" class="menu-item {{ request()->routeIs('profile.index') ? 'active' : '' }}">
-                <i class="fa-solid fa-user-circle"></i> Profil
+                <i class="fa-regular fa-circle-user"></i> Profil
             </a>
         </nav>
         <div class="sidebar-menu" style="flex-grow: 0; padding-top: 0;">
@@ -81,3 +85,4 @@
     @stack('scripts')
 </body>
 </html>
+

@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Command Center Kota Magelang</title>
+<link rel="icon" href="{{ asset('images/cmdcenterlogo.png') }}" type="image/png">
     <meta name="description" content="Pusat Kendali & Data Kota Magelang — platform terintegrasi untuk pemantauan, analisis, dan layanan publik.">
     
     <!-- Font bawaan -->

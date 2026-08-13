@@ -17,22 +17,22 @@
     <div class="dashboard-stats-grid" style="grid-template-columns: repeat(4, 1fr);">
         <div class="stat-card color-blue">
             <h3 class="stat-card-title">Total Pegawai</h3>
-            <p class="stat-card-value">126</p>
+            <p class="stat-card-value">{{ $stats['total'] ?? 0 }}</p>
             <p class="stat-card-desc">Jumlah tenaga kerja terdaftar</p>
         </div>
         <div class="stat-card color-green">
             <h3 class="stat-card-title">PNS</h3>
-            <p class="stat-card-value">83</p>
+            <p class="stat-card-value">{{ $stats['pns'] ?? 0 }}</p>
             <p class="stat-card-desc">Aparatur sipil negara aktif</p>
         </div>
         <div class="stat-card color-orange">
             <h3 class="stat-card-title">PPPK</h3>
-            <p class="stat-card-value">25</p>
+            <p class="stat-card-value">{{ $stats['pppk'] ?? 0 }}</p>
             <p class="stat-card-desc">Pegawai pemerintah dengan perjanjian kerja</p>
         </div>
         <div class="stat-card color-purple">
             <h3 class="stat-card-title">Non-ASN</h3>
-            <p class="stat-card-value">18</p>
+            <p class="stat-card-value">{{ $stats['non_asn'] ?? 0 }}</p>
             <p class="stat-card-desc">Tenaga kontrak dan honorer</p>
         </div>
     </div>
@@ -94,27 +94,21 @@
                     Pembaruan publikasi data kepegawaian
                 </p>
                 <div class="summary-list">
+                    @forelse($informasiTerbaru ?? [] as $info)
                     <div class="pub-info-item">
                         <div class="pub-info-header">
-                            <p class="pub-info-title">Rekap Data Pegawai Semester I 2026</p>
+                            <p class="pub-info-title">{{ Str::limit($info->judul, 40) }}</p>
                         </div>
-                        <p class="pub-info-meta">Rekap Data Pegawai · 03 Jul 2026</p>
-                        <a href="#" class="inline-block mt-2 text-xs border border-slate-200 rounded-lg px-3 py-1.5 text-blue-600 hover:bg-blue-50">Lihat PDF</a>
+                        <p class="pub-info-meta">{{ $info->kategori }} &middot; {{ $info->created_at->format('d M Y') }}</p>
+                        @if($info->dokumen)
+                        <a href="{{ Storage::url($info->dokumen) }}" target="_blank" class="inline-block mt-2 text-xs border border-slate-200 rounded-lg px-3 py-1.5 text-blue-600 hover:bg-blue-50">Lihat File</a>
+                        @else
+                        <a href="#" onclick="alert('File tidak tersedia.'); return false;" class="inline-block mt-2 text-xs border border-slate-200 rounded-lg px-3 py-1.5 text-slate-400">Tidak ada file</a>
+                        @endif
                     </div>
-                    <div class="pub-info-item">
-                        <div class="pub-info-header">
-                            <p class="pub-info-title">Informasi Mutasi Pegawai Juni 2026</p>
-                        </div>
-                        <p class="pub-info-meta">Mutasi Pegawai · 02 Jul 2026</p>
-                        <a href="#" class="inline-block mt-2 text-xs border border-slate-200 rounded-lg px-3 py-1.5 text-blue-600 hover:bg-blue-50">Lihat PDF</a>
-                    </div>
-                    <div class="pub-info-item">
-                        <div class="pub-info-header">
-                            <p class="pub-info-title">Jadwal Pensiun Pegawai 2026</p>
-                        </div>
-                        <p class="pub-info-meta">Pensiun Pegawai · 01 Jul 2026</p>
-                        <a href="#" class="inline-block mt-2 text-xs border border-slate-200 rounded-lg px-3 py-1.5 text-blue-600 hover:bg-blue-50">Lihat PDF</a>
-                    </div>
+                    @empty
+                    <p style="font-size:13px; color:#64748b;">Belum ada informasi terbaru.</p>
+                    @endforelse
                 </div>
             </div>
         </div>
@@ -130,53 +124,32 @@
                     <tr>
                         <th>Tahun</th>
                         <th>Kategori</th>
-                        <th>Unit Kerja</th>
-                        <th>Jumlah Pegawai</th>
-                        <th>Keterangan</th>
+                        <th>Nama Pegawai</th>
+                        <th>Unit Terkait</th>
+                        <th>Status</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @forelse($tabelRingkas ?? [] as $row)
                     <tr>
-                        <td>2026</td>
-                        <td>PNS</td>
-                        <td>Sekretariat</td>
-                        <td>18 Pegawai</td>
-                        <td><span class="table-badge success">Aktif</span></td>
-                        <td><a href="#">Lihat Detail</a></td>
+                        <td>{{ date('Y', strtotime($row->tanggal_efektif)) }}</td>
+                        <td>{{ $row->jenis }}</td>
+                        <td>{{ Str::limit($row->nama_pegawai, 25) }}</td>
+                        <td>{{ Str::limit($row->keterangan ?? '-', 20) }}</td>
+                        <td>
+                            @php
+                                $badge = 'success';
+                                if($row->status_pengajuan == 'Berjalan') $badge = 'warning';
+                                if($row->status_pengajuan == 'Tertunda') $badge = 'danger';
+                            @endphp
+                            <span class="table-badge {{ $badge }}">{{ $row->status_pengajuan }}</span>
+                        </td>
+                        <td><a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;">Lihat Detail</a></td>
                     </tr>
-                    <tr>
-                        <td>2026</td>
-                        <td>PPPK</td>
-                        <td>Bidang Pengembangan SDM</td>
-                        <td>9 Pegawai</td>
-                        <td><span class="table-badge success">Aktif</span></td>
-                        <td><a href="#">Lihat Detail</a></td>
-                    </tr>
-                    <tr>
-                        <td>2026</td>
-                        <td>Non-ASN</td>
-                        <td>Sekretariat</td>
-                        <td>6 Pegawai</td>
-                        <td><span class="table-badge success">Aktif</span></td>
-                        <td><a href="#">Lihat Detail</a></td>
-                    </tr>
-                    <tr>
-                        <td>2026</td>
-                        <td>Mendekati Pensiun</td>
-                        <td>Bidang Data Kepegawaian</td>
-                        <td>3 Pegawai</td>
-                        <td><span class="table-badge warning">Terjadwal</span></td>
-                        <td><a href="#">Lihat Detail</a></td>
-                    </tr>
-                    <tr>
-                        <td>2026</td>
-                        <td>Mutasi Internal</td>
-                        <td>Bidang Mutasi</td>
-                        <td>4 Pegawai</td>
-                        <td><span class="table-badge success">Selesai</span></td>
-                        <td><a href="#">Lihat Detail</a></td>
-                    </tr>
+                    @empty
+                    <tr><td colspan="6" style="text-align:center;">Belum ada data.</td></tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -215,10 +188,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    createDonut(document.getElementById('chartJenisPegawai'), ['PNS', 'PPPK', 'Non-ASN'], [83, 25, 18], ['#155DFC', '#10B981', '#F59E0B']);
-    createBar(document.getElementById('chartUnitKerja'), ['Sekretariat', 'Data Kepegawaian', 'Mutasi', 'Pengembangan SDM', 'Kesejahteraan'], [28, 54, 21, 25, 18], '#6366f1', true);
-    createDonut(document.getElementById('chartGenderPeg'), ['Laki-laki', 'Perempuan'], [58, 68], ['#155DFC', '#EC4899']);
-    createBar(document.getElementById('chartGolongan'), ['Golongan II', 'Golongan III', 'Golongan IV', 'PPPK', 'Non-ASN'], [18, 54, 11, 25, 18], '#10B981', true);
-    createBar(document.getElementById('chartMutasi'), ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'], [2, 4, 3, 5, 8, 12], '#F59E0B');
+    createDonut(document.getElementById('chartJenisPegawai'), ['PNS', 'PPPK', 'Non-ASN'], [{{ $stats['pns'] ?? 0 }}, {{ $stats['pppk'] ?? 0 }}, {{ $stats['non_asn'] ?? 0 }}], ['#155DFC', '#10B981', '#F59E0B']);
+    createBar(document.getElementById('chartUnitKerja'), {!! json_encode($chartUnitKerja['labels'] ?? []) !!}, {!! json_encode($chartUnitKerja['data'] ?? []) !!}, '#6366f1', true);
+    createDonut(document.getElementById('chartGenderPeg'), ['Laki-laki', 'Perempuan'], [{{ $chartGender['Laki-laki'] ?? 0 }}, {{ $chartGender['Perempuan'] ?? 0 }}], ['#155DFC', '#EC4899']);
+    createBar(document.getElementById('chartGolongan'), {!! json_encode($chartGolongan['labels'] ?? []) !!}, {!! json_encode($chartGolongan['data'] ?? []) !!}, '#10B981', true);
+    createBar(document.getElementById('chartMutasi'), ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'], {!! json_encode(array_values($chartMutasi ?? array_fill(1,12,0))) !!}, '#F59E0B');
 });
 </script>

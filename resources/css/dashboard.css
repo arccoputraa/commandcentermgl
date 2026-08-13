@@ -420,7 +420,6 @@
 .dashboard-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 800px;
 }
 
 .dashboard-table th {

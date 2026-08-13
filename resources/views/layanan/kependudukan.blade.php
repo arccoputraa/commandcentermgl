@@ -1,4 +1,4 @@
-ï»¿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', 'Kependudukan - Command Center Kota Magelang')
 
@@ -93,32 +93,32 @@
                             <p class="pub-info-title">Rekap Data Kependudukan Semester I 2026</p>
                             <span class="status-badge success">Rilis</span>
                         </div>
-                        <p class="pub-info-meta">Rekap Penduduk Â· 03 Jul 2026</p>
-                        <a href="#" class="action-link">Lihat PDF</a>
+                        <p class="pub-info-meta">Rekap Penduduk · 03 Jul 2026</p>
+                        <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat PDF</a>
                     </div>
                     <div class="pub-info-item">
                         <div class="pub-info-header">
                             <p class="pub-info-title">Statistik Pemeluk Agama 2026</p>
                             <span class="status-badge success">Rilis</span>
                         </div>
-                        <p class="pub-info-meta">Data Agama Â· 02 Jul 2026</p>
-                        <a href="#" class="action-link">Lihat PDF</a>
+                        <p class="pub-info-meta">Data Agama · 02 Jul 2026</p>
+                        <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat PDF</a>
                     </div>
                     <div class="pub-info-item">
                         <div class="pub-info-header">
                             <p class="pub-info-title">Laporan Mutasi Penduduk Juni 2026</p>
                             <span class="status-badge success">Rilis</span>
                         </div>
-                        <p class="pub-info-meta">Mutasi Penduduk Â· 01 Jul 2026</p>
-                        <a href="#" class="action-link">Lihat PDF</a>
+                        <p class="pub-info-meta">Mutasi Penduduk · 01 Jul 2026</p>
+                        <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat PDF</a>
                     </div>
                     <div class="pub-info-item">
                         <div class="pub-info-header">
                             <p class="pub-info-title">Publikasi Penduduk Berdasarkan Wilayah</p>
                             <span class="status-badge warning">Draft</span>
                         </div>
-                        <p class="pub-info-meta">Statistik Wilayah Â· 30 Jun 2026</p>
-                        <a href="#" class="action-link">Lihat PDF</a>
+                        <p class="pub-info-meta">Statistik Wilayah · 30 Jun 2026</p>
+                        <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat PDF</a>
                     </div>
                 </div>
             </div>
@@ -152,7 +152,7 @@
                         <td>2.340 KK</td>
                         <td>Islam</td>
                         <td><span class="table-badge success">Aktif</span></td>
-                        <td><a href="#" class="action-link">Lihat Detail</a></td>
+                        <td><a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat Detail</a></td>
                     </tr>
                     <tr>
                         <td>2026</td>
@@ -162,7 +162,7 @@
                         <td>2.180 KK</td>
                         <td>Islam</td>
                         <td><span class="table-badge success">Aktif</span></td>
-                        <td><a href="#" class="action-link">Lihat Detail</a></td>
+                        <td><a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat Detail</a></td>
                     </tr>
                     <tr>
                         <td>2026</td>
@@ -172,7 +172,7 @@
                         <td>1.920 KK</td>
                         <td>Islam</td>
                         <td><span class="table-badge success">Aktif</span></td>
-                        <td><a href="#" class="action-link">Lihat Detail</a></td>
+                        <td><a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat Detail</a></td>
                     </tr>
                     <tr>
                         <td>2026</td>
@@ -182,7 +182,7 @@
                         <td>1.710 KK</td>
                         <td>Islam</td>
                         <td><span class="table-badge success">Aktif</span></td>
-                        <td><a href="#" class="action-link">Lihat Detail</a></td>
+                        <td><a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat Detail</a></td>
                     </tr>
                     <tr>
                         <td>2026</td>
@@ -192,7 +192,7 @@
                         <td>1.860 KK</td>
                         <td>Islam</td>
                         <td><span class="table-badge success">Aktif</span></td>
-                        <td><a href="#" class="action-link">Lihat Detail</a></td>
+                        <td><a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat Detail</a></td>
                     </tr>
                 </tbody>
             </table>
