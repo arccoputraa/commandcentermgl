@@ -136,13 +136,13 @@
                             <div class="pub-info-header">
                                 <p class="pub-info-title">Ringkasan APBD 2026</p>
                             </div>
-                            <a href="#" style="font-size: 13px; color: var(--blue); font-weight: 500;">Unduh PDF</a>
+                            <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" style="font-size: 13px; color: var(--blue); font-weight: 500;">Unduh PDF</a>
                         </div>
                         <div class="pub-info-item">
                             <div class="pub-info-header">
                                 <p class="pub-info-title">LKPJ Walikota 2025</p>
                             </div>
-                            <a href="#" style="font-size: 13px; color: var(--blue); font-weight: 500;">Unduh PDF</a>
+                            <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" style="font-size: 13px; color: var(--blue); font-weight: 500;">Unduh PDF</a>
                         </div>
                     @endif
                 </div>
@@ -162,17 +162,17 @@ document.addEventListener('DOMContentLoaded', function() {
     new Chart(ctxAnggaran, {
         type: 'bar',
         data: {
-            labels: ['Pendidikan', 'Kesehatan', 'PUPR', 'Sosial', 'Trantibum', 'Lainnya'],
+            labels: {!! json_encode($chartAnggaran['labels'] ?? ['Pendidikan', 'Kesehatan', 'PUPR', 'Sosial']) !!},
             datasets: [
                 {
-                    label: 'Anggaran',
-                    data: [350, 250, 200, 150, 100, 150],
+                    label: 'Anggaran (Juta)',
+                    data: {!! json_encode($chartAnggaran['anggaran'] ?? [350, 250, 200, 150]) !!},
                     backgroundColor: '#155DFC',
                     borderRadius: 4,
                 },
                 {
-                    label: 'Realisasi',
-                    data: [280, 180, 120, 110, 80, 80],
+                    label: 'Realisasi (Juta)',
+                    data: {!! json_encode($chartAnggaran['realisasi'] ?? [280, 180, 120, 110]) !!},
                     backgroundColor: '#009966',
                     borderRadius: 4,
                 }

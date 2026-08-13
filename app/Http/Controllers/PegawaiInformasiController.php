@@ -21,18 +21,29 @@ class PegawaiInformasiController extends Controller
         return view('kepegawaian.informasi.index', compact('informasis'));
     }
 
+    public function create()
+    {
+        return view('kepegawaian.informasi.form');
+    }
+
     public function store(Request $request)
     {
         $request->validate([
             'judul' => 'required|string',
             'kategori' => 'required|string',
             'format' => 'nullable|string',
-            'dokumen' => 'nullable|string',
+            'dokumen' => 'nullable|file|mimes:pdf|max:10240',
             'status_publikasi' => 'required|string',
             'keterangan' => 'nullable|string'
         ]);
 
-        PegawaiInformasi::create($request->all());
+        $data = $request->all();
+
+        if ($request->hasFile('dokumen')) {
+            $data['dokumen'] = $request->file('dokumen')->store('kepegawaian/informasi', 'public');
+        }
+
+        PegawaiInformasi::create($data);
 
         return redirect()->route('kepegawaian.informasi.index')->with('success', 'Informasi berhasil ditambahkan.');
     }
@@ -43,19 +54,31 @@ class PegawaiInformasiController extends Controller
         return view('kepegawaian.informasi.detail', compact('informasi'));
     }
 
+    public function edit($id)
+    {
+        $informasi = PegawaiInformasi::findOrFail($id);
+        return view('kepegawaian.informasi.form', compact('informasi'));
+    }
+
     public function update(Request $request, $id)
     {
         $request->validate([
             'judul' => 'required|string',
             'kategori' => 'required|string',
             'format' => 'nullable|string',
-            'dokumen' => 'nullable|string',
+            'dokumen' => 'nullable|file|mimes:pdf|max:10240',
             'status_publikasi' => 'required|string',
             'keterangan' => 'nullable|string'
         ]);
 
         $informasi = PegawaiInformasi::findOrFail($id);
-        $informasi->update($request->all());
+        $data = $request->all();
+
+        if ($request->hasFile('dokumen')) {
+            $data['dokumen'] = $request->file('dokumen')->store('kepegawaian/informasi', 'public');
+        }
+
+        $informasi->update($data);
 
         return redirect()->route('kepegawaian.informasi.index')->with('success', 'Informasi berhasil diperbarui.');
     }

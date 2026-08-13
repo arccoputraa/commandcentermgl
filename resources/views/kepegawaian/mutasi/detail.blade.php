@@ -1,48 +1,74 @@
 @extends('layouts.kepegawaian')
 
-@section('title', 'Detail Mutasi & Pensiun')
+@section('title', 'Detail Mutasi / Pensiun')
 
 @section('content')
-<div class="detail-container" style="background:#fff; padding:24px; border-radius:12px; box-shadow:0 1px 3px rgba(0,0,0,0.05); max-width: 600px;">
-    <div style="margin-bottom:24px;">
-        <a href="{{ route('kepegawaian.mutasi.index') }}" style="color:#64748b; text-decoration:none; font-size:14px;"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+<div style="margin-bottom:24px;">
+    <!-- Breadcrumb -->
+    <div style="font-size:13px; color:#64748b; margin-bottom:12px;">
+        Dashboard &nbsp;/&nbsp; Mutasi & Pensiun &nbsp;/&nbsp; <strong style="color:#0f172a;">Detail</strong>
     </div>
-    
-    <h3 style="margin:0 0 16px 0; font-size:18px; color:#1e293b;">Detail Pengajuan Mutasi / Pensiun</h3>
-    
-    <table style="width:100%; border-collapse:collapse; text-align:left;">
-        <tr style="border-bottom:1px solid #f1f5f9;">
-            <th style="padding:12px 0; width:150px; color:#64748b; font-weight:500;">NIP</th>
-            <td style="padding:12px 0; color:#0f172a; font-weight:600;">{{ $mutasi->nip }}</td>
-        </tr>
-        <tr style="border-bottom:1px solid #f1f5f9;">
-            <th style="padding:12px 0; color:#64748b; font-weight:500;">Nama Pegawai</th>
-            <td style="padding:12px 0; color:#0f172a;">{{ $mutasi->nama_pegawai }}</td>
-        </tr>
-        <tr style="border-bottom:1px solid #f1f5f9;">
-            <th style="padding:12px 0; color:#64748b; font-weight:500;">Jenis</th>
-            <td style="padding:12px 0; color:#0f172a;">{{ $mutasi->jenis }}</td>
-        </tr>
-        <tr style="border-bottom:1px solid #f1f5f9;">
-            <th style="padding:12px 0; color:#64748b; font-weight:500;">Tanggal Efektif</th>
-            <td style="padding:12px 0; color:#0f172a;">{{ date('d M Y', strtotime($mutasi->tanggal_efektif)) }}</td>
-        </tr>
-        <tr style="border-bottom:1px solid #f1f5f9;">
-            <th style="padding:12px 0; color:#64748b; font-weight:500;">Keterangan</th>
-            <td style="padding:12px 0; color:#0f172a;">{{ $mutasi->keterangan ?? '-' }}</td>
-        </tr>
-        <tr>
-            <th style="padding:12px 0; color:#64748b; font-weight:500;">Status Pengajuan</th>
-            <td style="padding:12px 0; color:#0f172a;">
-                @if($mutasi->status_pengajuan == 'Disetujui')
-                    <span style="background:#dcfce7; color:#166534; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:500;">Disetujui</span>
-                @elseif($mutasi->status_pengajuan == 'Ditolak')
-                    <span style="background:#fee2e2; color:#991b1b; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:500;">Ditolak</span>
-                @else
-                    <span style="background:#fef08a; color:#854d0e; padding:4px 8px; border-radius:4px; font-size:12px; font-weight:500;">Proses</span>
-                @endif
-            </td>
-        </tr>
-    </table>
+
+    <!-- Header Actions -->
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h2 style="margin:0; font-size:24px; color:#1e293b; font-weight:700;">Detail {{ $mutasi->jenis }}</h2>
+        <div style="display:flex; gap:12px;">
+            <a href="{{ route('kepegawaian.mutasi.index') }}" style="background:#fff; border:1px solid #e2e8f0; color:#334155; padding:8px 16px; border-radius:8px; font-weight:600; text-decoration:none;">Kembali</a>
+            <a href="{{ route('kepegawaian.mutasi.edit', $mutasi->id) }}" style="background:#4f46e5; color:#fff; border:none; padding:8px 16px; border-radius:8px; font-weight:600; text-decoration:none; display:flex; align-items:center; gap:8px;">
+                <i class="fa-regular fa-pen-to-square"></i> Edit Data
+            </a>
+        </div>
+    </div>
+</div>
+
+<div style="background:#fff; border-radius:12px; border:1px solid #e2e8f0; padding:32px; max-width:800px;">
+    <!-- Card Header -->
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:32px;">
+        <div>
+            <h3 style="margin:0 0 4px 0; font-size:20px; color:#1e293b; font-weight:700;">{{ $mutasi->nama_pegawai }}</h3>
+            <p style="margin:0; color:#64748b; font-family:monospace; font-size:14px;">{{ $mutasi->nip }}</p>
+        </div>
+        <div>
+            @if($mutasi->status_pengajuan == 'Selesai')
+                <span style="background:#dcfce7; border:1px solid #86efac; color:#166534; padding:6px 16px; border-radius:999px; font-size:12px; font-weight:600;">Selesai</span>
+            @elseif($mutasi->status_pengajuan == 'Berjalan')
+                <span style="background:#fef3c7; border:1px solid #fde047; color:#854d0e; padding:6px 16px; border-radius:999px; font-size:12px; font-weight:600;">Berjalan</span>
+            @else
+                <span style="background:#fee2e2; border:1px solid #fca5a5; color:#991b1b; padding:6px 16px; border-radius:999px; font-size:12px; font-weight:600;">{{ $mutasi->status_pengajuan }}</span>
+            @endif
+        </div>
+    </div>
+
+    <!-- Detail Grid -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:32px;">
+        <div>
+            <p style="margin:0 0 4px 0; font-size:12px; color:#64748b; font-weight:500;">Jenis Perubahan</p>
+            <p style="margin:0; font-size:15px; color:#0f172a; font-weight:600;">{{ $mutasi->jenis }}</p>
+        </div>
+        <div>
+            <p style="margin:0 0 4px 0; font-size:12px; color:#64748b; font-weight:500;">Unit Asal</p>
+            <p style="margin:0; font-size:15px; color:#0f172a; font-weight:600;">{{ $mutasi->unit_asal ?? 'Sekretariat' }}</p>
+        </div>
+        <div>
+            <p style="margin:0 0 4px 0; font-size:12px; color:#64748b; font-weight:500;">Unit Tujuan</p>
+            <p style="margin:0; font-size:15px; color:#0f172a; font-weight:600;">{{ $mutasi->unit_tujuan ?? 'Bidang Mutasi' }}</p>
+        </div>
+        <div>
+            <p style="margin:0 0 4px 0; font-size:12px; color:#64748b; font-weight:500;">Tanggal Efektif</p>
+            <p style="margin:0; font-size:15px; color:#0f172a; font-weight:600;">{{ \Carbon\Carbon::parse($mutasi->tanggal_efektif)->format('d M Y') }}</p>
+        </div>
+        <div>
+            <p style="margin:0 0 4px 0; font-size:12px; color:#64748b; font-weight:500;">Status Proses</p>
+            <p style="margin:0; font-size:15px; color:#0f172a; font-weight:600;">{{ $mutasi->status_pengajuan }}</p>
+        </div>
+    </div>
+
+    <!-- Keterangan Box -->
+    <div>
+        <p style="margin:0 0 8px 0; font-size:12px; color:#64748b; font-weight:500;">Keterangan</p>
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:16px; font-size:14px; color:#334155;">
+            {{ $mutasi->keterangan ?: 'Tidak ada keterangan khusus.' }}
+        </div>
+    </div>
 </div>
 @endsection

@@ -2,8 +2,10 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Command Center Magelang</title>
+    <title>@yield('title', 'Admin Dashboard - Command Center Kota Magelang')</title>
+    <link rel="icon" href="{{ asset('images/cmdcenterlogo.png') }}" type="image/png">
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome -->

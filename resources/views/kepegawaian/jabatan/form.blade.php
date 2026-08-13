@@ -23,7 +23,7 @@
             @method('PUT')
         @endif
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:24px;">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:24px; margin-bottom:24px;">
             <div>
                 <label style="display:block; font-size:13px; font-weight:600; color:#334155; margin-bottom:8px;">Nama Unit Kerja</label>
                 <input type="text" name="nama_jabatan" value="{{ old('nama_jabatan', $jabatan->nama_jabatan ?? '') }}" required style="width:100%; padding:12px; border:1px solid #cbd5e1; border-radius:8px; outline:none; font-size:14px;" placeholder="Masukkan Nama Unit Kerja">
@@ -34,7 +34,7 @@
             </div>
         </div>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:24px;">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:24px; margin-bottom:24px;">
             <div>
                 <label style="display:block; font-size:13px; font-weight:600; color:#334155; margin-bottom:8px;">Jabatan Utama</label>
                 <input type="text" name="jabatan_utama" value="{{ old('jabatan_utama', $jabatan->jabatan_utama ?? '') }}" style="width:100%; padding:12px; border:1px solid #cbd5e1; border-radius:8px; outline:none; font-size:14px;" placeholder="Misal: Kepala Subbagian Umum">

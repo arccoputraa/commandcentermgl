@@ -9,21 +9,22 @@
             <h2 style="margin:0 0 8px 0; font-size:24px; color:#1e293b; font-weight:700;">Data Pegawai</h2>
             <p style="margin:0; color:#64748b; font-size:14px;">Sumber data: Total Pegawai, PNS, PPPK, Non-ASN, komposisi jenis kelamin dan golongan.</p>
         </div>
-        <button onclick="openModal('modalAdd')" style="background:#4f46e5; color:#fff; border:none; padding:10px 20px; border-radius:8px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px;">
+        <a href="{{ route('kepegawaian.data.create') }}" style="background:#4f46e5; color:#fff; border:none; padding:10px 20px; border-radius:8px; font-weight:600; cursor:pointer; text-decoration:none; display:flex; align-items:center; gap:8px;">
             <i class="fa-solid fa-plus"></i> Tambah Data Pegawai
-        </button>
+        </a>
     </div>
 </div>
 
 <div class="table-container" style="background:#fff; border-radius:12px; border:1px solid #e2e8f0; padding:24px;">
     <!-- Toolbar -->
     <div style="margin-bottom:20px;">
-        <form action="{{ route('kepegawaian.data.index') }}" method="GET" style="display:flex; gap:12px;">
-            <div style="position:relative; width:400px;">
+        <form action="{{ route('kepegawaian.data.index') }}" method="GET" style="display:flex; flex-wrap:wrap; gap:12px; align-items:center;">
+            <div style="position:relative; flex:1; min-width:250px; max-width:400px;">
                 <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:16px; top:12px; color:#94a3b8;"></i>
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama atau NIP..." style="width:100%; padding:10px 16px 10px 42px; border:1px solid #e2e8f0; border-radius:8px; outline:none; font-size:14px;">
             </div>
-            <!-- Mockup shows empty inputs/filters beside search, let's keep it clean as we don't have those filter fields yet -->
+            <!-- Removed empty mockup filters to match actual functionality -->
+            <button type="submit" style="background:#4f46e5; color:#fff; border:none; padding:10px 24px; border-radius:8px; font-weight:600; cursor:pointer;">Cari</button>
         </form>
     </div>
 
@@ -74,8 +75,7 @@
                     </td>
                     <td style="padding:16px 12px; text-align:center;">
                         <a href="{{ route('kepegawaian.data.show', $p->id) }}" style="color:#3b82f6; margin-right:12px; font-size:14px;"><i class="fa-regular fa-eye"></i></a>
-                        <!-- The mockup had an orange edit button next to the eye -->
-                        <button onclick="openEditModal({{ $p->id }}, '{{ $p->nip }}', '{{ $p->nama }}', '{{ $p->jenis_pegawai }}', '{{ $p->jenis_kelamin }}', '{{ $p->jabatan }}', '{{ $p->golongan }}', '{{ $p->unit_kerja }}', '{{ $p->status_pegawai }}', '{{ $p->tanggal_bergabung }}')" style="background:none; border:none; color:#f59e0b; cursor:pointer; margin-right:12px; font-size:14px;"><i class="fa-regular fa-pen-to-square"></i></button>
+                        <a href="{{ route('kepegawaian.data.edit', $p->id) }}" style="color:#f59e0b; margin-right:12px; font-size:14px;"><i class="fa-regular fa-pen-to-square"></i></a>
                         <form action="{{ route('kepegawaian.data.destroy', $p->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Hapus data pegawai ini?');">
                             @csrf
                             @method('DELETE')
@@ -92,163 +92,4 @@
         </table>
     </div>
 </div>
-
-<!-- Modal Tambah -->
-<div id="modalAdd" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999; align-items:center; justify-content:center;">
-    <div style="background:#fff; width:600px; border-radius:12px; padding:24px; max-height:90vh; overflow-y:auto;">
-        <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
-            <h3 style="margin:0; font-size:18px; font-weight:700;">Tambah Data Pegawai</h3>
-            <button onclick="closeModal('modalAdd')" style="background:none; border:none; font-size:20px; cursor:pointer; color:#64748b;">&times;</button>
-        </div>
-        <form action="{{ route('kepegawaian.data.store') }}" method="POST">
-            @csrf
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
-                <div>
-                    <label style="display:block; font-size:13px; font-weight:600; color:#334155; margin-bottom:6px;">NIP / ID Pegawai</label>
-                    <input type="text" name="nip" required style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
-                </div>
-                <div>
-                    <label style="display:block; font-size:13px; font-weight:600; color:#334155; margin-bottom:6px;">Nama Lengkap</label>
-                    <input type="text" name="nama" required style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
-                </div>
-                <div>
-                    <label style="display:block; font-size:13px; font-weight:600; color:#334155; margin-bottom:6px;">Jenis Pegawai</label>
-                    <select name="jenis_pegawai" required style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
-                        <option value="PNS">PNS</option>
-                        <option value="PPPK">PPPK</option>
-                        <option value="Non-ASN">Non-ASN</option>
-                    </select>
-                </div>
-                <div>
-                    <label style="display:block; font-size:13px; font-weight:600; color:#334155; margin-bottom:6px;">Jenis Kelamin</label>
-                    <select name="jenis_kelamin" required style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
-                        <option value="Laki-laki">Laki-laki</option>
-                        <option value="Perempuan">Perempuan</option>
-                    </select>
-                </div>
-                <div>
-                    <label style="display:block; font-size:13px; font-weight:600; color:#334155; margin-bottom:6px;">Unit Kerja</label>
-                    <input type="text" name="unit_kerja" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
-                </div>
-                <div>
-                    <label style="display:block; font-size:13px; font-weight:600; color:#334155; margin-bottom:6px;">Jabatan</label>
-                    <input type="text" name="jabatan" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
-                </div>
-                <div>
-                    <label style="display:block; font-size:13px; font-weight:600; color:#334155; margin-bottom:6px;">Golongan</label>
-                    <input type="text" name="golongan" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
-                </div>
-                <div>
-                    <label style="display:block; font-size:13px; font-weight:600; color:#334155; margin-bottom:6px;">Status</label>
-                    <select name="status_pegawai" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
-                        <option value="Aktif">Aktif</option>
-                        <option value="Mendekati Pensiun">Mendekati Pensiun</option>
-                        <option value="Cuti">Cuti</option>
-                        <option value="Tugas Belajar">Tugas Belajar</option>
-                    </select>
-                </div>
-                <div>
-                    <label style="display:block; font-size:13px; font-weight:600; color:#334155; margin-bottom:6px;">Tanggal Masuk (Bergabung)</label>
-                    <input type="date" name="tanggal_bergabung" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
-                </div>
-            </div>
-            
-            <div style="text-align:right; margin-top:24px;">
-                <button type="button" onclick="closeModal('modalAdd')" style="background:#f1f5f9; color:#475569; border:none; padding:10px 20px; border-radius:8px; font-weight:600; cursor:pointer; margin-right:12px;">Batal</button>
-                <button type="submit" style="background:#4f46e5; color:#fff; border:none; padding:10px 20px; border-radius:8px; font-weight:600; cursor:pointer;">Simpan Data</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- Modal Edit -->
-<div id="modalEdit" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999; align-items:center; justify-content:center;">
-    <div style="background:#fff; width:600px; border-radius:12px; padding:24px; max-height:90vh; overflow-y:auto;">
-        <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
-            <h3 style="margin:0; font-size:18px; font-weight:700;">Edit Data Pegawai</h3>
-            <button onclick="closeModal('modalEdit')" style="background:none; border:none; font-size:20px; cursor:pointer; color:#64748b;">&times;</button>
-        </div>
-        <form id="editForm" method="POST">
-            @csrf
-            @method('PUT')
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
-                <div>
-                    <label style="display:block; font-size:13px; font-weight:600; color:#334155; margin-bottom:6px;">NIP / ID Pegawai</label>
-                    <input type="text" name="nip" id="edit_nip" required style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
-                </div>
-                <div>
-                    <label style="display:block; font-size:13px; font-weight:600; color:#334155; margin-bottom:6px;">Nama Lengkap</label>
-                    <input type="text" name="nama" id="edit_nama" required style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
-                </div>
-                <div>
-                    <label style="display:block; font-size:13px; font-weight:600; color:#334155; margin-bottom:6px;">Jenis Pegawai</label>
-                    <select name="jenis_pegawai" id="edit_jenis_pegawai" required style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
-                        <option value="PNS">PNS</option>
-                        <option value="PPPK">PPPK</option>
-                        <option value="Non-ASN">Non-ASN</option>
-                    </select>
-                </div>
-                <div>
-                    <label style="display:block; font-size:13px; font-weight:600; color:#334155; margin-bottom:6px;">Jenis Kelamin</label>
-                    <select name="jenis_kelamin" id="edit_jenis_kelamin" required style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
-                        <option value="Laki-laki">Laki-laki</option>
-                        <option value="Perempuan">Perempuan</option>
-                    </select>
-                </div>
-                <div>
-                    <label style="display:block; font-size:13px; font-weight:600; color:#334155; margin-bottom:6px;">Unit Kerja</label>
-                    <input type="text" name="unit_kerja" id="edit_unit_kerja" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
-                </div>
-                <div>
-                    <label style="display:block; font-size:13px; font-weight:600; color:#334155; margin-bottom:6px;">Jabatan</label>
-                    <input type="text" name="jabatan" id="edit_jabatan" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
-                </div>
-                <div>
-                    <label style="display:block; font-size:13px; font-weight:600; color:#334155; margin-bottom:6px;">Golongan</label>
-                    <input type="text" name="golongan" id="edit_golongan" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
-                </div>
-                <div>
-                    <label style="display:block; font-size:13px; font-weight:600; color:#334155; margin-bottom:6px;">Status</label>
-                    <select name="status_pegawai" id="edit_status" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
-                        <option value="Aktif">Aktif</option>
-                        <option value="Mendekati Pensiun">Mendekati Pensiun</option>
-                        <option value="Cuti">Cuti</option>
-                        <option value="Tugas Belajar">Tugas Belajar</option>
-                    </select>
-                </div>
-                <div>
-                    <label style="display:block; font-size:13px; font-weight:600; color:#334155; margin-bottom:6px;">Tanggal Masuk (Bergabung)</label>
-                    <input type="date" name="tanggal_bergabung" id="edit_tanggal" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:6px; outline:none;">
-                </div>
-            </div>
-            
-            <div style="text-align:right; margin-top:24px;">
-                <button type="button" onclick="closeModal('modalEdit')" style="background:#f1f5f9; color:#475569; border:none; padding:10px 20px; border-radius:8px; font-weight:600; cursor:pointer; margin-right:12px;">Batal</button>
-                <button type="submit" style="background:#4f46e5; color:#fff; border:none; padding:10px 20px; border-radius:8px; font-weight:600; cursor:pointer;">Simpan Perubahan</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<script>
-    function openModal(id) {
-        document.getElementById(id).style.display = 'flex';
-    }
-    function closeModal(id) {
-        document.getElementById(id).style.display = 'none';
-    }
-    function openEditModal(id, nip, nama, jenis_pegawai, jenis_kelamin, jabatan, golongan, unit_kerja, status, tanggal) {
-        document.getElementById('editForm').action = '/kepegawaian/data/' + id;
-        document.getElementById('edit_nip').value = nip;
-        document.getElementById('edit_nama').value = nama;
-        document.getElementById('edit_jenis_pegawai').value = jenis_pegawai;
-        document.getElementById('edit_jenis_kelamin').value = jenis_kelamin;
-        document.getElementById('edit_jabatan').value = jabatan;
-        document.getElementById('edit_golongan').value = golongan;
-        document.getElementById('edit_unit_kerja').value = unit_kerja;
-        document.getElementById('edit_status').value = status;
-        document.getElementById('edit_tanggal').value = tanggal;
-        openModal('modalEdit');
-    }
-</script>
 @endsection

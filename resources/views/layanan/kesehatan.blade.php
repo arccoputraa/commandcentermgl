@@ -135,7 +135,7 @@
                         </div>
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
                             <span style="font-size: 11px; color: #94a3b8;">Diperbarui 2 hari lalu</span>
-                            <a href="#" style="font-size: 12px; font-weight: 600; color: #009966; text-decoration: none;">Lihat PDF</a>
+                            <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" style="font-size: 12px; font-weight: 600; color: #009966; text-decoration: none;">Lihat PDF</a>
                         </div>
                     </div>
 
@@ -152,7 +152,7 @@
                         </div>
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
                             <span style="font-size: 11px; color: #94a3b8;">Diperbarui 3 hari lalu</span>
-                            <a href="#" style="font-size: 12px; font-weight: 600; color: #009966; text-decoration: none;">Lihat PDF</a>
+                            <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" style="font-size: 12px; font-weight: 600; color: #009966; text-decoration: none;">Lihat PDF</a>
                         </div>
                     </div>
 
@@ -169,7 +169,7 @@
                         </div>
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
                             <span style="font-size: 11px; color: #94a3b8;">Diperbarui 5 hari lalu</span>
-                            <a href="#" style="font-size: 12px; font-weight: 600; color: #009966; text-decoration: none;">Lihat PDF</a>
+                            <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" style="font-size: 12px; font-weight: 600; color: #009966; text-decoration: none;">Lihat PDF</a>
                         </div>
                     </div>
                 </div>

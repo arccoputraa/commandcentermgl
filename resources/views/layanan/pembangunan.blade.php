@@ -1,4 +1,4 @@
-ï»¿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', 'Pembangunan - Command Center Kota Magelang')
 
@@ -31,9 +31,9 @@ $infoTerbaru = [
 ];
 
 $dokumentasi = [
-    ['judul' => 'Foto Progres Minggu Ke-4', 'sub' => 'Peningkatan Jalan Tidar Selatan Â· 28 Jun 2026'],
-    ['judul' => 'Dokumentasi Drainase Sisi Utara', 'sub' => 'Rehabilitasi Drainase Panjang Â· Pemasangan saluran beton'],
-    ['judul' => 'Laporan Progres Juni', 'sub' => 'Renovasi Gedung Pelayanan Publik Â· Laporan progres fisik dan anggaran'],
+    ['judul' => 'Foto Progres Minggu Ke-4', 'sub' => 'Peningkatan Jalan Tidar Selatan · 28 Jun 2026'],
+    ['judul' => 'Dokumentasi Drainase Sisi Utara', 'sub' => 'Rehabilitasi Drainase Panjang · Pemasangan saluran beton'],
+    ['judul' => 'Laporan Progres Juni', 'sub' => 'Renovasi Gedung Pelayanan Publik · Laporan progres fisik dan anggaran'],
 ];
 @endphp
 
@@ -107,8 +107,8 @@ $dokumentasi = [
                                 <p class="pub-info-title">{{ $info['judul'] }}</p>
                                 <span class="status-badge {{ $info['status'] === 'Draft' ? 'warning' : 'success' }}">{{ $info['status'] }}</span>
                             </div>
-                            <p class="pub-info-meta">{{ $info['kategori'] }} Â· {{ $info['tanggal'] }}</p>
-                            <a href="#" class="action-link">Lihat PDF</a>
+                            <p class="pub-info-meta">{{ $info['kategori'] }} · {{ $info['tanggal'] }}</p>
+                            <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat PDF</a>
                         </div>
                     @endforeach
                 </div>
@@ -146,7 +146,7 @@ $dokumentasi = [
                             <td>{{ $row['anggaran'] }}</td>
                             <td>{{ $row['progres'] }}</td>
                             <td><span class="{{ $row['badge'] }} font-medium">{{ $row['status'] }}</span></td>
-                            <td><a href="#" class="action-link">Lihat Detail</a></td>
+                            <td><a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat Detail</a></td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -157,11 +157,11 @@ $dokumentasi = [
     <div class="dashboard-doc-grid">
         @foreach ($dokumentasi as $dok)
             <div class="doc-card">
-                <div class="doc-placeholder">ðŸ“·</div>
+                <div class="doc-placeholder">??</div>
                 <div class="doc-card-body">
                     <p class="doc-card-title">{{ $dok['judul'] }}</p>
                     <p class="doc-card-sub">{{ $dok['sub'] }}</p>
-                    <a href="#" class="action-link mt-4">Lihat Dokumentasi</a>
+                    <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link mt-4">Lihat Dokumentasi</a>
                 </div>
             </div>
         @endforeach

@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tentang — Command Center Kota Magelang</title>
+<link rel="icon" href="{{ asset('images/cmdcenterlogo.png') }}" type="image/png">
 <meta name="description" content="Command Center Kota Magelang merupakan platform terintegrasi untuk pemantauan, analisis, dan pelayanan publik seluruh perangkat daerah.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -185,3 +186,4 @@
 </footer>
 </body>
 </html>
+

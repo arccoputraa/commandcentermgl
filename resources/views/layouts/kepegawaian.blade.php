@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Dashboard Kepegawaian') - Command Center Magelang</title>
+<link rel="icon" href="{{ asset('images/cmdcenterlogo.png') }}" type="image/png">
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome -->
@@ -19,7 +20,7 @@
     <aside class="admin-sidebar" style="background-color: #0f172a;">
         <div class="sidebar-header">
             <div class="logo-container">
-                <img src="{{ asset('img/logo-mgl.png') }}" alt="Logo" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Lambang_Kota_Magelang.png/403px-Lambang_Kota_Magelang.png'">
+                <img src="{{ asset('images/cmdcenterlogo.png') }}" alt="Logo" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Lambang_Kota_Magelang.png/403px-Lambang_Kota_Magelang.png'">
             </div>
             <h2>MagelangCC</h2>
         </div>
@@ -81,3 +82,4 @@
     @stack('scripts')
 </body>
 </html>
+

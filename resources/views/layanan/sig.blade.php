@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', 'SIG - Command Center Kota Magelang')
 
@@ -81,7 +81,7 @@ $infoTerbaruSIG = [
             <div class="stat-card">
                 <h3 class="stat-card-title">{{ $stat['label'] }}</h3>
                 <p class="stat-card-value">{{ $stat['value'] }}</p>
-                <a href="#" class="action-link stat-action-link">Lihat Data</a>
+                <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link stat-action-link">Lihat Data</a>
             </div>
         @endforeach
     </div>
@@ -112,7 +112,7 @@ $infoTerbaruSIG = [
                                     <td>{{ $row['wilayah'] }}</td>
                                     <td>{{ $row['nilai_jumlah'] }}</td>
                                     <td>{{ $row['update_terakhir'] }}</td>
-                                    <td><a href="#" class="action-link">Lihat Detail</a></td>
+                                    <td><a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat Detail</a></td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -131,8 +131,8 @@ $infoTerbaruSIG = [
                                 <p class="pub-info-title">{{ $info['judul'] }}</p>
                                 <span class="status-badge {{ $info['badge'] === 'warning' ? 'warning' : 'success' }}">{{ $info['status'] }}</span>
                             </div>
-                            <p class="pub-info-meta">{{ $info['kategori'] }} · {{ $info['tanggal'] }}</p>
-                            <a href="#" class="action-link">Lihat PDF</a>
+                            <p class="pub-info-meta">{{ $info['kategori'] }} � {{ $info['tanggal'] }}</p>
+                            <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat PDF</a>
                         </div>
                     @endforeach
                 </div>

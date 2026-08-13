@@ -12,18 +12,33 @@ class PegawaiMutasiController extends Controller
     {
         $query = PegawaiMutasi::query();
         
+        $tab = $request->get('tab', 'mutasi');
+
+        if ($tab == 'pensiun') {
+            $query->where('jenis', 'Pensiun');
+        } else {
+            $query->where('jenis', '!=', 'Pensiun');
+        }
+
         if ($request->has('search')) {
             $search = $request->search;
-            $query->where('nama_pegawai', 'like', "%{$search}%")
+            $query->where(function($q) use ($search) {
+                $q->where('nama_pegawai', 'like', "%{$search}%")
                   ->orWhere('nip', 'like', "%{$search}%")
                   ->orWhere('jenis', 'like', "%{$search}%");
+            });
         }
         
         $mutasis = $query->orderBy('created_at', 'desc')->get();
         // Mendapatkan data pegawai untuk dropdown modal
         $pegawais = PegawaiData::all();
         
-        return view('kepegawaian.mutasi.index', compact('mutasis', 'pegawais'));
+        return view('kepegawaian.mutasi.index', compact('mutasis', 'pegawais', 'tab'));
+    }
+
+    public function create()
+    {
+        return view('kepegawaian.mutasi.form');
     }
 
     public function store(Request $request)
@@ -56,6 +71,12 @@ class PegawaiMutasiController extends Controller
     {
         $mutasi = PegawaiMutasi::findOrFail($id);
         return view('kepegawaian.mutasi.detail', compact('mutasi'));
+    }
+
+    public function edit($id)
+    {
+        $mutasi = PegawaiMutasi::findOrFail($id);
+        return view('kepegawaian.mutasi.form', compact('mutasi'));
     }
 
     public function update(Request $request, $id)

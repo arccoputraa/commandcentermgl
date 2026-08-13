@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', 'Perhubungan - Command Center Kota Magelang')
 
@@ -96,8 +96,8 @@ $infoTerbaru = [
                                 <p class="pub-info-title">{{ $info['judul'] }}</p>
                                 <span class="status-badge {{ $info['status'] === 'Draft' ? 'warning' : 'success' }}">{{ $info['status'] }}</span>
                             </div>
-                            <p class="pub-info-meta">{{ $info['kategori'] }} · {{ $info['tanggal'] }}</p>
-                            <a href="#" class="action-link">Lihat PDF</a>
+                            <p class="pub-info-meta">{{ $info['kategori'] }} � {{ $info['tanggal'] }}</p>
+                            <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat PDF</a>
                         </div>
                     @endforeach
                 </div>
@@ -133,7 +133,7 @@ $infoTerbaru = [
                             <td>{{ $row['tidak_lulus'] }}</td>
                             <td>{{ $row['perlu_uji_ulang'] }}</td>
                             <td><span class="table-badge success">{{ $row['keterangan'] }}</span></td>
-                            <td><a href="#" class="action-link">Lihat Detail</a></td>
+                            <td><a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat Detail</a></td>
                         </tr>
                     @endforeach
                 </tbody>

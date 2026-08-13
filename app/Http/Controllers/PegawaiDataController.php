@@ -22,6 +22,11 @@ class PegawaiDataController extends Controller
         return view('kepegawaian.data.index', compact('pegawais'));
     }
 
+    public function create()
+    {
+        return view('kepegawaian.data.form');
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -45,6 +50,12 @@ class PegawaiDataController extends Controller
     {
         $pegawai = PegawaiData::findOrFail($id);
         return view('kepegawaian.data.detail', compact('pegawai'));
+    }
+
+    public function edit($id)
+    {
+        $pegawai = PegawaiData::findOrFail($id);
+        return view('kepegawaian.data.form', compact('pegawai'));
     }
 
     public function update(Request $request, $id)
