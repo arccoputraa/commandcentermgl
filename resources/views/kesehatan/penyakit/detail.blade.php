@@ -149,7 +149,7 @@
     </div>
     <div class="stat-box">
         <div class="stat-box-label">UPDATE TERAKHIR</div>
-        <div class="stat-box-value" style="font-size: 18px; margin-top: 6px;">{{ $penyakit['update'] }}</div>
+        <div class="stat-box-value" style="font-size: 18px; margin-top: 6px;">{{ $penyakit->updated_at->format('d M Y') }}</div>
     </div>
 </div>
 

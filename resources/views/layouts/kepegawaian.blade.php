@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Dashboard Keuangan') - Command Center Magelang</title>
+    <title>@yield('title', 'Dashboard Kepegawaian') - Command Center Magelang</title>
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome -->
@@ -16,7 +16,7 @@
 <body>
 
     <!-- Sidebar -->
-    <aside class="admin-sidebar">
+    <aside class="admin-sidebar" style="background-color: #0f172a;">
         <div class="sidebar-header">
             <div class="logo-container">
                 <img src="{{ asset('img/logo-mgl.png') }}" alt="Logo" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Lambang_Kota_Magelang.png/403px-Lambang_Kota_Magelang.png'">
@@ -24,23 +24,20 @@
             <h2>MagelangCC</h2>
         </div>
         <nav class="sidebar-menu">
-            <a href="{{ route('finance.dashboard') }}" class="menu-item {{ request()->routeIs('finance.dashboard') ? 'active' : '' }}">
-                <i class="fa-solid fa-border-all"></i> Dashboard Keuangan
+            <a href="{{ route('kepegawaian.dashboard') }}" class="menu-item {{ request()->routeIs('kepegawaian.dashboard') ? 'active' : '' }}">
+                <i class="fa-solid fa-border-all"></i> Dashboard Kepegawaian
             </a>
-            <a href="{{ route('finance.budget.index') }}" class="menu-item {{ request()->routeIs('finance.budget.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-wallet"></i> Data Anggaran & Realisasi
+            <a href="{{ route('kepegawaian.data.index') }}" class="menu-item {{ request()->routeIs('kepegawaian.data.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-users"></i> Data Pegawai
             </a>
-            <a href="{{ route('finance.pad.index') }}" class="menu-item {{ request()->routeIs('finance.pad.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-suitcase"></i> Pendapatan Daerah / PAD
+            <a href="{{ route('kepegawaian.jabatan.index') }}" class="menu-item {{ request()->routeIs('kepegawaian.jabatan.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-building-user"></i> Jabatan & Unit Kerja
             </a>
-            <a href="{{ route('finance.tax.index') }}" class="menu-item {{ request()->routeIs('finance.tax.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-file-lines"></i> Data Pajak Daerah
+            <a href="{{ route('kepegawaian.mutasi.index') }}" class="menu-item {{ request()->routeIs('kepegawaian.mutasi.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-people-arrows"></i> Mutasi & Pensiun
             </a>
-            <a href="{{ route('finance.subbidang.index') }}" class="menu-item {{ request()->routeIs('finance.subbidang.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-building"></i> Sub Bidang / Unit Keuangan
-            </a>
-            <a href="{{ route('finance.information.index') }}" class="menu-item {{ request()->routeIs('finance.information.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-download"></i> Informasi Terbaru
+            <a href="{{ route('kepegawaian.informasi.index') }}" class="menu-item {{ request()->routeIs('kepegawaian.informasi.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-bullhorn"></i> Informasi Terbaru
             </a>
             <a href="{{ route('profile.index') }}" class="menu-item {{ request()->routeIs('profile.index') ? 'active' : '' }}">
                 <i class="fa-regular fa-circle-user"></i> Profil
@@ -65,8 +62,8 @@
             </div>
             <div class="topbar-profile">
                 <div class="profile-info">
-                    <h4>{{ Auth::user()->name ?? 'User Keuangan' }}</h4>
-                    <p>{{ Auth::user()->division->name ?? 'Divisi Keuangan' }}</p>
+                    <h4>{{ Auth::user()->name ?? 'Admin Kepegawaian' }}</h4>
+                    <p>{{ Auth::user()->division->name ?? 'Divisi Kepegawaian' }}</p>
                 </div>
                 <div class="profile-img">
                     <i class="fa-regular fa-user"></i>

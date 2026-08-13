@@ -1,6 +1,6 @@
 @extends('layouts.finance')
 
-@section('title', 'Data Anggaran & Realisasi')
+@section('title', 'Pendapatan Daerah / PAD')
 
 @section('content')
 <style>
@@ -120,19 +120,14 @@
         font-weight: 500;
     }
     .badge-berjalan {
-        background: #eff6ff;
-        color: #3b82f6;
-        border: 1px solid #bfdbfe;
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px solid #e2e8f0;
     }
-    .badge-hampir-tercapai {
-        background: #eff6ff;
-        color: #3b82f6;
-        border: 1px solid #bfdbfe;
-    }
-    .badge-perlu-perhatian {
-        background: #fefce8;
-        color: #ca8a04;
-        border: 1px solid #fef08a;
+    .badge-melebihi-target {
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #bbf7d0;
     }
     
     .action-buttons {
@@ -287,16 +282,21 @@
     .btn-danger:hover {
         background: #fee2e2;
     }
+
+    /* Helper function for formatting numbers */
+    .number-display {
+        font-variant-numeric: tabular-nums;
+    }
 </style>
 
 <!-- Header -->
 <div class="finance-header">
     <div class="header-text">
-        <h2>Data Anggaran & Realisasi</h2>
-        <p>Menu ini menjadi sumber Total Anggaran, Total Realisasi, Persentase Realisasi, dan grafik realisasi.</p>
+        <h2>Pendapatan Daerah / PAD</h2>
+        <p>Menu ini menjadi sumber Target PAD, Realisasi PAD, Persentase PAD, dan tren PAD.</p>
     </div>
     <button class="btn-primary" onclick="openModal('modalForm')">
-        <i class="fa-solid fa-plus"></i> Tambah Data Anggaran
+        <i class="fa-solid fa-plus"></i> Tambah Data PAD
     </button>
 </div>
 
@@ -319,7 +319,7 @@
 
 <!-- Search Bar -->
 <div class="toolbar-container">
-    <form action="{{ route('finance.budget.index') }}" method="GET" style="display:flex; width:100%; align-items:center; gap: 12px; margin:0;">
+    <form action="{{ route('finance.pad.index') }}" method="GET" style="display:flex; width:100%; align-items:center; gap: 12px; margin:0;">
         <div class="search-input-wrapper">
             <i class="fa-solid fa-search"></i>
             <input type="text" name="search" placeholder="Search..." value="{{ request('search') }}">
@@ -338,51 +338,58 @@
             <tr>
                 <th>NO</th>
                 <th>TAHUN</th>
-                <th>SUB BIDANG / UNIT</th>
-                <th>NAMA ANGGARAN</th>
-                <th>TOTAL ANGGARAN</th>
-                <th>TOTAL REALISASI</th>
+                <th>SUMBER PENDAPATAN</th>
+                <th>SUB BIDANG</th>
+                <th>TARGET PAD</th>
+                <th>REALISASI PAD</th>
                 <th>PERSENTASE</th>
                 <th>KETERANGAN</th>
                 <th>AKSI</th>
             </tr>
         </thead>
         <tbody>
-            @forelse($budgets as $index => $b)
+            @forelse($pads as $index => $pad)
                 @php
-                    $persentase = $b->total_anggaran > 0 ? round(($b->total_realisasi / $b->total_anggaran) * 100) : 0;
-                    
                     $badgeClass = 'badge-berjalan';
-                    if (str_contains(strtolower($b->status), 'hampir tercapai')) {
-                        $badgeClass = 'badge-hampir-tercapai';
-                    } elseif (str_contains(strtolower($b->status), 'perlu perhatian')) {
-                        $badgeClass = 'badge-perlu-perhatian';
+                    if (str_contains(strtolower($pad->status), 'melebihi target')) {
+                        $badgeClass = 'badge-melebihi-target';
+                    }
+                    
+                    if (!function_exists('formatLargeNumber')) {
+                        function formatLargeNumber($number) {
+                            if ($number >= 1000000000) {
+                                return 'Rp' . str_replace('.0', '', number_format($number / 1000000000, 1, ',', '.')) . ' M';
+                            } elseif ($number >= 1000000) {
+                                return 'Rp' . str_replace('.0', '', number_format($number / 1000000, 1, ',', '.')) . ' Juta';
+                            }
+                            return 'Rp' . number_format($number, 0, ',', '.');
+                        }
                     }
                 @endphp
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                    <td>{{ $b->tahun }}</td>
-                    <td>{{ $b->sub_bidang }}</td>
-                    <td>{{ $b->nama_anggaran }}</td>
-                    <td>Rp{{ number_format($b->total_anggaran, 0, ',', '.') }}</td>
-                    <td>Rp{{ number_format($b->total_realisasi, 0, ',', '.') }}</td>
-                    <td>{{ $persentase }}%</td>
+                    <td>{{ $pad->tahun }}</td>
+                    <td>{{ $pad->sumber_pendapatan }}</td>
+                    <td>{{ $pad->sub_bidang }}</td>
+                    <td class="number-display">{{ formatLargeNumber($pad->target_pad) }}</td>
+                    <td class="number-display">{{ formatLargeNumber($pad->realisasi_pad) }}</td>
+                    <td>{{ $pad->persentase }}%</td>
                     <td>
                         <span class="badge-status {{ $badgeClass }}">
-                            {{ $b->status ?? 'Berjalan' }}
+                            {{ $pad->status ?? 'Berjalan' }}
                         </span>
                     </td>
                     <td>
                         <div class="action-buttons">
-                            <a href="{{ route('finance.budget.show', $b->id) }}" class="btn-icon btn-view"><i class="fa-solid fa-eye"></i></a>
-                            <button class="btn-icon btn-edit" onclick="editData({{ $b->toJson() }})"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button class="btn-icon btn-delete" onclick="confirmDelete({{ $b->id }})"><i class="fa-solid fa-trash-can"></i></button>
+                            <a href="{{ route('finance.pad.show', $pad->id) }}" class="btn-icon btn-view"><i class="fa-solid fa-eye"></i></a>
+                            <button class="btn-icon btn-edit" onclick="editData({{ $pad->toJson() }})"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btn-icon btn-delete" onclick="confirmDelete({{ $pad->id }})"><i class="fa-solid fa-trash-can"></i></button>
                         </div>
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="9" style="text-align: center; color: #94a3b8; padding: 32px;">Belum ada data anggaran.</td>
+                    <td colspan="9" style="text-align: center; color: #94a3b8; padding: 32px;">Belum ada data PAD.</td>
                 </tr>
             @endforelse
         </tbody>
@@ -396,7 +403,7 @@
             <h3 id="modalTitle">Edit Data</h3>
             <p>Isi semua kolom yang tersedia dengan data yang benar.</p>
         </div>
-        <form id="budgetForm" action="{{ route('finance.budget.store') }}" method="POST">
+        <form id="padForm" action="{{ route('finance.pad.store') }}" method="POST">
             @csrf
             <input type="hidden" name="_method" id="formMethod" value="POST">
             
@@ -406,26 +413,26 @@
                     <input type="number" name="tahun" id="tahun" class="form-control" required value="{{ date('Y') }}">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Sub Bidang / Unit</label>
-                    <input type="text" name="sub_bidang" id="sub_bidang" class="form-control" required>
+                    <label class="form-label">Sumber Pendapatan</label>
+                    <input type="text" name="sumber_pendapatan" id="sumber_pendapatan" class="form-control" required placeholder="Contoh: Pajak Daerah">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Nama Anggaran</label>
-                    <input type="text" name="nama_anggaran" id="nama_anggaran" class="form-control" placeholder="Nama Anggaran" required>
+                    <label class="form-label">Sub Bidang</label>
+                    <input type="text" name="sub_bidang" id="sub_bidang" class="form-control" required placeholder="Contoh: Bidang Pajak">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Total Anggaran (Rp)</label>
-                    <input type="number" name="total_anggaran" id="total_anggaran" class="form-control" placeholder="0" required>
+                    <label class="form-label">Target PAD (Rp)</label>
+                    <input type="number" name="target_pad" id="target_pad" class="form-control" placeholder="0" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Total Realisasi (Rp)</label>
-                    <input type="number" name="total_realisasi" id="total_realisasi" class="form-control" placeholder="0" required>
+                    <label class="form-label">Realisasi PAD (Rp)</label>
+                    <input type="number" name="realisasi_pad" id="realisasi_pad" class="form-control" placeholder="0" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Periode</label>
                     <input type="text" name="periode" id="periode" class="form-control" placeholder="Juli 2026">
                 </div>
-                <div class="form-group">
+                <div class="form-group full-width">
                     <label class="form-label">Status / Keterangan</label>
                     <input type="text" name="status" id="status" class="form-control" placeholder="Berjalan">
                 </div>
@@ -448,7 +455,7 @@
     <div class="modal-card small">
         <div class="modal-header" style="text-align: left;">
             <h3>Hapus Data?</h3>
-            <p>konfirmasi aksi untuk data Data Anggaran & Realisasi.</p>
+            <p>konfirmasi aksi untuk data Pendapatan Daerah / PAD.</p>
         </div>
         <form id="deleteForm" action="" method="POST">
             @csrf
@@ -468,32 +475,32 @@
     function openModal(id) {
         document.getElementById(id).classList.add('active');
         
-        if (id === 'modalForm' && !document.getElementById('budgetForm').dataset.editing) {
+        if (id === 'modalForm' && !document.getElementById('padForm').dataset.editing) {
             document.getElementById('modalTitle').innerText = 'Tambah Data';
-            document.getElementById('budgetForm').reset();
+            document.getElementById('padForm').reset();
             document.getElementById('formMethod').value = 'POST';
-            document.getElementById('budgetForm').action = '{{ route("finance.budget.store") }}';
+            document.getElementById('padForm').action = '{{ route("finance.pad.store") }}';
         }
     }
 
     function closeModal(id) {
         document.getElementById(id).classList.remove('active');
         if (id === 'modalForm') {
-            document.getElementById('budgetForm').dataset.editing = "";
+            document.getElementById('padForm').dataset.editing = "";
         }
     }
 
     function editData(data) {
         document.getElementById('modalTitle').innerText = 'Edit Data';
         document.getElementById('formMethod').value = 'PUT';
-        document.getElementById('budgetForm').action = `/keuangan/anggaran/${data.id}`;
-        document.getElementById('budgetForm').dataset.editing = "true";
+        document.getElementById('padForm').action = `/keuangan/pad/${data.id}`;
+        document.getElementById('padForm').dataset.editing = "true";
         
         document.getElementById('tahun').value = data.tahun;
+        document.getElementById('sumber_pendapatan').value = data.sumber_pendapatan;
         document.getElementById('sub_bidang').value = data.sub_bidang;
-        document.getElementById('nama_anggaran').value = data.nama_anggaran;
-        document.getElementById('total_anggaran').value = parseFloat(data.total_anggaran);
-        document.getElementById('total_realisasi').value = parseFloat(data.total_realisasi);
+        document.getElementById('target_pad').value = parseFloat(data.target_pad);
+        document.getElementById('realisasi_pad').value = parseFloat(data.realisasi_pad);
         document.getElementById('periode').value = data.periode || '';
         document.getElementById('status').value = data.status || '';
         document.getElementById('catatan_internal').value = data.catatan_internal || '';
@@ -502,7 +509,7 @@
     }
 
     function confirmDelete(id) {
-        document.getElementById('deleteForm').action = `/keuangan/anggaran/${id}`;
+        document.getElementById('deleteForm').action = `/keuangan/pad/${id}`;
         openModal('modalDelete');
     }
 </script>

@@ -92,7 +92,7 @@
                                 <p class="summary-item-title">Pendapatan Pajak Daerah</p>
                             </div>
                         </div>
-                        <p class="summary-item-value" style="font-size: 15px;">Rp 120 M</p>
+                        <p class="summary-item-value" style="font-size: 15px;">Rp {{ isset($pajakTotal) ? number_format($pajakTotal / 1000000, 0, ',', '.') . ' Juta' : '120 M' }}</p>
                     </div>
                     <div class="summary-list-item">
                         <div class="summary-item-left">
@@ -120,20 +120,31 @@
             </div>
             
             <div class="summary-widget" style="margin-top: 24px;">
-                <h3 class="summary-widget-title" style="font-size: 16px;">Dokumen Anggaran</h3>
+                <h3 class="summary-widget-title" style="font-size: 16px;">Dokumen Anggaran & Informasi</h3>
                 <div style="margin-top: 16px;">
-                    <div class="pub-info-item">
-                        <div class="pub-info-header">
-                            <p class="pub-info-title">Ringkasan APBD 2026</p>
+                    @if(isset($informasiTerbaru) && count($informasiTerbaru) > 0)
+                        @foreach($informasiTerbaru as $info)
+                        <div class="pub-info-item">
+                            <div class="pub-info-header">
+                                <p class="pub-info-title">{{ Str::limit($info->judul, 35) }}</p>
+                            </div>
+                            <a href="{{ $info->dokumen ?? '#' }}" style="font-size: 13px; color: var(--blue); font-weight: 500;">Unduh {{ $info->format }}</a>
                         </div>
-                        <a href="#" style="font-size: 13px; color: var(--blue); font-weight: 500;">Unduh PDF</a>
-                    </div>
-                    <div class="pub-info-item">
-                        <div class="pub-info-header">
-                            <p class="pub-info-title">LKPJ Walikota 2025</p>
+                        @endforeach
+                    @else
+                        <div class="pub-info-item">
+                            <div class="pub-info-header">
+                                <p class="pub-info-title">Ringkasan APBD 2026</p>
+                            </div>
+                            <a href="#" style="font-size: 13px; color: var(--blue); font-weight: 500;">Unduh PDF</a>
                         </div>
-                        <a href="#" style="font-size: 13px; color: var(--blue); font-weight: 500;">Unduh PDF</a>
-                    </div>
+                        <div class="pub-info-item">
+                            <div class="pub-info-header">
+                                <p class="pub-info-title">LKPJ Walikota 2025</p>
+                            </div>
+                            <a href="#" style="font-size: 13px; color: var(--blue); font-weight: 500;">Unduh PDF</a>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

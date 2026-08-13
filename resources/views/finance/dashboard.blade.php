@@ -155,6 +155,17 @@
     }
 </style>
 
+@php
+    function formatLargeNumberDash($number) {
+        if ($number >= 1000000000) {
+            return 'Rp ' . str_replace('.0', '', number_format($number / 1000000000, 1, ',', '.')) . ' M';
+        } elseif ($number >= 1000000) {
+            return 'Rp ' . str_replace('.0', '', number_format($number / 1000000, 1, ',', '.')) . ' Juta';
+        }
+        return 'Rp ' . number_format($number, 0, ',', '.');
+    }
+@endphp
+
 <!-- Header -->
 <div class="finance-header">
     <h2>Dashboard Keuangan</h2>
@@ -176,20 +187,20 @@
 <!-- Metrics Grid Row 1 -->
 <div class="metrics-grid">
     <div class="metric-card">
-        <p class="metric-label">Total Pendapatan</p>
-        <p class="metric-value">Rp 23,4 M</p>
+        <p class="metric-label">Total Pendapatan (Target)</p>
+        <p class="metric-value">{{ formatLargeNumberDash($targetPAD) }}</p>
     </div>
     <div class="metric-card">
         <p class="metric-label">Total Belanja</p>
-        <p class="metric-value">Rp 18,9 M</p>
+        <p class="metric-value">{{ formatLargeNumberDash($totalAnggaran) }}</p>
     </div>
     <div class="metric-card">
         <p class="metric-label">Sisa Anggaran</p>
-        <p class="metric-value">Rp 4,5 M</p>
+        <p class="metric-value">{{ formatLargeNumberDash($sisaAnggaran) }}</p>
     </div>
     <div class="metric-card alt-bg">
-        <p class="metric-label">Target Pendapatan</p>
-        <p class="metric-value">Rp 21,1 M</p>
+        <p class="metric-label">Realisasi Belanja</p>
+        <p class="metric-value">{{ formatLargeNumberDash($totalRealisasiBelanja) }}</p>
     </div>
 </div>
 
@@ -197,21 +208,21 @@
 <div class="metrics-grid" style="margin-bottom: 24px;">
     <div class="metric-card">
         <p class="metric-label">Realisasi Pendapatan</p>
-        <p class="metric-value">Rp 2,3 M</p>
+        <p class="metric-value">{{ formatLargeNumberDash($realisasiPAD) }}</p>
     </div>
     <div class="metric-card">
-        <p class="metric-label">Persentase Realisasi</p>
-        <p class="metric-value highlight">109,2%</p>
+        <p class="metric-label">Persentase Realisasi PAD</p>
+        <p class="metric-value highlight">{{ $persentaseRealisasiPAD }}%</p>
     </div>
     <div class="metric-card">
         <p class="metric-label">Pendapatan Pajak Daerah</p>
-        <p class="metric-value">Rp 1,6 M</p>
+        <p class="metric-value">{{ formatLargeNumberDash($pajakDaerah) }}</p>
     </div>
     <div class="metric-card alt-bg" style="display: flex; flex-direction: column; justify-content: center;">
         <p class="metric-label">Terakhir Diperbarui</p>
         <p class="metric-value" style="display: flex; align-items: center; gap: 8px; font-size: 20px;">
             <i class="fa-regular fa-calendar" style="color: #94a3b8;"></i>
-            03 Jul 2024
+            {{ date('d M Y') }}
         </p>
     </div>
 </div>
@@ -262,10 +273,10 @@
             new Chart(ctxBelanja.getContext('2d'), {
                 type: 'bar',
                 data: {
-                    labels: ['Dinas Pendidikan', 'Dinas Kesehatan', 'Dinas PUPR', 'Sekretariat Daerah', 'Lainnya'],
+                    labels: {!! json_encode($labelBelanja) !!},
                     datasets: [{
-                        label: 'Realisasi',
-                        data: [85, 72, 60, 45, 30],
+                        label: 'Realisasi (Rp)',
+                        data: {!! json_encode($dataBelanja) !!},
                         backgroundColor: '#3b82f6',
                         borderRadius: 4,
                         barPercentage: 0.5,
@@ -309,10 +320,10 @@
             new Chart(ctxPAD.getContext('2d'), {
                 type: 'bar',
                 data: {
-                    labels: ['Pajak Daerah', 'Retribusi Daerah', 'Hasil Pengelolaan', 'Lain-lain PAD'],
+                    labels: {!! json_encode($labelPad) !!},
                     datasets: [{
-                        label: 'Pendapatan',
-                        data: [90, 40, 20, 15],
+                        label: 'Pendapatan (Rp)',
+                        data: {!! json_encode($dataPad) !!},
                         backgroundColor: '#10b981',
                         borderRadius: 4,
                         barPercentage: 0.5,

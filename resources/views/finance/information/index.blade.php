@@ -1,6 +1,6 @@
 @extends('layouts.finance')
 
-@section('title', 'Data Anggaran & Realisasi')
+@section('title', 'Informasi Terbaru')
 
 @section('content')
 <style>
@@ -111,7 +111,7 @@
     .data-table tr:last-child td {
         border-bottom: none;
     }
-    
+
     .badge-status {
         display: inline-flex;
         padding: 6px 12px;
@@ -119,19 +119,14 @@
         font-size: 12px;
         font-weight: 500;
     }
-    .badge-berjalan {
-        background: #eff6ff;
-        color: #3b82f6;
-        border: 1px solid #bfdbfe;
+    .badge-rilis {
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #bbf7d0;
     }
-    .badge-hampir-tercapai {
-        background: #eff6ff;
-        color: #3b82f6;
-        border: 1px solid #bfdbfe;
-    }
-    .badge-perlu-perhatian {
-        background: #fefce8;
-        color: #ca8a04;
+    .badge-draft {
+        background: #fef9c3;
+        color: #854d0e;
         border: 1px solid #fef08a;
     }
     
@@ -255,9 +250,6 @@
         gap: 12px;
         margin-top: 32px;
     }
-    .modal-footer.center {
-        justify-content: center;
-    }
     .btn-outline {
         background: transparent;
         color: #475569;
@@ -292,11 +284,11 @@
 <!-- Header -->
 <div class="finance-header">
     <div class="header-text">
-        <h2>Data Anggaran & Realisasi</h2>
-        <p>Menu ini menjadi sumber Total Anggaran, Total Realisasi, Persentase Realisasi, dan grafik realisasi.</p>
+        <h2>Informasi Terbaru</h2>
+        <p>Manajemen publikasi data, laporan, dan informasi keuangan terbaru.</p>
     </div>
     <button class="btn-primary" onclick="openModal('modalForm')">
-        <i class="fa-solid fa-plus"></i> Tambah Data Anggaran
+        <i class="fa-solid fa-plus"></i> Tambah Informasi
     </button>
 </div>
 
@@ -306,7 +298,6 @@
         {{ session('success') }}
     </div>
 @endif
-
 @if($errors->any())
     <div style="background: #fee2e2; color: #991b1b; padding: 12px 16px; border-radius: 8px; margin-bottom: 24px; font-family: 'Inter', sans-serif; font-size: 14px;">
         <ul style="margin:0; padding-left: 20px;">
@@ -319,7 +310,7 @@
 
 <!-- Search Bar -->
 <div class="toolbar-container">
-    <form action="{{ route('finance.budget.index') }}" method="GET" style="display:flex; width:100%; align-items:center; gap: 12px; margin:0;">
+    <form action="{{ route('finance.information.index') }}" method="GET" style="display:flex; width:100%; align-items:center; gap: 12px; margin:0;">
         <div class="search-input-wrapper">
             <i class="fa-solid fa-search"></i>
             <input type="text" name="search" placeholder="Search..." value="{{ request('search') }}">
@@ -337,52 +328,41 @@
         <thead>
             <tr>
                 <th>NO</th>
-                <th>TAHUN</th>
-                <th>SUB BIDANG / UNIT</th>
-                <th>NAMA ANGGARAN</th>
-                <th>TOTAL ANGGARAN</th>
-                <th>TOTAL REALISASI</th>
-                <th>PERSENTASE</th>
-                <th>KETERANGAN</th>
+                <th>JUDUL PUBLIKASI</th>
+                <th>KATEGORI</th>
+                <th>FORMAT</th>
+                <th>TANGGAL UPLOAD</th>
+                <th>STATUS PUBLIKASI</th>
                 <th>AKSI</th>
             </tr>
         </thead>
         <tbody>
-            @forelse($budgets as $index => $b)
+            @forelse($informations as $index => $info)
                 @php
-                    $persentase = $b->total_anggaran > 0 ? round(($b->total_realisasi / $b->total_anggaran) * 100) : 0;
-                    
-                    $badgeClass = 'badge-berjalan';
-                    if (str_contains(strtolower($b->status), 'hampir tercapai')) {
-                        $badgeClass = 'badge-hampir-tercapai';
-                    } elseif (str_contains(strtolower($b->status), 'perlu perhatian')) {
-                        $badgeClass = 'badge-perlu-perhatian';
-                    }
+                    $badgeClass = strtolower($info->status_publikasi) == 'rilis' ? 'badge-rilis' : 'badge-draft';
                 @endphp
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                    <td>{{ $b->tahun }}</td>
-                    <td>{{ $b->sub_bidang }}</td>
-                    <td>{{ $b->nama_anggaran }}</td>
-                    <td>Rp{{ number_format($b->total_anggaran, 0, ',', '.') }}</td>
-                    <td>Rp{{ number_format($b->total_realisasi, 0, ',', '.') }}</td>
-                    <td>{{ $persentase }}%</td>
+                    <td style="font-weight: 500; color: #1e293b;">{{ Str::limit($info->judul, 40) }}</td>
+                    <td>{{ $info->kategori }}</td>
+                    <td>{{ $info->format }}</td>
+                    <td>{{ $info->created_at->format('d M Y') }}</td>
                     <td>
                         <span class="badge-status {{ $badgeClass }}">
-                            {{ $b->status ?? 'Berjalan' }}
+                            {{ $info->status_publikasi }}
                         </span>
                     </td>
                     <td>
                         <div class="action-buttons">
-                            <a href="{{ route('finance.budget.show', $b->id) }}" class="btn-icon btn-view"><i class="fa-solid fa-eye"></i></a>
-                            <button class="btn-icon btn-edit" onclick="editData({{ $b->toJson() }})"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button class="btn-icon btn-delete" onclick="confirmDelete({{ $b->id }})"><i class="fa-solid fa-trash-can"></i></button>
+                            <a href="{{ route('finance.information.show', $info->id) }}" class="btn-icon btn-view"><i class="fa-solid fa-eye"></i></a>
+                            <button class="btn-icon btn-edit" onclick="editData({{ $info->toJson() }})"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btn-icon btn-delete" onclick="confirmDelete({{ $info->id }})"><i class="fa-solid fa-trash-can"></i></button>
                         </div>
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="9" style="text-align: center; color: #94a3b8; padding: 32px;">Belum ada data anggaran.</td>
+                    <td colspan="7" style="text-align: center; color: #94a3b8; padding: 32px;">Belum ada informasi publikasi.</td>
                 </tr>
             @endforelse
         </tbody>
@@ -396,42 +376,37 @@
             <h3 id="modalTitle">Edit Data</h3>
             <p>Isi semua kolom yang tersedia dengan data yang benar.</p>
         </div>
-        <form id="budgetForm" action="{{ route('finance.budget.store') }}" method="POST">
+        <form id="infoForm" action="{{ route('finance.information.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="_method" id="formMethod" value="POST">
             
             <div class="form-grid">
-                <div class="form-group">
-                    <label class="form-label">Tahun</label>
-                    <input type="number" name="tahun" id="tahun" class="form-control" required value="{{ date('Y') }}">
+                <div class="form-group full-width">
+                    <label class="form-label">Judul Publikasi</label>
+                    <input type="text" name="judul" id="judul" class="form-control" required placeholder="Contoh: Laporan Realisasi Anggaran">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Sub Bidang / Unit</label>
-                    <input type="text" name="sub_bidang" id="sub_bidang" class="form-control" required>
+                    <label class="form-label">Kategori</label>
+                    <input type="text" name="kategori" id="kategori" class="form-control" required placeholder="Contoh: Laporan Keuangan">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Nama Anggaran</label>
-                    <input type="text" name="nama_anggaran" id="nama_anggaran" class="form-control" placeholder="Nama Anggaran" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Total Anggaran (Rp)</label>
-                    <input type="number" name="total_anggaran" id="total_anggaran" class="form-control" placeholder="0" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Total Realisasi (Rp)</label>
-                    <input type="number" name="total_realisasi" id="total_realisasi" class="form-control" placeholder="0" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Periode</label>
-                    <input type="text" name="periode" id="periode" class="form-control" placeholder="Juli 2026">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Status / Keterangan</label>
-                    <input type="text" name="status" id="status" class="form-control" placeholder="Berjalan">
+                    <label class="form-label">Format</label>
+                    <input type="text" name="format" id="format" class="form-control" required placeholder="Contoh: PDF, 2.4MB">
                 </div>
                 <div class="form-group full-width">
-                    <label class="form-label">Catatan Internal</label>
-                    <textarea name="catatan_internal" id="catatan_internal" class="form-control" placeholder="Tulis keterangan..."></textarea>
+                    <label class="form-label">Upload File / Dokumen</label>
+                    <input type="text" name="dokumen" id="dokumen" class="form-control" placeholder="URL dokumen / path (dummy)">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Status Publikasi</label>
+                    <select name="status_publikasi" id="status_publikasi" class="form-control" required>
+                        <option value="Rilis">Rilis</option>
+                        <option value="Draft">Draft</option>
+                    </select>
+                </div>
+                <div class="form-group full-width">
+                    <label class="form-label">Keterangan</label>
+                    <textarea name="keterangan" id="keterangan" class="form-control" placeholder="Tulis keterangan..."></textarea>
                 </div>
             </div>
             
@@ -448,7 +423,7 @@
     <div class="modal-card small">
         <div class="modal-header" style="text-align: left;">
             <h3>Hapus Data?</h3>
-            <p>konfirmasi aksi untuk data Data Anggaran & Realisasi.</p>
+            <p>konfirmasi aksi untuk data Informasi Terbaru.</p>
         </div>
         <form id="deleteForm" action="" method="POST">
             @csrf
@@ -468,41 +443,39 @@
     function openModal(id) {
         document.getElementById(id).classList.add('active');
         
-        if (id === 'modalForm' && !document.getElementById('budgetForm').dataset.editing) {
+        if (id === 'modalForm' && !document.getElementById('infoForm').dataset.editing) {
             document.getElementById('modalTitle').innerText = 'Tambah Data';
-            document.getElementById('budgetForm').reset();
+            document.getElementById('infoForm').reset();
             document.getElementById('formMethod').value = 'POST';
-            document.getElementById('budgetForm').action = '{{ route("finance.budget.store") }}';
+            document.getElementById('infoForm').action = '{{ route("finance.information.store") }}';
         }
     }
 
     function closeModal(id) {
         document.getElementById(id).classList.remove('active');
         if (id === 'modalForm') {
-            document.getElementById('budgetForm').dataset.editing = "";
+            document.getElementById('infoForm').dataset.editing = "";
         }
     }
 
     function editData(data) {
         document.getElementById('modalTitle').innerText = 'Edit Data';
         document.getElementById('formMethod').value = 'PUT';
-        document.getElementById('budgetForm').action = `/keuangan/anggaran/${data.id}`;
-        document.getElementById('budgetForm').dataset.editing = "true";
+        document.getElementById('infoForm').action = `/keuangan/information/${data.id}`;
+        document.getElementById('infoForm').dataset.editing = "true";
         
-        document.getElementById('tahun').value = data.tahun;
-        document.getElementById('sub_bidang').value = data.sub_bidang;
-        document.getElementById('nama_anggaran').value = data.nama_anggaran;
-        document.getElementById('total_anggaran').value = parseFloat(data.total_anggaran);
-        document.getElementById('total_realisasi').value = parseFloat(data.total_realisasi);
-        document.getElementById('periode').value = data.periode || '';
-        document.getElementById('status').value = data.status || '';
-        document.getElementById('catatan_internal').value = data.catatan_internal || '';
+        document.getElementById('judul').value = data.judul;
+        document.getElementById('kategori').value = data.kategori;
+        document.getElementById('format').value = data.format;
+        document.getElementById('status_publikasi').value = data.status_publikasi;
+        document.getElementById('dokumen').value = data.dokumen || '';
+        document.getElementById('keterangan').value = data.keterangan || '';
         
         openModal('modalForm');
     }
 
     function confirmDelete(id) {
-        document.getElementById('deleteForm').action = `/keuangan/anggaran/${id}`;
+        document.getElementById('deleteForm').action = `/keuangan/information/${id}`;
         openModal('modalDelete');
     }
 </script>

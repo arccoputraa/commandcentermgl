@@ -146,7 +146,7 @@
             <tr>
                 <td>{{ $item['nama'] }}</td>
                 <td>{{ number_format($item['jumlah']) }}</td>
-                <td>{{ $item['update'] }}</td>
+                <td>{{ $item->updated_at->format('d M Y') }}</td>
                 <td>
                     <div class="action-icons" style="justify-content: flex-end;">
                         <a href="{{ route('kesehatan.penyakit.detail', $item['id']) }}" class="action-btn btn-view"><i class="fa-solid fa-eye"></i></a>
