@@ -43,7 +43,7 @@
         <div class="blob"></div>
         <div class="lv-content">
           <div class="badge">
-            <span class="mark"><span>CM</span></span>
+            <img class="brand-mark" src="{{ asset('images/cmdcenterlogo.png') }}" alt="Command Center Kota Magelang" />
             <div class="txt">
               <b>Command Center</b>
               <span>Kota Magelang</span>

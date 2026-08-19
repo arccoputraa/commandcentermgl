@@ -206,6 +206,11 @@ Route::middleware('auth')->prefix('perizinan')->group(function () {
     Route::delete('/publikasi/{publikasi}', [\App\Http\Controllers\PerizinanController::class, 'publikasiDestroy'])->name('perizinan.publikasi.destroy');
 });
 
+// Pembangunan Routes (protected)
+Route::middleware('auth')->prefix('pembangunan')->group(function () {
+    Route::get('/', [\App\Http\Controllers\PembangunanController::class, 'dashboard'])->name('pembangunan.dashboard');
+});
+
 // Kesehatan Routes (protected)
 Route::middleware('auth')->prefix('kesehatan')->group(function () {
     Route::get('/', [\App\Http\Controllers\KesehatanController::class, 'dashboard'])->name('kesehatan.dashboard');
@@ -220,6 +225,12 @@ Route::middleware('auth')->prefix('kesehatan')->group(function () {
     Route::get('/penyakit/{id}', [\App\Http\Controllers\KesehatanController::class, 'penyakitDetail'])->name('kesehatan.penyakit.detail');
     Route::put('/penyakit/{id}', [\App\Http\Controllers\KesehatanController::class, 'penyakitUpdate'])->name('kesehatan.penyakit.update');
     Route::delete('/penyakit/{id}', [\App\Http\Controllers\KesehatanController::class, 'penyakitDestroy'])->name('kesehatan.penyakit.destroy');
+
+    // Informasi Terbaru
+    Route::get('/informasi', [\App\Http\Controllers\KesehatanInformasiController::class, 'index'])->name('kesehatan.informasi.index');
+    Route::post('/informasi', [\App\Http\Controllers\KesehatanInformasiController::class, 'store'])->name('kesehatan.informasi.store');
+    Route::put('/informasi/{id}', [\App\Http\Controllers\KesehatanInformasiController::class, 'update'])->name('kesehatan.informasi.update');
+    Route::delete('/informasi/{id}', [\App\Http\Controllers\KesehatanInformasiController::class, 'destroy'])->name('kesehatan.informasi.destroy');
 });
 
 // Keuangan Routes (protected)

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Dashboard Kesehatan') - Command Center Magelang</title>
+    <title>@yield('title', 'Pusat Data Pembangunan') - Command Center Magelang</title>
 <link rel="icon" href="{{ asset('images/cmdcenterlogo.png') }}" type="image/png">
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -24,18 +24,10 @@
             <h2>MagelangCC</h2>
         </div>
         <nav class="sidebar-menu">
-            <a href="{{ route('kesehatan.dashboard') }}" class="menu-item {{ request()->routeIs('kesehatan.dashboard') ? 'active' : '' }}">
-                <i class="fa-solid fa-notes-medical"></i> Dashboard Kesehatan
+            <a href="{{ route('pembangunan.dashboard') }}" class="menu-item {{ request()->routeIs('pembangunan.dashboard') ? 'active' : '' }}">
+                <i class="fa-solid fa-building"></i> Dashboard Pembangunan
             </a>
-            <a href="{{ route('kesehatan.program.index') }}" class="menu-item {{ request()->routeIs('kesehatan.program.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-file-medical"></i> Daftar Program Kesehatan
-            </a>
-            <a href="{{ route('kesehatan.penyakit.index') }}" class="menu-item {{ request()->routeIs('kesehatan.penyakit.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-virus"></i> Data Penyakit
-            </a>
-            <a href="{{ route('kesehatan.informasi.index') }}" class="menu-item {{ request()->routeIs('kesehatan.informasi.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-bullhorn"></i> Informasi Terbaru
-            </a>
+            <!-- Tambahan menu pembangunan bisa ditempatkan di sini nantinya -->
             <a href="{{ route('profile.index') }}" class="menu-item {{ request()->routeIs('profile.index') ? 'active' : '' }}">
                 <i class="fa-solid fa-user-circle"></i> Profil
             </a>
@@ -59,8 +51,8 @@
             </div>
             <div class="topbar-profile">
                 <div class="profile-info">
-                    <h4>{{ Auth::user()->name ?? 'User Kesehatan' }}</h4>
-                    <p>{{ Auth::user()->division->name ?? 'Divisi Kesehatan' }}</p>
+                    <h4>{{ Auth::user()->name ?? 'User Pembangunan' }}</h4>
+                    <p>{{ Auth::user()->division->name ?? 'Divisi Pembangunan' }}</p>
                 </div>
                 <div class="profile-img">
                     <i class="fa-regular fa-user"></i>
@@ -78,4 +70,3 @@
     @stack('scripts')
 </body>
 </html>
-

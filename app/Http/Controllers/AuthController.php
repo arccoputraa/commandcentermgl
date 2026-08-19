@@ -50,6 +50,9 @@ class AuthController extends Controller
             if ($user->division && strtolower($user->division->name) === 'kepegawaian') {
                 return redirect()->route('kepegawaian.dashboard');
             }
+            if ($user->division && strtolower($user->division->name) === 'pembangunan') {
+                return redirect()->route('pembangunan.dashboard');
+            }
 
             return redirect()->route('admin.dashboard');
         }
