@@ -303,6 +303,40 @@ Route::middleware('auth')->prefix('kepegawaian')->group(function () {
     Route::delete('/informasi/{id}', [\App\Http\Controllers\PegawaiInformasiController::class, 'destroy'])->name('kepegawaian.informasi.destroy');
 });
 
+// Kependudukan Routes (protected)
+Route::middleware('auth')->prefix('kependudukan')->group(function () {
+    Route::get('/', [\App\Http\Controllers\KependudukanController::class, 'dashboard'])->name('kependudukan.dashboard');
+    Route::get('/data-penduduk', [\App\Http\Controllers\KependudukanController::class, 'dataPendudukIndex'])->name('kependudukan.data-penduduk.index');
+    Route::get('/data-penduduk/create', [\App\Http\Controllers\KependudukanController::class, 'dataPendudukCreate'])->name('kependudukan.data-penduduk.create');
+    Route::post('/data-penduduk', [\App\Http\Controllers\KependudukanController::class, 'dataPendudukStore'])->name('kependudukan.data-penduduk.store');
+    Route::get('/data-penduduk/{id}', [\App\Http\Controllers\KependudukanController::class, 'dataPendudukShow'])->name('kependudukan.data-penduduk.show');
+    Route::get('/data-penduduk/{id}/edit', [\App\Http\Controllers\KependudukanController::class, 'dataPendudukEdit'])->name('kependudukan.data-penduduk.edit');
+    Route::put('/data-penduduk/{id}', [\App\Http\Controllers\KependudukanController::class, 'dataPendudukUpdate'])->name('kependudukan.data-penduduk.update');
+    Route::get('/data-agama', [\App\Http\Controllers\KependudukanController::class, 'dataAgamaIndex'])->name('kependudukan.data-agama.index');
+    Route::get('/data-agama/create', [\App\Http\Controllers\KependudukanController::class, 'dataAgamaCreate'])->name('kependudukan.data-agama.create');
+    Route::post('/data-agama', [\App\Http\Controllers\KependudukanController::class, 'dataAgamaStore'])->name('kependudukan.data-agama.store');
+    Route::get('/data-agama/{id}', [\App\Http\Controllers\KependudukanController::class, 'dataAgamaShow'])->name('kependudukan.data-agama.show');
+    Route::get('/data-agama/{id}/edit', [\App\Http\Controllers\KependudukanController::class, 'dataAgamaEdit'])->name('kependudukan.data-agama.edit');
+    Route::put('/data-agama/{id}', [\App\Http\Controllers\KependudukanController::class, 'dataAgamaUpdate'])->name('kependudukan.data-agama.update');
+    Route::delete('/data-agama/{id}', [\App\Http\Controllers\KependudukanController::class, 'dataAgamaDestroy'])->name('kependudukan.data-agama.destroy');
+    Route::get('/data-wilayah', [\App\Http\Controllers\KependudukanController::class, 'dataWilayahIndex'])->name('kependudukan.data-wilayah.index');
+    Route::get('/data-wilayah/create', [\App\Http\Controllers\KependudukanController::class, 'dataWilayahCreate'])->name('kependudukan.data-wilayah.create');
+    Route::post('/data-wilayah', [\App\Http\Controllers\KependudukanController::class, 'dataWilayahStore'])->name('kependudukan.data-wilayah.store');
+    Route::get('/data-wilayah/{id}', [\App\Http\Controllers\KependudukanController::class, 'dataWilayahShow'])->name('kependudukan.data-wilayah.show');
+    Route::get('/data-wilayah/{id}/edit', [\App\Http\Controllers\KependudukanController::class, 'dataWilayahEdit'])->name('kependudukan.data-wilayah.edit');
+    Route::put('/data-wilayah/{id}', [\App\Http\Controllers\KependudukanController::class, 'dataWilayahUpdate'])->name('kependudukan.data-wilayah.update');
+    Route::delete('/data-wilayah/{id}', [\App\Http\Controllers\KependudukanController::class, 'dataWilayahDestroy'])->name('kependudukan.data-wilayah.destroy');
+    Route::get('/data-kartu-keluarga', [\App\Http\Controllers\KependudukanController::class, 'dataKartuKeluargaIndex'])->name('kependudukan.data-kartu-keluarga.index');
+    Route::get('/data-kartu-keluarga/create', [\App\Http\Controllers\KependudukanController::class, 'dataKartuKeluargaCreate'])->name('kependudukan.data-kartu-keluarga.create');
+    Route::post('/data-kartu-keluarga', [\App\Http\Controllers\KependudukanController::class, 'dataKartuKeluargaStore'])->name('kependudukan.data-kartu-keluarga.store');
+    Route::get('/data-kartu-keluarga/{id}', [\App\Http\Controllers\KependudukanController::class, 'dataKartuKeluargaShow'])->name('kependudukan.data-kartu-keluarga.show');
+    Route::get('/data-kartu-keluarga/{id}/edit', [\App\Http\Controllers\KependudukanController::class, 'dataKartuKeluargaEdit'])->name('kependudukan.data-kartu-keluarga.edit');
+    Route::put('/data-kartu-keluarga/{id}', [\App\Http\Controllers\KependudukanController::class, 'dataKartuKeluargaUpdate'])->name('kependudukan.data-kartu-keluarga.update');
+    Route::delete('/data-kartu-keluarga/{id}', [\App\Http\Controllers\KependudukanController::class, 'dataKartuKeluargaDestroy'])->name('kependudukan.data-kartu-keluarga.destroy');
+    Route::get('/mutasi-penduduk', [\App\Http\Controllers\KependudukanController::class, 'mutasiPendudukIndex'])->name('kependudukan.mutasi-penduduk.index');
+    Route::get('/informasi-terbaru', [\App\Http\Controllers\KependudukanController::class, 'informasiTerbaruIndex'])->name('kependudukan.informasi-terbaru.index');
+});
+
 Route::get('/{page}', function (Request $request, string $page) {
     $viewName = preg_replace('/\.(blade\.php|html)$/', '', $page);
 

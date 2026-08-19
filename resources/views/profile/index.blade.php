@@ -7,88 +7,95 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding-top: 16px;
+        padding-top: 48px;
         font-family: 'Inter', sans-serif;
     }
     .profile-title {
-        font-size: 26px;
+        font-size: 32px;
+        line-height: 1.2;
         font-weight: 800;
-        color: #1e293b;
-        margin-bottom: 32px;
+        color: #1d293d;
+        margin: 0 0 46px 0;
         text-align: center;
     }
     .profile-card {
         background: #ffffff;
-        border-radius: 12px;
-        border: 1px solid #f1f5f9;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-        padding: 48px 80px;
+        border-radius: 18px;
+        border: 1px solid #e8edf3;
+        box-shadow: 0 2px 5px rgba(15, 23, 42, 0.12);
+        padding: 48px 80px 40px;
         width: 100%;
-        max-width: 580px;
+        max-width: 720px;
+        min-height: 420px;
         text-align: center;
+        box-sizing: border-box;
     }
     .profile-avatar-large {
-        width: 124px;
-        height: 124px;
-        background: #f8fafc;
+        width: 160px;
+        height: 160px;
+        background: #f1f5f9;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 0 auto 24px;
+        margin: 0 auto 36px;
         color: #94a3b8;
     }
     .profile-avatar-large svg {
-        width: 56px;
-        height: 56px;
+        width: 92px;
+        height: 92px;
         stroke: currentColor;
-        stroke-width: 2.5;
+        stroke-width: 2;
         fill: none;
         stroke-linecap: round;
         stroke-linejoin: round;
     }
     .profile-name-large {
-        font-size: 24px;
-        font-weight: 700;
-        color: #0f172a;
-        margin: 0 0 6px 0;
+        font-size: 32px;
+        line-height: 1.2;
+        font-weight: 800;
+        color: #1d293d;
+        margin: 0 0 8px 0;
     }
     .profile-subtitle {
-        font-size: 15px;
-        color: #64748b;
-        margin: 0 0 32px 0;
+        font-size: 21px;
+        color: #708098;
+        margin: 0 0 36px 0;
     }
     .btn-edit-profile {
         display: block;
         width: 100%;
+        max-width: 400px;
         box-sizing: border-box;
-        background: #1c4ed8;
+        background: #2563eb;
         color: #ffffff;
-        padding: 14px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 15px;
+        padding: 14px 18px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 18px;
         text-decoration: none;
         transition: background 0.2s;
-        margin-bottom: 12px;
+        margin: 0 auto 14px;
     }
     .btn-edit-profile:hover {
-        background: #1e40af;
+        background: #1d4ed8;
     }
     .btn-logout-profile {
         display: block;
         width: 100%;
+        max-width: 400px;
         box-sizing: border-box;
         background: #fef2f2;
-        color: #dc2626;
-        padding: 14px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 15px;
+        color: #ef1f1f;
+        padding: 14px 18px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 18px;
         text-decoration: none;
         transition: background 0.2s;
         border: none;
         cursor: pointer;
+        margin: 0 auto;
     }
     .btn-logout-profile:hover {
         background: #fee2e2;
