@@ -137,6 +137,42 @@ Route::get('/layanan', function (Request $request) {
         }
     }
     
+    if ($dept === 'pembangunan') {
+        $stats = [
+            'total' => \App\Models\PembangunanProject::count(),
+            'selesai' => \App\Models\PembangunanProject::where('status', 'Selesai')->count(),
+            'berjalan' => \App\Models\PembangunanProject::where('status', 'Berjalan')->count(),
+            'anggaran' => \App\Models\PembangunanProject::sum('total_budget')
+        ];
+        
+        $projects = \App\Models\PembangunanProject::orderBy('created_at', 'desc')->limit(6)->get();
+        
+        $mapData = \App\Models\PembangunanProject::whereNotNull('latitude')->whereNotNull('longitude')->get()->map(function($p) {
+            return [
+                'name' => $p->name,
+                'lat' => $p->latitude,
+                'lng' => $p->longitude,
+                'status' => $p->status,
+                'progress' => $p->progress_percentage
+            ];
+        })->values();
+
+        $dokumentasi = \App\Models\PembangunanDocument::with('project')->where('type', 'Image')->orderBy('upload_date', 'desc')->limit(4)->get();
+
+        if (view()->exists('layanan.pembangunan')) {
+            return view('layanan.pembangunan', compact('stats', 'projects', 'mapData', 'dokumentasi', 'dept'));
+        }
+    }
+
+    if ($dept === 'kesehatan') {
+        $informasi = \App\Models\KesehatanInformasi::orderBy('created_at', 'desc')->limit(5)->get();
+        $penyakit = \App\Models\KesehatanPenyakit::orderBy('jumlah', 'desc')->limit(5)->get();
+        
+        if (view()->exists('layanan.kesehatan')) {
+            return view('layanan.kesehatan', compact('informasi', 'penyakit', 'dept'));
+        }
+    }
+
     // Fallback to generic layanan if specific view doesn't exist
     if ($dept && view()->exists("layanan.{$dept}")) {
         return view("layanan.{$dept}");
@@ -209,6 +245,22 @@ Route::middleware('auth')->prefix('perizinan')->group(function () {
 // Pembangunan Routes (protected)
 Route::middleware('auth')->prefix('pembangunan')->group(function () {
     Route::get('/', [\App\Http\Controllers\PembangunanController::class, 'dashboard'])->name('pembangunan.dashboard');
+    
+    // Proyek Pembangunan
+    Route::get('/project', [\App\Http\Controllers\PembangunanController::class, 'projectIndex'])->name('pembangunan.project.index');
+    Route::get('/project/create', [\App\Http\Controllers\PembangunanController::class, 'projectCreate'])->name('pembangunan.project.create');
+    Route::post('/project', [\App\Http\Controllers\PembangunanController::class, 'projectStore'])->name('pembangunan.project.store');
+    Route::get('/project/{id}/edit', [\App\Http\Controllers\PembangunanController::class, 'projectEdit'])->name('pembangunan.project.edit');
+    Route::put('/project/{id}', [\App\Http\Controllers\PembangunanController::class, 'projectUpdate'])->name('pembangunan.project.update');
+    Route::delete('/project/{id}', [\App\Http\Controllers\PembangunanController::class, 'projectDestroy'])->name('pembangunan.project.destroy');
+
+    // Dokumen Proyek
+    Route::get('/document', [\App\Http\Controllers\PembangunanController::class, 'documentIndex'])->name('pembangunan.document.index');
+    Route::get('/document/create', [\App\Http\Controllers\PembangunanController::class, 'documentCreate'])->name('pembangunan.document.create');
+    Route::post('/document', [\App\Http\Controllers\PembangunanController::class, 'documentStore'])->name('pembangunan.document.store');
+    Route::get('/document/{id}/edit', [\App\Http\Controllers\PembangunanController::class, 'documentEdit'])->name('pembangunan.document.edit');
+    Route::put('/document/{id}', [\App\Http\Controllers\PembangunanController::class, 'documentUpdate'])->name('pembangunan.document.update');
+    Route::delete('/document/{id}', [\App\Http\Controllers\PembangunanController::class, 'documentDestroy'])->name('pembangunan.document.destroy');
 });
 
 // Kesehatan Routes (protected)

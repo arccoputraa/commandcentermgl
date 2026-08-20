@@ -6,6 +6,7 @@ use App\Models\PembangunanProject;
 use App\Models\PembangunanDocument;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class PembangunanController extends Controller
 {
@@ -107,5 +108,153 @@ class PembangunanController extends Controller
             'projects', 'kpi', 'chartBulan', 'chartStatus', 'chartRealisasi', 
             'chartKategori', 'mapData', 'recentDocs', 'publicDocs', 'categories'
         ));
+    }
+
+    // --- PROYEK PEMBANGUNAN CRUD ---
+
+    public function projectIndex(Request $request)
+    {
+        $projects = PembangunanProject::orderBy('created_at', 'desc')->paginate(10);
+        return view('pembangunan.project.index', compact('projects'));
+    }
+
+    public function projectCreate()
+    {
+        return view('pembangunan.project.form');
+    }
+
+    public function projectStore(Request $request)
+    {
+        $request->validate([
+            'project_code' => 'required|unique:pembangunan_projects',
+            'name' => 'required|string|max:255',
+            'category' => 'required|string',
+            'status' => 'required|string',
+        ]);
+
+        PembangunanProject::create($request->all());
+
+        return redirect()->route('pembangunan.project.index')->with('success', 'Proyek berhasil ditambahkan.');
+    }
+
+    public function projectEdit($id)
+    {
+        $project = PembangunanProject::findOrFail($id);
+        return view('pembangunan.project.form', compact('project'));
+    }
+
+    public function projectUpdate(Request $request, $id)
+    {
+        $project = PembangunanProject::findOrFail($id);
+
+        $request->validate([
+            'project_code' => 'required|unique:pembangunan_projects,project_code,' . $project->id,
+            'name' => 'required|string|max:255',
+            'category' => 'required|string',
+            'status' => 'required|string',
+        ]);
+
+        $project->update($request->all());
+
+        return redirect()->route('pembangunan.project.index')->with('success', 'Proyek berhasil diperbarui.');
+    }
+
+    public function projectDestroy($id)
+    {
+        $project = PembangunanProject::findOrFail($id);
+        $project->delete();
+
+        return redirect()->route('pembangunan.project.index')->with('success', 'Proyek berhasil dihapus.');
+    }
+
+    // --- DOKUMEN PROYEK CRUD ---
+
+    public function documentIndex(Request $request)
+    {
+        $documents = PembangunanDocument::with('project')->orderBy('created_at', 'desc')->paginate(10);
+        return view('pembangunan.document.index', compact('documents'));
+    }
+
+    public function documentCreate()
+    {
+        $projects = PembangunanProject::all();
+        return view('pembangunan.document.form', compact('projects'));
+    }
+
+    public function documentStore(Request $request)
+    {
+        $request->validate([
+            'pembangunan_project_id' => 'required|exists:pembangunan_projects,id',
+            'title' => 'required|string|max:255',
+            'type' => 'required|string',
+            'file' => 'required|file|max:10240', // 10MB max
+            'upload_date' => 'required|date',
+        ]);
+
+        $data = $request->except('file');
+        
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('public/pembangunan/documents', $filename);
+            $data['file_path'] = str_replace('public/', 'storage/', $path);
+        }
+
+        PembangunanDocument::create($data);
+
+        return redirect()->route('pembangunan.document.index')->with('success', 'Dokumen berhasil diunggah.');
+    }
+
+    public function documentEdit($id)
+    {
+        $document = PembangunanDocument::findOrFail($id);
+        $projects = PembangunanProject::all();
+        return view('pembangunan.document.form', compact('document', 'projects'));
+    }
+
+    public function documentUpdate(Request $request, $id)
+    {
+        $document = PembangunanDocument::findOrFail($id);
+
+        $request->validate([
+            'pembangunan_project_id' => 'required|exists:pembangunan_projects,id',
+            'title' => 'required|string|max:255',
+            'type' => 'required|string',
+            'file' => 'nullable|file|max:10240',
+            'upload_date' => 'required|date',
+        ]);
+
+        $data = $request->except('file');
+
+        if ($request->hasFile('file')) {
+            // Delete old file if exists
+            if ($document->file_path) {
+                $oldPath = str_replace('storage/', 'public/', $document->file_path);
+                Storage::delete($oldPath);
+            }
+
+            $file = $request->file('file');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('public/pembangunan/documents', $filename);
+            $data['file_path'] = str_replace('public/', 'storage/', $path);
+        }
+
+        $document->update($data);
+
+        return redirect()->route('pembangunan.document.index')->with('success', 'Dokumen berhasil diperbarui.');
+    }
+
+    public function documentDestroy($id)
+    {
+        $document = PembangunanDocument::findOrFail($id);
+        
+        if ($document->file_path) {
+            $oldPath = str_replace('storage/', 'public/', $document->file_path);
+            Storage::delete($oldPath);
+        }
+        
+        $document->delete();
+
+        return redirect()->route('pembangunan.document.index')->with('success', 'Dokumen berhasil dihapus.');
     }
 }

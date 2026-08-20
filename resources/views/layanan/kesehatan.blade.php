@@ -122,62 +122,27 @@
                     <i class="fa-solid fa-file-lines" style="color: #009966;"></i> Informasi Terbaru
                 </h3>
                 <div class="info-list">
-                    <div class="info-item" style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; transition: border-color 0.2s;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <div style="display: flex; gap: 12px;">
-                                <i class="fa-solid fa-file-pdf" style="color: #ef4444; font-size: 20px; margin-top: 4px;"></i>
-                                <div>
-                                    <h4 style="font-size: 14px; font-weight: 600; color: #1e293b; margin: 0;">Publikasi Data Kesehatan Triwulan III</h4>
-                                    <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">Dokumen PDF - publikasi-kesehatan-q3.pdf</p>
+                    @if(isset($informasi))
+                        @foreach($informasi as $info)
+                        <div class="info-item" style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; transition: border-color 0.2s;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <div style="display: flex; gap: 12px;">
+                                    <i class="fa-solid fa-file-pdf" style="color: #ef4444; font-size: 20px; margin-top: 4px;"></i>
+                                    <div>
+                                        <h4 style="font-size: 14px; font-weight: 600; color: #1e293b; margin: 0;">{{ $info->judul }}</h4>
+                                        <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">Dokumen PDF</p>
+                                    </div>
                                 </div>
+                                <span style="background: #ecfdf5; color: #009966; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 600;">Rilis</span>
                             </div>
-                            <span style="background: #ecfdf5; color: #009966; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 600;">Rilis</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
-                            <span style="font-size: 11px; color: #94a3b8;">Diperbarui 2 hari lalu</span>
-                            <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" style="font-size: 12px; font-weight: 600; color: #009966; text-decoration: none;">Lihat PDF</a>
-                        </div>
-                    </div>
-
-                    <div class="info-item" style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <div style="display: flex; gap: 12px;">
-                                <i class="fa-solid fa-file-pdf" style="color: #ef4444; font-size: 20px; margin-top: 4px;"></i>
-                                <div>
-                                    <h4 style="font-size: 14px; font-weight: 600; color: #1e293b; margin: 0;">Update Program Imunisasi Kota</h4>
-                                    <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">Dokumen PDF - update-imunisasi-kota.pdf</p>
-                                </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                                <span style="font-size: 11px; color: #94a3b8;">Diperbarui {{ \Carbon\Carbon::parse($info->created_at)->diffForHumans() }}</span>
+                                <a href="{{ $info->file_pdf ? asset($info->file_pdf) : '#' }}" {{ $info->file_pdf ? 'target="_blank"' : '' }} style="font-size: 12px; font-weight: 600; color: #009966; text-decoration: none;">Lihat PDF</a>
                             </div>
-                            <span style="background: #ecfdf5; color: #009966; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 600;">Rilis</span>
                         </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
-                            <span style="font-size: 11px; color: #94a3b8;">Diperbarui 3 hari lalu</span>
-                            <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" style="font-size: 12px; font-weight: 600; color: #009966; text-decoration: none;">Lihat PDF</a>
-                        </div>
-                    </div>
-
-                    <div class="info-item" style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 8px;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <div style="display: flex; gap: 12px;">
-                                <i class="fa-solid fa-file-pdf" style="color: #ef4444; font-size: 20px; margin-top: 4px;"></i>
-                                <div>
-                                    <h4 style="font-size: 14px; font-weight: 600; color: #1e293b; margin: 0;">Laporan Ringkas Stunting</h4>
-                                    <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">Dokumen PDF - laporan-stunting-ringkas.pdf</p>
-                                </div>
-                            </div>
-                            <span style="background: #ecfdf5; color: #009966; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 600;">Rilis</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
-                            <span style="font-size: 11px; color: #94a3b8;">Diperbarui 5 hari lalu</span>
-                            <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" style="font-size: 12px; font-weight: 600; color: #009966; text-decoration: none;">Lihat PDF</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-@endsection
+                        @endforeach
+                    @endif
+                </div></div></div></div>@endsection
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -188,19 +153,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const ctxTop = document.getElementById('topPenyakitChart').getContext('2d');
     new Chart(ctxTop, {
         type: 'bar',
-        data: {
-            labels: ['ISPA', 'Hipertensi', 'Diabetes', 'Diare', 'Demam Berdarah'],
+                data: {
+            labels: {!! isset($penyakit) ? json_encode($penyakit->pluck('nama')) : json_encode(['ISPA', 'Hipertensi', 'Diabetes', 'Diare', 'Demam Berdarah']) !!},
             datasets: [{
                 label: 'Jumlah Kasus',
-                data: [1200, 950, 780, 450, 320],
+                data: {!! isset($penyakit) ? json_encode($penyakit->pluck('jumlah')) : json_encode([1200, 950, 780, 450, 320]) !!},
                 backgroundColor: '#009966',
                 borderRadius: 4,
             }]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
             scales: {
                 y: { beginAtZero: true, grid: { borderDash: [4, 4], color: '#E2E8F0' } },
                 x: { grid: { display: false } }

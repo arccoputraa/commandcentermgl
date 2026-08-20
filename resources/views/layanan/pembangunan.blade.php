@@ -4,37 +4,15 @@
 
 @section('content')
 @php
-$stats = [
-    ['label' => 'Total Proyek', 'value' => '32 Proyek'],
-    ['label' => 'Proyek Berjalan', 'value' => '18 Proyek'],
-    ['label' => 'Proyek Selesai', 'value' => '9 Proyek'],
-    ['label' => 'Proyek Tertunda', 'value' => '3 Proyek'],
-    ['label' => 'Total Anggaran', 'value' => 'Rp28,5 M'],
-    ['label' => 'Total Realisasi', 'value' => 'Rp19,8 M'],
-    ['label' => 'Rata-rata Progres Fisik', 'value' => '74%'],
-    ['label' => 'Update Terakhir', 'value' => '03 Juli 2026'],
-];
-
-$tabelProyek = [
-    ['kode' => 'PRJ-2026-001', 'nama' => 'Peningkatan Jalan Tidar Selatan', 'kategori' => 'Jalan & Jembatan', 'kecamatan' => 'Magelang Selatan', 'kelurahan' => 'Tidar Selatan', 'anggaran' => 'Rp1,8 M', 'progres' => '72%', 'status' => 'Berjalan', 'badge' => 'text-amber-600'],
-    ['kode' => 'PRJ-2026-002', 'nama' => 'Rehabilitasi Drainase Panjang', 'kategori' => 'Drainase', 'kecamatan' => 'Magelang Tengah', 'kelurahan' => 'Panjang', 'anggaran' => 'Rp850 Juta', 'progres' => '58%', 'status' => 'Berjalan', 'badge' => 'text-amber-600'],
-    ['kode' => 'PRJ-2026-003', 'nama' => 'Renovasi Gedung Pelayanan Publik', 'kategori' => 'Gedung Pemerintahan', 'kecamatan' => 'Magelang Tengah', 'kelurahan' => 'Kemirirejo', 'anggaran' => 'Rp2,4 M', 'progres' => '34%', 'status' => 'Perlu Perhatian', 'badge' => 'text-red-600'],
-    ['kode' => 'PRJ-2026-004', 'nama' => 'Pembangunan Taman Kelurahan', 'kategori' => 'Ruang Terbuka Hijau', 'kecamatan' => 'Magelang Utara', 'kelurahan' => 'Kedungsari', 'anggaran' => 'Rp620 Juta', 'progres' => '100%', 'status' => 'Selesai', 'badge' => 'text-green-600'],
-    ['kode' => 'PRJ-2026-005', 'nama' => 'Perbaikan Fasilitas Pasar Rejowinangun', 'kategori' => 'Fasilitas Umum', 'kecamatan' => 'Magelang Selatan', 'kelurahan' => 'Rejowinangun', 'anggaran' => 'Rp1,2 M', 'progres' => '25%', 'status' => 'Tertunda', 'badge' => 'text-red-500'],
-];
-
-$infoTerbaru = [
-    ['judul' => 'Laporan Progres Pembangunan Semester I 2026', 'kategori' => 'Laporan Progres Pembangunan', 'tanggal' => '03 Jul 2026', 'status' => 'Rilis', 'badge' => 'bg-green-100 text-green-700'],
-    ['judul' => 'Rekap Proyek Infrastruktur 2026', 'kategori' => 'Rekap Proyek', 'tanggal' => '02 Jul 2026', 'status' => 'Rilis', 'badge' => 'bg-green-100 text-green-700'],
-    ['judul' => 'Publikasi Pembangunan Fasilitas Umum', 'kategori' => 'Publikasi Infrastruktur', 'tanggal' => '01 Jul 2026', 'status' => 'Draft', 'badge' => 'bg-amber-100 text-amber-700'],
-    ['judul' => 'Laporan Realisasi Pembangunan Triwulan II', 'kategori' => 'Laporan Realisasi Pembangunan', 'tanggal' => '02 Jul 2026', 'status' => 'Rilis', 'badge' => 'bg-green-100 text-green-700'],
-];
-
-$dokumentasi = [
-    ['judul' => 'Foto Progres Minggu Ke-4', 'sub' => 'Peningkatan Jalan Tidar Selatan · 28 Jun 2026'],
-    ['judul' => 'Dokumentasi Drainase Sisi Utara', 'sub' => 'Rehabilitasi Drainase Panjang · Pemasangan saluran beton'],
-    ['judul' => 'Laporan Progres Juni', 'sub' => 'Renovasi Gedung Pelayanan Publik · Laporan progres fisik dan anggaran'],
-];
+$formattedStats = [];
+if(isset($stats)) {
+    $formattedStats = [
+        ['label' => 'Total Proyek', 'value' => $stats['total'] . ' Proyek'],
+        ['label' => 'Proyek Berjalan', 'value' => $stats['berjalan'] . ' Proyek'],
+        ['label' => 'Proyek Selesai', 'value' => $stats['selesai'] . ' Proyek'],
+        ['label' => 'Total Anggaran', 'value' => 'Rp ' . number_format($stats['anggaran'], 0, ',', '.')],
+    ];
+}
 @endphp
 
 <div class="wrap" style="padding-bottom: 80px;">
@@ -50,7 +28,7 @@ $dokumentasi = [
     </div>
 
     <div class="dashboard-stats-grid" style="margin-top: 24px;">
-        @foreach ($stats as $stat)
+        @foreach ($formattedStats as $stat)
             <div class="stat-card">
                 <h3 class="stat-card-title">{{ $stat['label'] }}</h3>
                 <p class="stat-card-value">{{ $stat['value'] }}</p>
@@ -107,7 +85,7 @@ $dokumentasi = [
                                 <p class="pub-info-title">{{ $info['judul'] }}</p>
                                 <span class="status-badge {{ $info['status'] === 'Draft' ? 'warning' : 'success' }}">{{ $info['status'] }}</span>
                             </div>
-                            <p class="pub-info-meta">{{ $info['kategori'] }} · {{ $info['tanggal'] }}</p>
+                            <p class="pub-info-meta">{{ $info['kategori'] }} ï¿½ {{ $info['tanggal'] }}</p>
                             <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat PDF</a>
                         </div>
                     @endforeach
