@@ -94,7 +94,7 @@
                             <span class="status-badge success">Rilis</span>
                         </div>
                         <p class="pub-info-meta">Rekap Penduduk · 03 Jul 2026</p>
-                        <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat PDF</a>
+                        <a href="/sample-document.pdf" target="_blank" class="action-link">Lihat PDF</a>
                     </div>
                     <div class="pub-info-item">
                         <div class="pub-info-header">
@@ -102,7 +102,7 @@
                             <span class="status-badge success">Rilis</span>
                         </div>
                         <p class="pub-info-meta">Data Agama · 02 Jul 2026</p>
-                        <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat PDF</a>
+                        <a href="/sample-document.pdf" target="_blank" class="action-link">Lihat PDF</a>
                     </div>
                     <div class="pub-info-item">
                         <div class="pub-info-header">
@@ -110,7 +110,7 @@
                             <span class="status-badge success">Rilis</span>
                         </div>
                         <p class="pub-info-meta">Mutasi Penduduk · 01 Jul 2026</p>
-                        <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat PDF</a>
+                        <a href="/sample-document.pdf" target="_blank" class="action-link">Lihat PDF</a>
                     </div>
                     <div class="pub-info-item">
                         <div class="pub-info-header">
@@ -118,7 +118,7 @@
                             <span class="status-badge warning">Draft</span>
                         </div>
                         <p class="pub-info-meta">Statistik Wilayah · 30 Jun 2026</p>
-                        <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat PDF</a>
+                        <a href="/sample-document.pdf" target="_blank" class="action-link">Lihat PDF</a>
                     </div>
                 </div>
             </div>
@@ -152,7 +152,7 @@
                         <td>2.340 KK</td>
                         <td>Islam</td>
                         <td><span class="table-badge success">Aktif</span></td>
-                        <td><a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat Detail</a></td>
+                        <td><a href="#" onclick="window.showDummyDetail(this); return false;" class="action-link">Lihat Detail</a></td>
                     </tr>
                     <tr>
                         <td>2026</td>
@@ -162,7 +162,7 @@
                         <td>2.180 KK</td>
                         <td>Islam</td>
                         <td><span class="table-badge success">Aktif</span></td>
-                        <td><a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat Detail</a></td>
+                        <td><a href="#" onclick="window.showDummyDetail(this); return false;" class="action-link">Lihat Detail</a></td>
                     </tr>
                     <tr>
                         <td>2026</td>
@@ -172,7 +172,7 @@
                         <td>1.920 KK</td>
                         <td>Islam</td>
                         <td><span class="table-badge success">Aktif</span></td>
-                        <td><a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat Detail</a></td>
+                        <td><a href="#" onclick="window.showDummyDetail(this); return false;" class="action-link">Lihat Detail</a></td>
                     </tr>
                     <tr>
                         <td>2026</td>
@@ -182,7 +182,7 @@
                         <td>1.710 KK</td>
                         <td>Islam</td>
                         <td><span class="table-badge success">Aktif</span></td>
-                        <td><a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat Detail</a></td>
+                        <td><a href="#" onclick="window.showDummyDetail(this); return false;" class="action-link">Lihat Detail</a></td>
                     </tr>
                     <tr>
                         <td>2026</td>
@@ -192,7 +192,7 @@
                         <td>1.860 KK</td>
                         <td>Islam</td>
                         <td><span class="table-badge success">Aktif</span></td>
-                        <td><a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat Detail</a></td>
+                        <td><a href="#" onclick="window.showDummyDetail(this); return false;" class="action-link">Lihat Detail</a></td>
                     </tr>
                 </tbody>
             </table>
@@ -228,3 +228,4 @@ const map3 = L.map('map3').setView([-7.4797, 110.2177], 13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(map3);
 </script>
 @endsection
+

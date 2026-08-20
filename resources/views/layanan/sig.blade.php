@@ -81,7 +81,7 @@ $infoTerbaruSIG = [
             <div class="stat-card">
                 <h3 class="stat-card-title">{{ $stat['label'] }}</h3>
                 <p class="stat-card-value">{{ $stat['value'] }}</p>
-                <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link stat-action-link">Lihat Data</a>
+                <a href="#" onclick="window.showDummyDetail(this); return false;" class="action-link stat-action-link">Lihat Data</a>
             </div>
         @endforeach
     </div>
@@ -112,7 +112,7 @@ $infoTerbaruSIG = [
                                     <td>{{ $row['wilayah'] }}</td>
                                     <td>{{ $row['nilai_jumlah'] }}</td>
                                     <td>{{ $row['update_terakhir'] }}</td>
-                                    <td><a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat Detail</a></td>
+                                    <td><a href="#" onclick="window.showDummyDetail(this); return false;" class="action-link">Lihat Detail</a></td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -132,7 +132,7 @@ $infoTerbaruSIG = [
                                 <span class="status-badge {{ $info['badge'] === 'warning' ? 'warning' : 'success' }}">{{ $info['status'] }}</span>
                             </div>
                             <p class="pub-info-meta">{{ $info['kategori'] }} · {{ $info['tanggal'] }}</p>
-                            <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat PDF</a>
+                            <a href="/sample-document.pdf" target="_blank" class="action-link">Lihat PDF</a>
                         </div>
                     @endforeach
                 </div>
@@ -192,3 +192,4 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:
 L.marker([-7.4797, 110.2177]).addTo(map).bindPopup('Mata Air Kota Magelang');
 </script>
 @endsection
+

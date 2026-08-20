@@ -197,7 +197,7 @@
                             @endphp
                             <span class="table-badge {{ $badge }}">{{ $data->status }}</span>
                         </td>
-                        <td><a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" style="color:var(--blue); font-weight:500;">Lihat Detail</a></td>
+                        <td><a href="#" onclick="window.showDummyDetail(this); return false;" style="color:var(--blue); font-weight:500;">Lihat Detail</a></td>
                     </tr>
                     @empty
                     <tr>
@@ -311,3 +311,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+

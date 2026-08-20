@@ -97,7 +97,7 @@ $infoTerbaru = [
                                 <span class="status-badge {{ $info['status'] === 'Draft' ? 'warning' : 'success' }}">{{ $info['status'] }}</span>
                             </div>
                             <p class="pub-info-meta">{{ $info['kategori'] }} · {{ $info['tanggal'] }}</p>
-                            <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat PDF</a>
+                            <a href="/sample-document.pdf" target="_blank" class="action-link">Lihat PDF</a>
                         </div>
                     @endforeach
                 </div>
@@ -133,7 +133,7 @@ $infoTerbaru = [
                             <td>{{ $row['tidak_lulus'] }}</td>
                             <td>{{ $row['perlu_uji_ulang'] }}</td>
                             <td><span class="table-badge success">{{ $row['keterangan'] }}</span></td>
-                            <td><a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat Detail</a></td>
+                            <td><a href="#" onclick="window.showDummyDetail(this); return false;" class="action-link">Lihat Detail</a></td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -172,3 +172,4 @@ new ApexCharts(document.querySelector('#chartKIRJenis'), barOpts(['JN-001','JN-0
 new ApexCharts(document.querySelector('#chartLayananUnit'), barOpts(['UPT-KIR-01','POS-TIM-01','POS-BRG-01'], [6820,124,120], '#06b6d4')).render();
 </script>
 @endsection
+

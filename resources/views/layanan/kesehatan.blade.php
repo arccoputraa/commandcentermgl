@@ -137,7 +137,11 @@
                             </div>
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
                                 <span style="font-size: 11px; color: #94a3b8;">Diperbarui {{ \Carbon\Carbon::parse($info->created_at)->diffForHumans() }}</span>
-                                <a href="{{ $info->file_pdf ? asset($info->file_pdf) : '#' }}" {{ $info->file_pdf ? 'target="_blank"' : '' }} style="font-size: 12px; font-weight: 600; color: #009966; text-decoration: none;">Lihat PDF</a>
+                                @php
+                                    $actualFile = $info->file_pdf ? public_path($info->file_pdf) : null;
+                                    $pdfLink = ($actualFile && file_exists($actualFile)) ? asset($info->file_pdf) : asset('sample-document.pdf');
+                                @endphp
+                                <a href="{{ $pdfLink }}" target="_blank" style="font-size: 12px; font-weight: 600; color: #009966; text-decoration: none;">Lihat PDF</a>
                             </div>
                         </div>
                         @endforeach
@@ -191,3 +195,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+

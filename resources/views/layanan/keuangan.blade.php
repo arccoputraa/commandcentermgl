@@ -136,13 +136,13 @@
                             <div class="pub-info-header">
                                 <p class="pub-info-title">Ringkasan APBD 2026</p>
                             </div>
-                            <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" style="font-size: 13px; color: var(--blue); font-weight: 500;">Unduh PDF</a>
+                            <a href="/sample-document.pdf" target="_blank" style="font-size: 13px; color: var(--blue); font-weight: 500;">Unduh PDF</a>
                         </div>
                         <div class="pub-info-item">
                             <div class="pub-info-header">
                                 <p class="pub-info-title">LKPJ Walikota 2025</p>
                             </div>
-                            <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" style="font-size: 13px; color: var(--blue); font-weight: 500;">Unduh PDF</a>
+                            <a href="/sample-document.pdf" target="_blank" style="font-size: 13px; color: var(--blue); font-weight: 500;">Unduh PDF</a>
                         </div>
                     @endif
                 </div>
@@ -237,3 +237,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+

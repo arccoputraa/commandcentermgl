@@ -139,32 +139,37 @@ const DEPARTMENTS = {
 };
 
 // ---------- CCTV dataset ----------
+// GANTI GAMBAR PER LOKASI DI SINI: Ubah property 'image' dengan path gambar yang sesuai untuk setiap CCTV
 const CCTV_POINTS = [
-  { id: 'taman-badaan-barat', name: 'Taman Badaan Barat', area: 'Kecamatan Magelang Tengah', status: 'online' },
-  { id: 'taman-skateboard-magersari', name: 'Taman Skateboard Magersari', area: 'Kecamatan Magelang Selatan', status: 'online' },
-  { id: 'taman-depan-atria', name: 'Taman Depan Atria', area: 'Kecamatan Magelang Tengah', status: 'online' },
-  { id: 'batas-utara', name: 'Batas Utara Kota Magelang', area: 'Kecamatan Magelang Utara', status: 'online' },
-  { id: 'kebun-bibit-senopati', name: 'Kebun Bibit Senopati', area: 'Kecamatan Magelang Utara', status: 'online' },
-  { id: 'pertigaan-sman1', name: 'Pertigaan SMA Negeri 1', area: 'Kecamatan Magelang Tengah', status: 'online' },
-  { id: 'alun-alun', name: 'Alun-Alun Kota Magelang', area: 'Kecamatan Magelang Tengah', status: 'online' },
-  { id: 'pasar-rejowinangun', name: 'Pasar Rejowinangun', area: 'Kecamatan Magelang Selatan', status: 'offline' }
+ { id: 'taman-badaan-barat', name: 'Taman Badaan Barat', area: 'Kecamatan Magelang Tengah', status: 'online', image: '/images/cctv_park.jpg' },
+  { id: 'taman-skateboard-magersari', name: 'Taman Skateboard Magersari', area: 'Kecamatan Magelang Selatan', status: 'online', image: '/images/cctv_park.jpg' },
+  { id: 'taman-depan-atria', name: 'Taman Depan Atria', area: 'Kecamatan Magelang Tengah', status: 'online', image: '/images/cctv_park.jpg' },
+  { id: 'batas-utara', name: 'Batas Utara Kota Magelang', area: 'Kecamatan Magelang Utara', status: 'online', image: '/images/cctv_park.jpg' },
+  { id: 'kebun-bibit-senopati', name: 'Kebun Bibit Senopati', area: 'Kecamatan Magelang Utara', status: 'online', image: '/images/cctv_park.jpg' },
+  { id: 'pertigaan-sman1', name: 'Pertigaan SMA Negeri 1', area: 'Kecamatan Magelang Tengah', status: 'online', image: '/images/cctv_park.jpg' },
+  { id: 'alun-alun', name: 'Alun-Alun Kota Magelang', area: 'Kecamatan Magelang Tengah', status: 'online', image: '/images/cctv_park.jpg' },
+  { id: 'pasar-rejowinangun', name: 'Pasar Rejowinangun', area: 'Kecamatan Magelang Selatan', status: 'offline', image: '/images/cctv_park.jpg' }
 ];
 
 function cctvCardHTML(cam) {
   const isOnline = cam.status === 'online';
+  // Gambar ditarik dari property 'image' pada data CCTV
+  const placeholderImage = cam.image || '/images/cctv_park.jpg';
+  
   return `
   <article class="cctv-card">
     <div class="cctv-thumb">
-      <div class="feed"></div>
-      <div class="cam-icon">${ICONS.camera}</div>
-      <span class="live-tag">${isOnline ? 'LIVE' : 'OFFLINE'}</span>
+      <img src="${placeholderImage}" alt="${cam.name}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0;" />
+      <div class="feed" style="z-index:1; background: repeating-linear-gradient(0deg, rgba(0,0,0,.08) 0 2px, transparent 2px 4px);"></div>
+      <div class="cam-icon" style="z-index:2; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">${ICONS.camera}</div>
+      <span class="live-tag" style="z-index:2;">${isOnline ? 'LIVE' : 'OFFLINE'}</span>
     </div>
     <div class="cctv-body">
       <div class="cctv-top">
         <h3>${cam.name}</h3>
         <span class="status-pill ${isOnline ? 'online' : 'offline'}"><span class="dot"></span>${isOnline ? 'Online' : 'Offline'}</span>
       </div>
-      <a class="btn btn-outline" href="#" style="width:100%" data-cam="${cam.id}" onclick="alert('Demo: stream langsung ${cam.name} akan tampil di sini.'); return false;">Lihat Live</a>
+      <a class="btn btn-outline" href="#" style="width:100%" data-cam="${cam.id}" onclick="if(window.showCctvLive) { window.showCctvLive('${cam.id}'); } else { window.location.href = '/cctv?cam=' + '${cam.id}'; } return false;">Lihat Live</a>
     </div>
   </article>`;
 }
@@ -176,6 +181,80 @@ function renderCctvGrid(targetSelector, limit) {
   const points = limit ? CCTV_POINTS.slice(0, limit) : CCTV_POINTS;
   el.innerHTML = points.map(cctvCardHTML).join('');
 }
+
+window.showCctvLive = function(camId) {
+  const cam = CCTV_POINTS.find(c => c.id === camId);
+  if (!cam) return;
+  
+  const isOnline = cam.status === 'online';
+  
+  // Hide grid and hero
+  const gridContainer = document.querySelector('[data-cctv-grid]');
+  if(gridContainer) gridContainer.style.display = 'none';
+  
+  const heroSection = document.querySelector('.page-hero');
+  if(heroSection) heroSection.style.display = 'none';
+  
+  // Create or get live view container
+  let liveView = document.getElementById('cctv-live-view');
+  if (!liveView) {
+    liveView = document.createElement('div');
+    liveView.id = 'cctv-live-view';
+    const wrap = gridContainer ? gridContainer.closest('.wrap') : null;
+    if (wrap) wrap.appendChild(liveView);
+  }
+  
+  liveView.style.display = 'block';
+  
+  // Gambar ditarik dari property 'image' pada data CCTV
+  const placeholderImage = cam.image || '/images/cctv_park.jpg';
+  
+  liveView.innerHTML = `
+    <div class="cctv-live-container">
+      <a href="#" onclick="window.showCctvGrid(); return false;" class="back-link">
+        &larr; Kembali ke Semua CCTV Publik
+      </a>
+      
+      <div class="cctv-live-player">
+        <img src="${placeholderImage}" alt="${cam.name}" class="cctv-live-image" />
+        <div class="play-icon-overlay">
+          <svg viewBox="0 0 24 24" fill="white" stroke="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+        </div>
+      </div>
+      
+      <div class="cctv-live-info">
+        <div>
+          <h2 class="cctv-live-title">${cam.name}</h2>
+          <p class="cctv-live-meta">${cam.area} &middot; Monitoring CCTV publik Kota Magelang</p>
+        </div>
+        <span class="status-pill ${isOnline ? 'online' : 'offline'}">
+          <span class="dot"></span>${isOnline ? 'Online' : 'Offline'}
+        </span>
+      </div>
+    </div>
+  `;
+  
+  // Smooth scroll to the live view, accounting for fixed header height (approx 70px)
+  setTimeout(() => {
+    const headerHeight = document.querySelector('.site-header') ? document.querySelector('.site-header').offsetHeight : 70;
+    const y = liveView.getBoundingClientRect().top + window.scrollY - headerHeight - 20;
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  }, 50);
+};
+
+window.showCctvGrid = function() {
+  const gridContainer = document.querySelector('[data-cctv-grid]');
+  if(gridContainer) gridContainer.style.display = '';
+  
+  const heroSection = document.querySelector('.page-hero');
+  if(heroSection) heroSection.style.display = ''; 
+  
+  const liveView = document.getElementById('cctv-live-view');
+  if (liveView) liveView.style.display = 'none';
+  
+  // Smooth scroll to top when going back
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
 
 // Render department detail page based on ?dept= query param
 function renderDeptPage() {
@@ -202,7 +281,7 @@ function renderDeptPage() {
         <div class="file-name">${d.name}</div>
         <div class="file-meta">${d.meta}</div>
       </div>
-      <a class="dl" href="#" onclick="alert('Demo: unduhan berkas akan dimulai di sini.'); return false;">${ICONS.file} Unduh</a>
+      <a class="dl" href="/sample-document.pdf" target="_blank">${ICONS.file} Unduh</a>
     </li>
   `).join('');
 
@@ -244,4 +323,63 @@ document.addEventListener('DOMContentLoaded', () => {
   renderDeptPage();
   bindLoginForm();
 });
+
+// ---------- Generic Detail Modal ----------
+window.showDummyDetail = function(element) {
+  const tr = element.closest('tr');
+  let title = 'Detail Informasi';
+  let contentHtml = '<p>Data lengkap sedang dalam pengembangan.</p>';
+  
+  if (tr) {
+    const tdCells = Array.from(tr.querySelectorAll('td'));
+    if (tdCells.length >= 2) {
+      title = tdCells[0].innerText;
+      contentHtml = '<ul style="list-style:none; padding:0; margin:0;">';
+      const headers = Array.from(tr.closest('table').querySelectorAll('th')).map(th => th.innerText);
+      tdCells.forEach((td, idx) => {
+        if(headers[idx] && headers[idx].toLowerCase() !== 'aksi') {
+          contentHtml += `<li style="margin-bottom:8px;"><strong>${headers[idx]}:</strong> ${td.innerText}</li>`;
+        }
+      });
+      contentHtml += '</ul>';
+    }
+  } else {
+     // fallback for card clicks
+     const cardTitle = element.closest('.pub-info-item, .doc-card')?.querySelector('.pub-info-title, .doc-card-title')?.innerText;
+     if(cardTitle) title = cardTitle;
+  }
+  
+  let modal = document.getElementById('dummy-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'dummy-modal';
+    modal.innerHTML = `
+      <div style="position:fixed; inset:0; background:rgba(15, 23, 43, 0.5); backdrop-filter:blur(4px); z-index:9999; display:flex; align-items:center; justify-content:center; padding:24px; opacity:0; transition:opacity 0.2s;">
+        <div style="background:#fff; border-radius:16px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25); width:100%; max-width:500px; transform:translateY(20px); transition:transform 0.2s; overflow:hidden;">
+          <div style="padding:20px 24px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;">
+            <h3 id="dummy-modal-title" style="margin:0; font-size:18px; font-weight:700; color:#0f172a;">Detail</h3>
+            <button onclick="document.getElementById('dummy-modal').children[0].style.opacity=0; document.querySelector('#dummy-modal > div > div').style.transform='translateY(20px)'; setTimeout(()=>document.getElementById('dummy-modal').style.display='none', 200);" style="background:none; border:none; cursor:pointer; color:#64748b;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+            </button>
+          </div>
+          <div id="dummy-modal-content" style="padding:24px; font-size:15px; color:#475569; line-height:1.6; max-height:400px; overflow-y:auto;">
+          </div>
+          <div style="padding:16px 24px; background:#f8fafc; text-align:right;">
+             <button onclick="document.getElementById('dummy-modal').children[0].style.opacity=0; document.querySelector('#dummy-modal > div > div').style.transform='translateY(20px)'; setTimeout(()=>document.getElementById('dummy-modal').style.display='none', 200);" style="background:#2563eb; color:#fff; border:none; padding:8px 16px; border-radius:8px; font-weight:500; cursor:pointer;">Tutup</button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+  
+  document.getElementById('dummy-modal-title').innerText = title;
+  document.getElementById('dummy-modal-content').innerHTML = contentHtml;
+  
+  modal.style.display = 'block';
+  setTimeout(() => {
+    modal.children[0].style.opacity = 1;
+    modal.children[0].children[0].style.transform = 'translateY(0)';
+  }, 10);
+};
 

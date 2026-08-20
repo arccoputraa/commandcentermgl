@@ -79,14 +79,14 @@ if(isset($stats)) {
             <div class="summary-widget">
                 <h3 class="summary-widget-title">Informasi Terbaru</h3>
                 <div>
-                    @foreach ($infoTerbaru as $info)
+                    @foreach ($projects->take(5) as $info)
                         <div class="pub-info-item">
                             <div class="pub-info-header">
-                                <p class="pub-info-title">{{ $info['judul'] }}</p>
-                                <span class="status-badge {{ $info['status'] === 'Draft' ? 'warning' : 'success' }}">{{ $info['status'] }}</span>
+                                <p class="pub-info-title">{{ $info->name }}</p>
+                                <span class="status-badge {{ $info->status === 'Selesai' ? 'success' : 'warning' }}">{{ $info->status }}</span>
                             </div>
-                            <p class="pub-info-meta">{{ $info['kategori'] }} � {{ $info['tanggal'] }}</p>
-                            <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat PDF</a>
+                            <p class="pub-info-meta">{{ $info->category }} - {{ \Carbon\Carbon::parse($info->created_at)->format('d M Y') }}</p>
+                            <a href="#" onclick="window.showDummyDetail(this); return false;" class="action-link">Lihat Detail</a>
                         </div>
                     @endforeach
                 </div>
@@ -114,17 +114,17 @@ if(isset($stats)) {
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($tabelProyek as $row)
+                    @foreach ($projects as $row)
                         <tr>
-                            <td>{{ $row['kode'] }}</td>
-                            <td>{{ $row['nama'] }}</td>
-                            <td>{{ $row['kategori'] }}</td>
-                            <td>{{ $row['kecamatan'] }}</td>
-                            <td>{{ $row['kelurahan'] }}</td>
-                            <td>{{ $row['anggaran'] }}</td>
-                            <td>{{ $row['progres'] }}</td>
-                            <td><span class="{{ $row['badge'] }} font-medium">{{ $row['status'] }}</span></td>
-                            <td><a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link">Lihat Detail</a></td>
+                            <td>{{ $row->project_code }}</td>
+                            <td>{{ $row->name }}</td>
+                            <td>{{ $row->category }}</td>
+                            <td>{{ $row->kecamatan ?? '-' }}</td>
+                            <td>{{ $row->kelurahan ?? '-' }}</td>
+                            <td>Rp {{ number_format($row->total_budget, 0, ',', '.') }}</td>
+                            <td>{{ $row->progress_percentage }}%</td>
+                            <td><span class="{{ $row->status === 'Selesai' ? 'text-green-600' : 'text-yellow-600' }} font-medium">{{ $row->status }}</span></td>
+                            <td><a href="#" onclick="window.showDummyDetail(this); return false;" class="action-link">Lihat Detail</a></td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -135,11 +135,15 @@ if(isset($stats)) {
     <div class="dashboard-doc-grid">
         @foreach ($dokumentasi as $dok)
             <div class="doc-card">
-                <div class="doc-placeholder">??</div>
+                @if($dok->file_path)
+                    <div class="doc-placeholder" style="background-image: url('{{ asset($dok->file_path) }}'); background-size: cover; background-position: center; color: transparent;">??</div>
+                @else
+                    <div class="doc-placeholder">??</div>
+                @endif
                 <div class="doc-card-body">
-                    <p class="doc-card-title">{{ $dok['judul'] }}</p>
-                    <p class="doc-card-sub">{{ $dok['sub'] }}</p>
-                    <a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;" class="action-link mt-4">Lihat Dokumentasi</a>
+                    <p class="doc-card-title">{{ $dok->title }}</p>
+                    <p class="doc-card-sub">{{ $dok->project ? $dok->project->name : '-' }}</p>
+                    <a href="#" onclick="window.showDummyDetail(this); return false;" class="action-link mt-4">Lihat Dokumentasi</a>
                 </div>
             </div>
         @endforeach
@@ -184,3 +188,4 @@ const map2 = L.map('map2').setView([-7.4797, 110.2177], 13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(map2);
 </script>
 @endsection
+

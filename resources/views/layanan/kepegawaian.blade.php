@@ -145,7 +145,7 @@
                             @endphp
                             <span class="table-badge {{ $badge }}">{{ $row->status_pengajuan }}</span>
                         </td>
-                        <td><a href="#" onclick="alert('Fitur sedang dalam pengembangan.'); return false;">Lihat Detail</a></td>
+                        <td><a href="#" onclick="window.showDummyDetail(this); return false;">Lihat Detail</a></td>
                     </tr>
                     @empty
                     <tr><td colspan="6" style="text-align:center;">Belum ada data.</td></tr>
@@ -195,3 +195,4 @@ document.addEventListener('DOMContentLoaded', function() {
     createBar(document.getElementById('chartMutasi'), ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'], {!! json_encode(array_values($chartMutasi ?? array_fill(1,12,0))) !!}, '#F59E0B');
 });
 </script>
+
