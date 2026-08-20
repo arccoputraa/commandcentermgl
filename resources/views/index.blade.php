@@ -42,7 +42,7 @@
 </header>
 
 <main>
-  <section class="hero home-hero">
+  <section class="hero home-hero" style="--container-image: url('{{ asset('images/container.png') }}');">
     <div class="wrap">
       <h1>Pusat Kendali &amp; Data <span class="hero-city">Kota Magelang</span></h1>
       <p>Platform terintegrasi untuk pemantauan, analisis, dan layanan publik seluruh perangkat daerah Kota Magelang dalam satu tempat.</p>

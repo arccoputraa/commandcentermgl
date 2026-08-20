@@ -35,7 +35,7 @@
 </header>
 
 <main>
-  <div class="login-hero">
+  <div class="login-hero" style="--container-image: url('{{ asset('images/container.png') }}');">
     <div class="login-card-split">
 
       <!-- Left: visual / branding panel -->
