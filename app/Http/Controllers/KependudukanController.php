@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class KependudukanController extends Controller
 {
@@ -89,17 +90,27 @@ class KependudukanController extends Controller
         session(['kependudukan_data_kartu_keluarga' => array_values($kartuKeluarga)]);
     }
 
-    private function dataMutasiPenduduk(): array
+    private function defaultDataMutasiPenduduk(): array
     {
         return [
-            ['tahun' => 2026, 'bulan' => 'Januari', 'kecamatan' => 'Magelang Tengah', 'kelurahan' => 'Panjang', 'kelahiran' => 18, 'kematian' => 7, 'pindah_datang' => 24, 'pindah_keluar' => 15, 'update' => '31 Jan 2026'],
-            ['tahun' => 2026, 'bulan' => 'Februari', 'kecamatan' => 'Magelang Selatan', 'kelurahan' => 'Jurangombo Utara', 'kelahiran' => 21, 'kematian' => 9, 'pindah_datang' => 18, 'pindah_keluar' => 12, 'update' => '28 Feb 2026'],
-            ['tahun' => 2026, 'bulan' => 'Maret', 'kecamatan' => 'Magelang Utara', 'kelurahan' => 'Kedungsari', 'kelahiran' => 15, 'kematian' => 6, 'pindah_datang' => 20, 'pindah_keluar' => 14, 'update' => '31 Mar 2026'],
-            ['tahun' => 2026, 'bulan' => 'April', 'kecamatan' => 'Magelang Tengah', 'kelurahan' => 'Kemirirejo', 'kelahiran' => 12, 'kematian' => 5, 'pindah_datang' => 16, 'pindah_keluar' => 10, 'update' => '30 Apr 2026'],
+            ['tahun' => 2026, 'bulan' => 'Januari', 'kecamatan' => 'Magelang Tengah', 'kelurahan' => 'Panjang', 'kelahiran' => 18, 'kematian' => 7, 'pindah_datang' => 24, 'pindah_keluar' => 15, 'status' => 'Aktif', 'update' => '31 Jan 2026'],
+            ['tahun' => 2026, 'bulan' => 'Februari', 'kecamatan' => 'Magelang Selatan', 'kelurahan' => 'Jurangombo Utara', 'kelahiran' => 21, 'kematian' => 9, 'pindah_datang' => 18, 'pindah_keluar' => 12, 'status' => 'Aktif', 'update' => '28 Feb 2026'],
+            ['tahun' => 2026, 'bulan' => 'Maret', 'kecamatan' => 'Magelang Utara', 'kelurahan' => 'Kedungsari', 'kelahiran' => 15, 'kematian' => 6, 'pindah_datang' => 20, 'pindah_keluar' => 14, 'status' => 'Aktif', 'update' => '31 Mar 2026'],
+            ['tahun' => 2026, 'bulan' => 'April', 'kecamatan' => 'Magelang Tengah', 'kelurahan' => 'Kemirirejo', 'kelahiran' => 12, 'kematian' => 5, 'pindah_datang' => 16, 'pindah_keluar' => 10, 'status' => 'Aktif', 'update' => '30 Apr 2026'],
         ];
     }
 
-    private function dataInformasiTerbaru(): array
+    private function dataMutasiPenduduk(): array
+    {
+        return session('kependudukan_data_mutasi_penduduk', $this->defaultDataMutasiPenduduk());
+    }
+
+    private function saveDataMutasiPenduduk(array $mutasi): void
+    {
+        session(['kependudukan_data_mutasi_penduduk' => array_values($mutasi)]);
+    }
+
+    private function defaultDataInformasiTerbaru(): array
     {
         return [
             ['judul' => 'Rekap Data Kependudukan Semester I 2026', 'kategori' => 'Rekap Penduduk', 'file' => 'rekap-penduduk-semester-1.pdf', 'tanggal' => '03 Jul 2026', 'status' => 'Rilis'],
@@ -109,48 +120,90 @@ class KependudukanController extends Controller
         ];
     }
 
+    private function dataInformasiTerbaru(): array
+    {
+        return session('kependudukan_data_informasi_terbaru', $this->defaultDataInformasiTerbaru());
+    }
+
+    private function saveDataInformasiTerbaru(array $informasi): void
+    {
+        session(['kependudukan_data_informasi_terbaru' => array_values($informasi)]);
+    }
+
     public function dashboard()
     {
+        // Load live session data (falls back to defaults)
+        $dataPenduduk  = $this->dataPenduduk();
+        $dataAgama     = $this->dataAgama();
+        $dataMutasi    = $this->dataMutasiPenduduk();
+        $dataInformasi = $this->dataInformasiTerbaru();
+
+        // Compute summary stats from session
+        $totalPenduduk  = 0; $lakiLaki = 0; $perempuan = 0;
+        $totalKk = 0; $wajibKtp = 0; $usiaProduktif = 0;
+        foreach ($dataPenduduk as $item) {
+            if ($item['status'] === 'Aktif') {
+                $totalPenduduk  += $item['penduduk'];
+                $lakiLaki       += $item['laki_laki'];
+                $perempuan      += $item['perempuan'];
+                $totalKk        += $item['kk'];
+                $wajibKtp       += $item['wajib_ktp'];
+                $usiaProduktif  += $item['usia_produktif'];
+            }
+        }
+        $kelahiran = 0; $kematian = 0;
+        foreach ($dataMutasi as $item) {
+            if ($item['status'] === 'Aktif') {
+                $kelahiran += $item['kelahiran'];
+                $kematian  += $item['kematian'];
+            }
+        }
+
         $stats = [
-            'totalPenduduk' => 126840,
-            'lakiLaki' => 62410,
-            'perempuan' => 64430,
-            'totalKk' => 39520,
-            'wajibKtp' => 94780,
-            'usiaProduktif' => 86240,
-            'kelahiranTahunIni' => 412,
-            'kematianTahunIni' => 185,
+            'totalPenduduk'    => $totalPenduduk,
+            'lakiLaki'         => $lakiLaki,
+            'perempuan'        => $perempuan,
+            'totalKk'          => $totalKk,
+            'wajibKtp'         => $wajibKtp,
+            'usiaProduktif'    => $usiaProduktif,
+            'kelahiranTahunIni'=> $kelahiran,
+            'kematianTahunIni' => $kematian,
         ];
 
-        $agama = [
-            ['label' => 'Islam', 'total' => 98240],
-            ['label' => 'Kristen', 'total' => 11200],
-            ['label' => 'Katolik', 'total' => 9800],
-            ['label' => 'Hindu', 'total' => 1420],
-            ['label' => 'Buddha', 'total' => 920],
-            ['label' => 'Konghucu', 'total' => 280],
-        ];
+        // Agama chart grouped
+        $agamaGrouped = [];
+        foreach ($dataAgama as $item) {
+            if ($item['status'] === 'Aktif') {
+                $agamaGrouped[$item['agama']] = ($agamaGrouped[$item['agama']] ?? 0) + $item['penduduk'];
+            }
+        }
+        $agama = array_map(fn($label, $total) => ['label' => $label, 'total' => $total],
+            array_keys($agamaGrouped), array_values($agamaGrouped));
 
-        $kecamatan = [
-            ['label' => 'Magelang Tengah', 'total' => 43620],
-            ['label' => 'Magelang Selatan', 'total' => 42160],
-            ['label' => 'Magelang Utara', 'total' => 40895],
-        ];
+        // Kecamatan chart grouped
+        $kecamatanGrouped = [];
+        foreach ($dataPenduduk as $item) {
+            if ($item['status'] === 'Aktif') {
+                $kecamatanGrouped[$item['kecamatan']] = ($kecamatanGrouped[$item['kecamatan']] ?? 0) + $item['penduduk'];
+            }
+        }
+        $kecamatan = array_map(fn($label, $total) => ['label' => $label, 'total' => $total],
+            array_keys($kecamatanGrouped), array_values($kecamatanGrouped));
 
-        $kelurahan = [
-            ['tahun' => 2026, 'kecamatan' => 'Magelang Tengah', 'kelurahan' => 'Panjang', 'penduduk' => 8240, 'kk' => 2340, 'agama' => 'Islam'],
-            ['tahun' => 2026, 'kecamatan' => 'Magelang Selatan', 'kelurahan' => 'Jurangombo Utara', 'penduduk' => 7850, 'kk' => 2180, 'agama' => 'Islam'],
-            ['tahun' => 2026, 'kecamatan' => 'Magelang Utara', 'kelurahan' => 'Kedungsari', 'penduduk' => 6730, 'kk' => 1920, 'agama' => 'Islam'],
-            ['tahun' => 2026, 'kecamatan' => 'Magelang Tengah', 'kelurahan' => 'Kemirirejo', 'penduduk' => 5980, 'kk' => 1710, 'agama' => 'Islam'],
-            ['tahun' => 2026, 'kecamatan' => 'Magelang Selatan', 'kelurahan' => 'Tidar Selatan', 'penduduk' => 6410, 'kk' => 1860, 'agama' => 'Islam'],
-        ];
+        // Kelurahan table
+        $kelurahan = array_map(function ($item) {
+            return [
+                'tahun'     => $item['tahun'],
+                'kecamatan' => $item['kecamatan'],
+                'kelurahan' => $item['kelurahan'],
+                'penduduk'  => $item['penduduk'],
+                'kk'        => $item['kk'],
+                'agama'     => $item['agama'],
+            ];
+        }, $dataPenduduk);
 
-        $publikasi = [
-            ['judul' => 'Rekap Data Kependudukan Semester I 2026', 'kategori' => 'Rekap Penduduk', 'tanggal' => '03 Jul 2026', 'status' => 'Rilis'],
-            ['judul' => 'Statistik Pemeluk Agama 2026', 'kategori' => 'Data Agama', 'tanggal' => '02 Jul 2026', 'status' => 'Rilis'],
-            ['judul' => 'Laporan Mutasi Penduduk Juni 2026', 'kategori' => 'Mutasi Penduduk', 'tanggal' => '01 Jul 2026', 'status' => 'Rilis'],
-            ['judul' => 'Publikasi Penduduk Berdasarkan Wilayah', 'kategori' => 'Statistik Wilayah', 'tanggal' => '30 Jun 2026', 'status' => 'Draft'],
-        ];
+        // Publikasi (latest released informasi)
+        $publikasi = array_slice(array_filter($dataInformasi, fn($i) => $i['status'] === 'Rilis'), 0, 4);
 
         return view('kependudukan.dashboard', compact('stats', 'agama', 'kecamatan', 'kelurahan', 'publikasi'));
     }
@@ -539,17 +592,236 @@ class KependudukanController extends Controller
         ]);
     }
 
-    public function mutasiPendudukIndex()
+    public function mutasiPendudukIndex(Request $request)
     {
         $mutasi = $this->dataMutasiPenduduk();
+        $filters = $request->only(['q', 'kecamatan', 'bulan']);
 
-        return view('kependudukan.mutasi-penduduk.index', compact('mutasi'));
+        $mutasi = array_map(function ($item, $index) {
+            $item['_id'] = $index + 1;
+            return $item;
+        }, $mutasi, array_keys($mutasi));
+
+        $mutasi = array_values(array_filter($mutasi, function ($item) use ($filters) {
+            $keyword = strtolower($filters['q'] ?? '');
+            $matchesKeyword = $keyword === ''
+                || str_contains(strtolower($item['bulan']), $keyword)
+                || str_contains(strtolower($item['kecamatan']), $keyword)
+                || str_contains(strtolower($item['kelurahan']), $keyword)
+                || str_contains((string) $item['tahun'], $keyword);
+
+            $matchesKecamatan = empty($filters['kecamatan']) || $item['kecamatan'] === $filters['kecamatan'];
+            $matchesBulan = empty($filters['bulan']) || $item['bulan'] === $filters['bulan'];
+
+            return $matchesKeyword && $matchesKecamatan && $matchesBulan;
+        }));
+
+        $allMutasi = $this->dataMutasiPenduduk();
+        $kecamatanOptions = array_values(array_unique(array_column($allMutasi, 'kecamatan')));
+        $bulanOptions = array_values(array_unique(array_column($allMutasi, 'bulan')));
+
+        return view('kependudukan.mutasi-penduduk.index', compact('mutasi', 'filters', 'kecamatanOptions', 'bulanOptions'));
     }
 
-    public function informasiTerbaruIndex()
+    public function mutasiPendudukShow(int $id)
+    {
+        $mutasi = $this->dataMutasiPenduduk();
+        $item = $mutasi[$id - 1] ?? abort(404);
+
+        return view('kependudukan.mutasi-penduduk.show', compact('item', 'id'));
+    }
+
+    public function mutasiPendudukCreate()
+    {
+        return view('kependudukan.mutasi-penduduk.form');
+    }
+
+    public function mutasiPendudukStore(Request $request)
+    {
+        $data = $this->validateDataMutasiPenduduk($request);
+        $mutasi = $this->dataMutasiPenduduk();
+        $mutasi[] = $data;
+        $this->saveDataMutasiPenduduk($mutasi);
+
+        return redirect()->route('kependudukan.mutasi-penduduk.index')->with('success', 'Data mutasi penduduk berhasil ditambahkan.');
+    }
+
+    public function mutasiPendudukEdit(int $id)
+    {
+        $mutasi = $this->dataMutasiPenduduk();
+        $item = $mutasi[$id - 1] ?? abort(404);
+
+        return view('kependudukan.mutasi-penduduk.form', compact('item', 'id'));
+    }
+
+    public function mutasiPendudukUpdate(Request $request, int $id)
+    {
+        $mutasi = $this->dataMutasiPenduduk();
+        abort_unless(isset($mutasi[$id - 1]), 404);
+
+        $mutasi[$id - 1] = $this->validateDataMutasiPenduduk($request);
+        $this->saveDataMutasiPenduduk($mutasi);
+
+        return redirect()->route('kependudukan.mutasi-penduduk.show', $id)->with('success', 'Data mutasi penduduk berhasil diperbarui.');
+    }
+
+    public function mutasiPendudukDestroy(int $id)
+    {
+        $mutasi = $this->dataMutasiPenduduk();
+        abort_unless(isset($mutasi[$id - 1]), 404);
+
+        unset($mutasi[$id - 1]);
+        $this->saveDataMutasiPenduduk($mutasi);
+
+        return redirect()->route('kependudukan.mutasi-penduduk.index')->with('success', 'Data mutasi penduduk berhasil dihapus.');
+    }
+
+    private function validateDataMutasiPenduduk(Request $request): array
+    {
+        return $request->validate([
+            'tahun' => ['required', 'integer', 'min:2000', 'max:2100'],
+            'bulan' => ['required', 'string', 'max:30'],
+            'kecamatan' => ['required', 'string', 'max:100'],
+            'kelurahan' => ['required', 'string', 'max:100'],
+            'kelahiran' => ['required', 'integer', 'min:0'],
+            'kematian' => ['required', 'integer', 'min:0'],
+            'pindah_datang' => ['required', 'integer', 'min:0'],
+            'pindah_keluar' => ['required', 'integer', 'min:0'],
+            'status' => ['required', 'string', 'max:30'],
+            'update' => ['required', 'string', 'max:30'],
+        ]);
+    }
+
+    public function informasiTerbaruIndex(Request $request)
     {
         $informasi = $this->dataInformasiTerbaru();
+        $filters = $request->only(['q', 'kategori', 'status']);
 
-        return view('kependudukan.informasi-terbaru.index', compact('informasi'));
+        $informasi = array_map(function ($item, $index) {
+            $item['_id'] = $index + 1;
+            return $item;
+        }, $informasi, array_keys($informasi));
+
+        $informasi = array_values(array_filter($informasi, function ($item) use ($filters) {
+            $keyword = strtolower($filters['q'] ?? '');
+            $matchesKeyword = $keyword === ''
+                || str_contains(strtolower($item['judul']), $keyword)
+                || str_contains(strtolower($item['kategori']), $keyword)
+                || str_contains(strtolower($item['file']), $keyword);
+
+            $matchesKategori = empty($filters['kategori']) || $item['kategori'] === $filters['kategori'];
+            $matchesStatus = empty($filters['status']) || $item['status'] === $filters['status'];
+
+            return $matchesKeyword && $matchesKategori && $matchesStatus;
+        }));
+
+        $allInformasi = $this->dataInformasiTerbaru();
+        $kategoriOptions = array_values(array_unique(array_column($allInformasi, 'kategori')));
+        $statusOptions = array_values(array_unique(array_column($allInformasi, 'status')));
+
+        return view('kependudukan.informasi-terbaru.index', compact('informasi', 'filters', 'kategoriOptions', 'statusOptions'));
+    }
+
+    public function informasiTerbaruCreate()
+    {
+        return view('kependudukan.informasi-terbaru.form');
+    }
+
+    public function informasiTerbaruStore(Request $request)
+    {
+        $data = $this->validateInformasiTerbaru($request, true);
+        $data = $this->storeInformasiTerbaruPdf($request, $data);
+        
+        $informasi = $this->dataInformasiTerbaru();
+        $informasi[] = $data;
+        $this->saveDataInformasiTerbaru($informasi);
+
+        return redirect()->route('kependudukan.informasi-terbaru.index')->with('success', 'Informasi terbaru berhasil ditambahkan.');
+    }
+
+    public function informasiTerbaruShow(int $id)
+    {
+        $informasi = $this->dataInformasiTerbaru();
+        $item = $informasi[$id - 1] ?? abort(404);
+
+        return view('kependudukan.informasi-terbaru.show', compact('item', 'id'));
+    }
+
+    public function informasiTerbaruPdf(int $id)
+    {
+        $informasi = $this->dataInformasiTerbaru();
+        $item = $informasi[$id - 1] ?? abort(404);
+
+        abort_if(empty($item['file_path']) || !Storage::disk('public')->exists($item['file_path']), 404);
+
+        return Storage::disk('public')->response($item['file_path'], $item['file']);
+    }
+
+    public function informasiTerbaruEdit(int $id)
+    {
+        $informasi = $this->dataInformasiTerbaru();
+        $item = $informasi[$id - 1] ?? abort(404);
+
+        return view('kependudukan.informasi-terbaru.form', compact('item', 'id'));
+    }
+
+    public function informasiTerbaruUpdate(Request $request, int $id)
+    {
+        $informasi = $this->dataInformasiTerbaru();
+        abort_unless(isset($informasi[$id - 1]), 404);
+
+        $data = $this->validateInformasiTerbaru($request, false);
+        $informasi[$id - 1] = $this->storeInformasiTerbaruPdf($request, $data, $informasi[$id - 1]);
+        $this->saveDataInformasiTerbaru($informasi);
+
+        return redirect()->route('kependudukan.informasi-terbaru.show', $id)->with('success', 'Informasi terbaru berhasil diperbarui.');
+    }
+
+    public function informasiTerbaruDestroy(int $id)
+    {
+        $informasi = $this->dataInformasiTerbaru();
+        abort_unless(isset($informasi[$id - 1]), 404);
+
+        if (!empty($informasi[$id - 1]['file_path'])) {
+            Storage::disk('public')->delete($informasi[$id - 1]['file_path']);
+        }
+
+        unset($informasi[$id - 1]);
+        $this->saveDataInformasiTerbaru($informasi);
+
+        return redirect()->route('kependudukan.informasi-terbaru.index')->with('success', 'Informasi terbaru berhasil dihapus.');
+    }
+
+    private function validateInformasiTerbaru(Request $request, bool $isCreate): array
+    {
+        return $request->validate([
+            'judul' => ['required', 'string', 'max:255'],
+            'kategori' => ['required', 'string', 'max:100'],
+            'file' => [$isCreate ? 'required' : 'nullable', 'file', 'mimes:pdf', 'max:10240'],
+            'tanggal' => ['required', 'string', 'max:30'],
+            'status' => ['required', 'string', 'in:Rilis,Draft'],
+        ]);
+    }
+
+    private function storeInformasiTerbaruPdf(Request $request, array $data, ?array $currentItem = null): array
+    {
+        unset($data['file']);
+
+        if ($request->hasFile('file')) {
+            if (!empty($currentItem['file_path'])) {
+                Storage::disk('public')->delete($currentItem['file_path']);
+            }
+
+            $uploadedFile = $request->file('file');
+            $data['file'] = $uploadedFile->getClientOriginalName();
+            $data['file_path'] = $uploadedFile->store('kependudukan/informasi-terbaru', 'public');
+
+            return $data;
+        }
+
+        $data['file'] = $currentItem['file'] ?? '';
+        $data['file_path'] = $currentItem['file_path'] ?? null;
+
+        return $data;
     }
 }

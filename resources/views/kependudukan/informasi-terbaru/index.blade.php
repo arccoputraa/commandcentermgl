@@ -14,7 +14,7 @@
     .search-field i { position:absolute; left:18px; top:50%; transform:translateY(-50%); color:#8da0bb; font-size:18px; }
     .filter-input { width:100%; padding:0 18px 0 54px; }
     .filter-input::placeholder { color:#8b96a8; }
-    .filter-select { width:100%; color:transparent; padding:0 16px; }
+    .filter-select { width:100%; padding:0 16px; }
     .filter-button { height:50px; border:0; border-radius:10px; background:#2563eb; color:#fff; font-size:18px; font-weight:700; cursor:pointer; }
     .table-card { background:#fff; border:1px solid #e8edf3; border-radius:18px; overflow:hidden; box-shadow:0 2px 5px rgba(15,23,42,.1); }
     .table-wrap { overflow-x:auto; }
@@ -33,10 +33,13 @@
     .status-pill.release { background:#ecfdf5; border:1px solid #a7f3d0; color:#059669; }
     .status-pill.draft { background:#fffbeb; border:1px solid #fde68a; color:#d97706; }
     .action-cell { display:flex; justify-content:flex-end; gap:22px; }
-    .action-link { border:0; background:transparent; padding:0; cursor:pointer; font-size:18px; line-height:1; }
+    .action-link { border:0; background:transparent; padding:0; cursor:pointer; font-size:18px; line-height:1; text-decoration:none; }
     .action-link.view { color:#2563eb; }
     .action-link.edit { color:#f97316; }
     .action-link.delete { color:#ef1f1f; }
+    .file-link { color:#2563eb; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:8px; }
+    .file-link:hover { text-decoration:underline; }
+    .success-alert { margin-bottom:24px; padding:14px 18px; border-radius:10px; background:#ecfdf5; color:#047857; border:1px solid #a7f3d0; font-weight:700; }
     .table-footer { display:flex; justify-content:space-between; align-items:center; padding:24px 22px; border-top:1px solid #e5e7eb; color:#708098; font-size:18px; }
     @media (max-width:1200px) {
         .info-header { flex-direction:column; }
@@ -55,20 +58,34 @@
         <h2>Informasi Terbaru</h2>
         <p>Kelola data sumber internal kependudukan Kota Magelang dengan alur tambah, detail, edit, dan hapus/nonaktifkan.</p>
     </div>
-    <a href="#" class="add-button" onclick="alert('Fitur tambah informasi sedang dalam pengembangan.'); return false;">
+    <a href="{{ route('kependudukan.informasi-terbaru.create') }}" class="add-button">
         <i class="fa-solid fa-plus"></i>
         Tambah Informasi
     </a>
 </div>
 
-<form class="filter-card" action="#" method="GET">
+@if(session('success'))
+    <div class="success-alert">{{ session('success') }}</div>
+@endif
+
+<form class="filter-card" action="{{ route('kependudukan.informasi-terbaru.index') }}" method="GET">
     <div class="search-field">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input class="filter-input" type="search" placeholder="Cari data" aria-label="Cari informasi terbaru">
+        <input class="filter-input" type="search" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="Cari data" aria-label="Cari informasi terbaru">
     </div>
-    <select class="filter-select" aria-label="Pilih Kategori"><option value="">Pilih Kategori</option></select>
-    <select class="filter-select" aria-label="Pilih Status"><option value="">Pilih Status</option></select>
-    <button class="filter-button" type="button">Terapkan Filter</button>
+    <select class="filter-select" name="kategori" aria-label="Pilih Kategori" style="color:#1d293d;">
+        <option value="">Pilih Kategori</option>
+        @foreach($kategoriOptions as $kategori)
+            <option value="{{ $kategori }}" {{ ($filters['kategori'] ?? '') === $kategori ? 'selected' : '' }}>{{ $kategori }}</option>
+        @endforeach
+    </select>
+    <select class="filter-select" name="status" aria-label="Pilih Status" style="color:#1d293d;">
+        <option value="">Pilih Status</option>
+        @foreach($statusOptions as $status)
+            <option value="{{ $status }}" {{ ($filters['status'] ?? '') === $status ? 'selected' : '' }}>{{ $status }}</option>
+        @endforeach
+    </select>
+    <button class="filter-button" type="submit">Terapkan Filter</button>
 </form>
 
 <div class="table-card">
@@ -86,36 +103,53 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($informasi as $item)
+                @forelse($informasi as $item)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item['judul'] }}</td>
                         <td>{{ $item['kategori'] }}</td>
-                        <td>{{ $item['file'] }}</td>
+                        <td>
+                            @if(!empty($item['file_path']))
+                                <a class="file-link" href="{{ route('kependudukan.informasi-terbaru.pdf', $item['_id']) }}" target="_blank" rel="noopener">
+                                    <i class="fa-regular fa-file-pdf"></i>
+                                    {{ $item['file'] }}
+                                </a>
+                            @else
+                                {{ $item['file'] }}
+                            @endif
+                        </td>
                         <td>{{ $item['tanggal'] }}</td>
                         <td>
                             <span class="status-pill {{ $item['status'] === 'Rilis' ? 'release' : 'draft' }}">{{ $item['status'] }}</span>
                         </td>
                         <td>
                             <div class="action-cell">
-                                <button class="action-link view" type="button" aria-label="Lihat detail" onclick="alert('Fitur detail informasi sedang dalam pengembangan.');">
+                                <a class="action-link view" href="{{ route('kependudukan.informasi-terbaru.show', $item['_id']) }}" aria-label="Lihat detail">
                                     <i class="fa-regular fa-eye"></i>
-                                </button>
-                                <button class="action-link edit" type="button" aria-label="Edit informasi" onclick="alert('Fitur edit informasi sedang dalam pengembangan.');">
+                                </a>
+                                <a class="action-link edit" href="{{ route('kependudukan.informasi-terbaru.edit', $item['_id']) }}" aria-label="Edit informasi">
                                     <i class="fa-regular fa-pen-to-square"></i>
-                                </button>
-                                <button class="action-link delete" type="button" aria-label="Hapus informasi" onclick="alert('Fitur hapus informasi sedang dalam pengembangan.');">
-                                    <i class="fa-regular fa-trash-can"></i>
-                                </button>
+                                </a>
+                                <form action="{{ route('kependudukan.informasi-terbaru.destroy', $item['_id']) }}" method="POST" style="display:inline;" onsubmit="return confirm('Hapus informasi terbaru ini?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="action-link delete" type="submit" aria-label="Hapus informasi">
+                                        <i class="fa-regular fa-trash-can"></i>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr>
+                        <td colspan="7" style="padding:24px; text-align:center; color:#94a3b8;">Tidak ada data informasi terbaru.</td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
     <div class="table-footer">
-        <span>Menampilkan {{ count($informasi) }} data dummy</span>
+        <span>Menampilkan {{ count($informasi) }} data</span>
         <span>Halaman 1 dari 1</span>
     </div>
 </div>

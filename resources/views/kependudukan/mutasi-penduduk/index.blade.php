@@ -36,6 +36,7 @@
     .action-link.edit { color:#f97316; }
     .action-link.delete { color:#ef1f1f; }
     .table-footer { display:flex; justify-content:space-between; align-items:center; padding:24px 22px; border-top:1px solid #e5e7eb; color:#708098; font-size:18px; }
+    .success-alert { margin-bottom:24px; padding:14px 18px; border-radius:10px; background:#ecfdf5; color:#047857; border:1px solid #a7f3d0; font-weight:700; }
     @media (max-width:1200px) {
         .mutation-header { flex-direction:column; }
         .filter-card { grid-template-columns:1fr 1fr; }
@@ -53,20 +54,34 @@
         <h2>Mutasi Penduduk</h2>
         <p>Kelola data sumber internal kependudukan Kota Magelang dengan alur tambah, detail, edit, dan hapus/nonaktifkan.</p>
     </div>
-    <a href="#" class="add-button" onclick="alert('Fitur tambah data mutasi sedang dalam pengembangan.'); return false;">
+    <a href="{{ route('kependudukan.mutasi-penduduk.create') }}" class="add-button">
         <i class="fa-solid fa-plus"></i>
         Tambah Data Mutasi
     </a>
 </div>
 
-<form class="filter-card" action="#" method="GET">
+@if(session('success'))
+    <div class="success-alert">{{ session('success') }}</div>
+@endif
+
+<form class="filter-card" action="{{ route('kependudukan.mutasi-penduduk.index') }}" method="GET">
     <div class="search-field">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input class="filter-input" type="search" placeholder="Cari data" aria-label="Cari data mutasi penduduk">
+        <input class="filter-input" type="search" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="Cari data" aria-label="Cari data mutasi penduduk">
     </div>
-    <select class="filter-select" aria-label="Pilih Kecamatan"><option value="">Pilih Kecamatan</option></select>
-    <select class="filter-select" aria-label="Pilih Bulan"><option value="">Pilih Bulan</option></select>
-    <button class="filter-button" type="button">Terapkan Filter</button>
+    <select class="filter-select" name="kecamatan" aria-label="Pilih Kecamatan" style="color:#1d293d;">
+        <option value="">Pilih Kecamatan</option>
+        @foreach($kecamatanOptions as $kecamatan)
+            <option value="{{ $kecamatan }}" {{ ($filters['kecamatan'] ?? '') === $kecamatan ? 'selected' : '' }}>{{ $kecamatan }}</option>
+        @endforeach
+    </select>
+    <select class="filter-select" name="bulan" aria-label="Pilih Bulan" style="color:#1d293d;">
+        <option value="">Pilih Bulan</option>
+        @foreach($bulanOptions as $bulan)
+            <option value="{{ $bulan }}" {{ ($filters['bulan'] ?? '') === $bulan ? 'selected' : '' }}>{{ $bulan }}</option>
+        @endforeach
+    </select>
+    <button class="filter-button" type="submit">Terapkan Filter</button>
 </form>
 
 <div class="table-card">
@@ -102,15 +117,19 @@
                         <td>{{ $item['update'] }}</td>
                         <td>
                             <div class="action-cell">
-                                <button class="action-link view" type="button" aria-label="Lihat detail" onclick="alert('Fitur detail mutasi penduduk sedang dalam pengembangan.');">
+                                <a class="action-link view" href="{{ route('kependudukan.mutasi-penduduk.show', $item['_id']) }}" aria-label="Lihat detail">
                                     <i class="fa-regular fa-eye"></i>
-                                </button>
-                                <button class="action-link edit" type="button" aria-label="Edit data" onclick="alert('Fitur edit mutasi penduduk sedang dalam pengembangan.');">
+                                </a>
+                                <a class="action-link edit" href="{{ route('kependudukan.mutasi-penduduk.edit', $item['_id']) }}" aria-label="Edit data">
                                     <i class="fa-regular fa-pen-to-square"></i>
-                                </button>
-                                <button class="action-link delete" type="button" aria-label="Hapus data" onclick="alert('Fitur hapus mutasi penduduk sedang dalam pengembangan.');">
-                                    <i class="fa-regular fa-trash-can"></i>
-                                </button>
+                                </a>
+                                <form action="{{ route('kependudukan.mutasi-penduduk.destroy', $item['_id']) }}" method="POST" style="display:inline;" onsubmit="return confirm('Hapus data mutasi penduduk ini?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="action-link delete" type="submit" aria-label="Hapus data">
+                                        <i class="fa-regular fa-trash-can"></i>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>
@@ -119,7 +138,7 @@
         </table>
     </div>
     <div class="table-footer">
-        <span>Menampilkan {{ count($mutasi) }} data dummy</span>
+        <span>Menampilkan {{ count($mutasi) }} data</span>
         <span>Halaman 1 dari 1</span>
     </div>
 </div>
