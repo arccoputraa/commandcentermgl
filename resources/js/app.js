@@ -142,11 +142,11 @@ const DEPARTMENTS = {
 // GANTI GAMBAR PER LOKASI DI SINI: Ubah property 'image' dengan path gambar yang sesuai untuk setiap CCTV
 const CCTV_POINTS = [
  { id: 'taman-badaan-barat', name: 'Taman Badaan Barat', area: 'Kecamatan Magelang Tengah', status: 'online', image: '/images/cctv_park.jpg' },
-  { id: 'taman-skateboard-magersari', name: 'Taman Skateboard Magersari', area: 'Kecamatan Magelang Selatan', status: 'online', image: '/images/cctv_park.jpg' },
-  { id: 'taman-depan-atria', name: 'Taman Depan Atria', area: 'Kecamatan Magelang Tengah', status: 'online', image: '/images/cctv_park.jpg' },
+  { id: 'taman-skateboard-magersari', name: 'Taman Skateboard Magersari', area: 'Kecamatan Magelang Selatan', status: 'online', image: '/images/taman_skateboard_magersari.png' },
+  { id: 'taman-depan-atria', name: 'Taman Depan Atria', area: 'Kecamatan Magelang Tengah', status: 'online', image: '/images/taman_badaan.png' },
   { id: 'batas-utara', name: 'Batas Utara Kota Magelang', area: 'Kecamatan Magelang Utara', status: 'online', image: '/images/cctv_park.jpg' },
-  { id: 'kebun-bibit-senopati', name: 'Kebun Bibit Senopati', area: 'Kecamatan Magelang Utara', status: 'online', image: '/images/cctv_park.jpg' },
-  { id: 'pertigaan-sman1', name: 'Pertigaan SMA Negeri 1', area: 'Kecamatan Magelang Tengah', status: 'online', image: '/images/cctv_park.jpg' },
+  { id: 'kebun-bibit-senopati', name: 'Kebun Bibit Senopati', area: 'Kecamatan Magelang Utara', status: 'online', image: '/images/bibit_senopati.png' },
+  { id: 'pertigaan-sman1', name: 'Pertigaan SMA Negeri 1', area: 'Kecamatan Magelang Tengah', status: 'online', image: '/images/smansamgl.png' },
   { id: 'alun-alun', name: 'Alun-Alun Kota Magelang', area: 'Kecamatan Magelang Tengah', status: 'online', image: '/images/cctv_park.jpg' },
   { id: 'pasar-rejowinangun', name: 'Pasar Rejowinangun', area: 'Kecamatan Magelang Selatan', status: 'offline', image: '/images/cctv_park.jpg' }
 ];
@@ -281,7 +281,7 @@ function renderDeptPage() {
         <div class="file-name">${d.name}</div>
         <div class="file-meta">${d.meta}</div>
       </div>
-      <a class="dl" href="/sample-document.pdf" target="_blank">${ICONS.file} Unduh</a>
+      <a class="dl" href="#" onclick="alert('Demo: unduhan berkas akan dimulai di sini.'); return false;">${ICONS.file} Unduh</a>
     </li>
   `).join('');
 
@@ -323,63 +323,4 @@ document.addEventListener('DOMContentLoaded', () => {
   renderDeptPage();
   bindLoginForm();
 });
-
-// ---------- Generic Detail Modal ----------
-window.showDummyDetail = function(element) {
-  const tr = element.closest('tr');
-  let title = 'Detail Informasi';
-  let contentHtml = '<p>Data lengkap sedang dalam pengembangan.</p>';
-  
-  if (tr) {
-    const tdCells = Array.from(tr.querySelectorAll('td'));
-    if (tdCells.length >= 2) {
-      title = tdCells[0].innerText;
-      contentHtml = '<ul style="list-style:none; padding:0; margin:0;">';
-      const headers = Array.from(tr.closest('table').querySelectorAll('th')).map(th => th.innerText);
-      tdCells.forEach((td, idx) => {
-        if(headers[idx] && headers[idx].toLowerCase() !== 'aksi') {
-          contentHtml += `<li style="margin-bottom:8px;"><strong>${headers[idx]}:</strong> ${td.innerText}</li>`;
-        }
-      });
-      contentHtml += '</ul>';
-    }
-  } else {
-     // fallback for card clicks
-     const cardTitle = element.closest('.pub-info-item, .doc-card')?.querySelector('.pub-info-title, .doc-card-title')?.innerText;
-     if(cardTitle) title = cardTitle;
-  }
-  
-  let modal = document.getElementById('dummy-modal');
-  if (!modal) {
-    modal = document.createElement('div');
-    modal.id = 'dummy-modal';
-    modal.innerHTML = `
-      <div style="position:fixed; inset:0; background:rgba(15, 23, 43, 0.5); backdrop-filter:blur(4px); z-index:9999; display:flex; align-items:center; justify-content:center; padding:24px; opacity:0; transition:opacity 0.2s;">
-        <div style="background:#fff; border-radius:16px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25); width:100%; max-width:500px; transform:translateY(20px); transition:transform 0.2s; overflow:hidden;">
-          <div style="padding:20px 24px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;">
-            <h3 id="dummy-modal-title" style="margin:0; font-size:18px; font-weight:700; color:#0f172a;">Detail</h3>
-            <button onclick="document.getElementById('dummy-modal').children[0].style.opacity=0; document.querySelector('#dummy-modal > div > div').style.transform='translateY(20px)'; setTimeout(()=>document.getElementById('dummy-modal').style.display='none', 200);" style="background:none; border:none; cursor:pointer; color:#64748b;">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"></path></svg>
-            </button>
-          </div>
-          <div id="dummy-modal-content" style="padding:24px; font-size:15px; color:#475569; line-height:1.6; max-height:400px; overflow-y:auto;">
-          </div>
-          <div style="padding:16px 24px; background:#f8fafc; text-align:right;">
-             <button onclick="document.getElementById('dummy-modal').children[0].style.opacity=0; document.querySelector('#dummy-modal > div > div').style.transform='translateY(20px)'; setTimeout(()=>document.getElementById('dummy-modal').style.display='none', 200);" style="background:#2563eb; color:#fff; border:none; padding:8px 16px; border-radius:8px; font-weight:500; cursor:pointer;">Tutup</button>
-          </div>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(modal);
-  }
-  
-  document.getElementById('dummy-modal-title').innerText = title;
-  document.getElementById('dummy-modal-content').innerHTML = contentHtml;
-  
-  modal.style.display = 'block';
-  setTimeout(() => {
-    modal.children[0].style.opacity = 1;
-    modal.children[0].children[0].style.transform = 'translateY(0)';
-  }, 10);
-};
 
