@@ -61,6 +61,21 @@
                         <input type="date" class="form-control" id="upload_date" name="upload_date" value="{{ old('upload_date', isset($document) ? \Carbon\Carbon::parse($document->upload_date)->format('Y-m-d') : date('Y-m-d')) }}" required>
                     </div>
 
+                    <div class="col-md-6 mb-3">
+                        <label for="status_tag" class="form-label">Status Tag (Badge)</label>
+                        <select class="form-select form-control" id="status_tag" name="status_tag">
+                            <option value="">Pilih Status (Opsional)</option>
+                            <option value="Rilis" {{ old('status_tag', $document->status_tag ?? '') == 'Rilis' ? 'selected' : '' }}>Rilis</option>
+                            <option value="Draft" {{ old('status_tag', $document->status_tag ?? '') == 'Draft' ? 'selected' : '' }}>Draft</option>
+                            <option value="Internal" {{ old('status_tag', $document->status_tag ?? '') == 'Internal' ? 'selected' : '' }}>Internal</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-12 mb-3">
+                        <label for="description" class="form-label">Deskripsi</label>
+                        <textarea class="form-control" id="description" name="description" rows="3">{{ old('description', $document->description ?? '') }}</textarea>
+                    </div>
+
                     <div class="col-md-12 mb-3">
                         <label for="file" class="form-label">File Dokumen {{ isset($document) ? '(Biarkan kosong jika tidak ingin mengubah file)' : '*' }}</label>
                         <input type="file" class="form-control" id="file" name="file" {{ isset($document) ? '' : 'required' }}>

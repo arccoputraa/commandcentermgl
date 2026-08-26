@@ -19,4 +19,9 @@ class PembangunanProject extends Model
     {
         return $this->hasMany(PembangunanDocument::class);
     }
+
+    public function progress()
+    {
+        return $this->hasMany(PembangunanProjectProgress::class, 'project_id');
+    }
 }

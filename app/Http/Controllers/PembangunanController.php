@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PembangunanProject;
 use App\Models\PembangunanDocument;
+use App\Models\PembangunanProjectProgress;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -129,6 +130,11 @@ class PembangunanController extends Controller
             'project_code' => 'required|unique:pembangunan_projects',
             'name' => 'required|string|max:255',
             'category' => 'required|string',
+            'kecamatan' => 'nullable|string',
+            'kelurahan' => 'nullable|string',
+            'total_budget' => 'nullable|numeric',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
             'status' => 'required|string',
         ]);
 
@@ -151,6 +157,11 @@ class PembangunanController extends Controller
             'project_code' => 'required|unique:pembangunan_projects,project_code,' . $project->id,
             'name' => 'required|string|max:255',
             'category' => 'required|string',
+            'kecamatan' => 'nullable|string',
+            'kelurahan' => 'nullable|string',
+            'total_budget' => 'nullable|numeric',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
             'status' => 'required|string',
         ]);
 
@@ -187,6 +198,8 @@ class PembangunanController extends Controller
             'pembangunan_project_id' => 'required|exists:pembangunan_projects,id',
             'title' => 'required|string|max:255',
             'type' => 'required|string',
+            'status_tag' => 'nullable|string',
+            'description' => 'nullable|string',
             'file' => 'required|file|max:10240', // 10MB max
             'upload_date' => 'required|date',
         ]);
@@ -220,6 +233,8 @@ class PembangunanController extends Controller
             'pembangunan_project_id' => 'required|exists:pembangunan_projects,id',
             'title' => 'required|string|max:255',
             'type' => 'required|string',
+            'status_tag' => 'nullable|string',
+            'description' => 'nullable|string',
             'file' => 'nullable|file|max:10240',
             'upload_date' => 'required|date',
         ]);
@@ -256,5 +271,40 @@ class PembangunanController extends Controller
         $document->delete();
 
         return redirect()->route('pembangunan.document.index')->with('success', 'Dokumen berhasil dihapus.');
+    }
+
+    // --- PROGRES PROYEK CRUD ---
+
+    public function progressIndex(Request $request)
+    {
+        $progresses = PembangunanProjectProgress::with('project')->orderBy('report_date', 'desc')->paginate(10);
+        return view('pembangunan.progress.index', compact('progresses'));
+    }
+
+    public function progressCreate()
+    {
+        $projects = PembangunanProject::all();
+        return view('pembangunan.progress.form', compact('projects'));
+    }
+
+    public function progressStore(Request $request)
+    {
+        $request->validate([
+            'project_id' => 'required|exists:pembangunan_projects,id',
+            'report_date' => 'required|date',
+            'progress_percentage' => 'required|integer|min:0|max:100',
+            'realized_budget' => 'nullable|numeric',
+        ]);
+
+        PembangunanProjectProgress::create($request->all());
+        
+        // Update main project progress and realized_budget
+        $project = PembangunanProject::find($request->project_id);
+        $project->update([
+            'progress_percentage' => $request->progress_percentage,
+            'realized_budget' => $request->realized_budget ?? $project->realized_budget,
+        ]);
+
+        return redirect()->route('pembangunan.progress.index')->with('success', 'Update progres berhasil ditambahkan.');
     }
 }

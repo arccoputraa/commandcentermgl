@@ -444,6 +444,11 @@ Route::middleware('auth')->prefix('pembangunan')->group(function () {
     Route::get('/document/{id}/edit', [\App\Http\Controllers\PembangunanController::class, 'documentEdit'])->name('pembangunan.document.edit');
     Route::put('/document/{id}', [\App\Http\Controllers\PembangunanController::class, 'documentUpdate'])->name('pembangunan.document.update');
     Route::delete('/document/{id}', [\App\Http\Controllers\PembangunanController::class, 'documentDestroy'])->name('pembangunan.document.destroy');
+
+    // Progres Proyek
+    Route::get('/progress', [\App\Http\Controllers\PembangunanController::class, 'progressIndex'])->name('pembangunan.progress.index');
+    Route::get('/progress/create', [\App\Http\Controllers\PembangunanController::class, 'progressCreate'])->name('pembangunan.progress.create');
+    Route::post('/progress', [\App\Http\Controllers\PembangunanController::class, 'progressStore'])->name('pembangunan.progress.store');
 });
 
 // Kesehatan Routes (protected)

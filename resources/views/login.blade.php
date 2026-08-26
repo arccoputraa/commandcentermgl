@@ -51,7 +51,7 @@
           </div>
           <div class="eyebrow-cyan">Secure Government Data Access</div>
           <h1>Masuk ke pusat kendali data sektoral.</h1>
-          <p>Akses dashboard internal sesuai akun dan hak akses yang telah diberikan oleh administrator sistem.</p>
+          <p>Akses dashboard internal sesuai akun dan hak akses masing-masing divisi. Sistem otomatis mengarahkan pengguna ke ruang kerja yang berwenang.</p>
         </div>
       </section>
 
@@ -76,8 +76,7 @@
             <div class="input-group">
               <label for="username">Username / Email</label>
               <div class="input-wrap">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                <input type="email" id="username" name="email" value="{{ old('email') }}" autocomplete="email" required placeholder="Masukkan username/email">
+                <input type="email" id="username" name="email" value="{{ old('email') }}" autocomplete="email" required placeholder="Masukkan username">
               </div>
             </div>
 
@@ -87,7 +86,6 @@
                 <a class="forgot" href="#" onclick="alert('Demo: hubungi admin Diskominfo untuk reset kata sandi.'); return false;">Lupa Password?</a>
               </div>
               <div class="input-wrap">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                 <input type="password" id="password" name="password" autocomplete="current-password" required placeholder="Masukkan password">
               </div>
             </div>
