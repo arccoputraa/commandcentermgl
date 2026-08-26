@@ -174,6 +174,14 @@ Route::get('/layanan', function (Request $request) {
         }
     }
 
+    if ($dept === 'perhubungan' && view()->exists('layanan.perhubungan')) {
+        return view('layanan.perhubungan');
+    }
+
+    if ($dept === 'sig' && view()->exists('layanan.sig')) {
+        return view('layanan.sig');
+    }
+
     if ($dept === 'kependudukan') {
         $defaultPenduduk = [
             ['tahun' => 2026, 'kecamatan' => 'Magelang Tengah', 'kelurahan' => 'Panjang', 'penduduk' => 8240, 'laki_laki' => 4090, 'perempuan' => 4150, 'wajib_ktp' => 6120, 'usia_produktif' => 5430, 'anak' => 1620, 'lansia' => 1190, 'kk' => 2340, 'agama' => 'Islam', 'status' => 'Aktif', 'update' => '03 Jul 2026'],

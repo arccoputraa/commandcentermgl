@@ -8,27 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     @vite(['resources/css/admin.css', 'resources/js/app.js'])
-    <style>
-        body { background:#ffffff; }
-        .admin-sidebar { width:300px; background:#0d1b2e !important; box-shadow:none; }
-        .admin-main { margin-left:300px; background:#ffffff; }
-        .sidebar-header { height:74px; padding:0 28px; gap:14px; border-bottom:1px solid rgba(255,255,255,.06); }
-        .sidebar-header .logo-container { width:38px; height:38px; border-radius:7px; padding:0; }
-        .sidebar-header img { width:30px; height:30px; }
-        .sidebar-header h2 { font-size:22px; }
-        .sidebar-menu { padding:28px 18px; gap:12px; }
-        .menu-item { min-height:48px; padding:12px 18px; border-radius:11px; font-size:18px; line-height:1.25; gap:16px; color:#c7d1df; }
-        .menu-item.active { background:#334157; color:#fff; }
-        .menu-item i { width:24px; font-size:18px; }
-        .menu-item.active::before { left:16px; width:7px; height:7px; }
-        .menu-item.active i { margin-left:18px; color:#22d3ee; }
-        .admin-topbar { height:74px; padding:0 36px; background:#fff; }
-        .topbar-title { font-size:22px; color:#1d293d; }
-        .profile-info h4 { font-size:17px; }
-        .profile-info p { font-size:15px; color:#708098; }
-        .profile-img { width:42px; height:42px; font-size:19px; }
-        .admin-content { padding:44px 48px; }
-    </style>
     @stack('styles')
 </head>
 <body>
@@ -91,11 +70,231 @@
             </div>
         </header>
 
-        <div class="admin-content">
+        <div class="admin-content kependudukan-content">
             @yield('content')
         </div>
     </main>
 
+    <style>
+        .kependudukan-content .kependudukan-header,
+        .kependudukan-content .resident-header,
+        .kependudukan-content .religion-header,
+        .kependudukan-content .area-header,
+        .kependudukan-content .kk-header,
+        .kependudukan-content .mutation-header,
+        .kependudukan-content .info-header,
+        .kependudukan-content .form-header,
+        .kependudukan-content .detail-header {
+            margin-bottom: 24px !important;
+        }
+
+        .kependudukan-content h1.profile-title,
+        .kependudukan-content .kependudukan-header h2,
+        .kependudukan-content .resident-header h2,
+        .kependudukan-content .religion-header h2,
+        .kependudukan-content .area-header h2,
+        .kependudukan-content .kk-header h2,
+        .kependudukan-content .mutation-header h2,
+        .kependudukan-content .info-header h2,
+        .kependudukan-content .form-header h2,
+        .kependudukan-content .detail-header h2 {
+            font-size: 24px !important;
+            line-height: 1.25 !important;
+            margin-bottom: 8px !important;
+        }
+
+        .kependudukan-content .kependudukan-header p,
+        .kependudukan-content .resident-header p,
+        .kependudukan-content .religion-header p,
+        .kependudukan-content .area-header p,
+        .kependudukan-content .kk-header p,
+        .kependudukan-content .mutation-header p,
+        .kependudukan-content .info-header p,
+        .kependudukan-content .form-header p,
+        .kependudukan-content .detail-header p {
+            font-size: 14px !important;
+            line-height: 1.5 !important;
+        }
+
+        .kependudukan-content .add-button,
+        .kependudukan-content .edit-button,
+        .kependudukan-content .back-button,
+        .kependudukan-content .btn-back,
+        .kependudukan-content .btn-save,
+        .kependudukan-content .btn-cancel,
+        .kependudukan-content .btn-edit-profile,
+        .kependudukan-content .btn-logout-profile {
+            min-width: 0 !important;
+            height: auto !important;
+            padding: 10px 20px !important;
+            border-radius: 8px !important;
+            font-size: 14px !important;
+            gap: 8px !important;
+        }
+
+        .kependudukan-content .filter-card {
+            gap: 12px !important;
+            padding: 8px !important;
+            margin-bottom: 24px !important;
+            border-radius: 12px !important;
+        }
+
+        .kependudukan-content .filter-input,
+        .kependudukan-content .filter-select,
+        .kependudukan-content .filter-button,
+        .kependudukan-content .filter-card select,
+        .kependudukan-content .filter-card button,
+        .kependudukan-content .form-group input,
+        .kependudukan-content .form-group select {
+            height: 40px !important;
+            border-radius: 8px !important;
+            font-size: 14px !important;
+        }
+
+        .kependudukan-content .search-field i {
+            left: 16px !important;
+            font-size: 14px !important;
+        }
+
+        .kependudukan-content .filter-input {
+            padding-left: 42px !important;
+        }
+
+        .kependudukan-content .table-card,
+        .kependudukan-content .form-card,
+        .kependudukan-content .detail-card,
+        .kependudukan-content .panel-card,
+        .kependudukan-content .metric-card,
+        .kependudukan-content .profile-card {
+            border-radius: 12px !important;
+        }
+
+        .kependudukan-content .resident-table th,
+        .kependudukan-content .religion-table th,
+        .kependudukan-content .area-table th,
+        .kependudukan-content .kk-table th,
+        .kependudukan-content .mutation-table th,
+        .kependudukan-content .info-table th,
+        .kependudukan-content .data-table th {
+            padding: 16px 12px !important;
+            font-size: 12px !important;
+            font-weight: 600 !important;
+        }
+
+        .kependudukan-content .resident-table td,
+        .kependudukan-content .religion-table td,
+        .kependudukan-content .area-table td,
+        .kependudukan-content .kk-table td,
+        .kependudukan-content .mutation-table td,
+        .kependudukan-content .info-table td,
+        .kependudukan-content .data-table td {
+            padding: 16px 12px !important;
+            font-size: 14px !important;
+        }
+
+        .kependudukan-content .action-link {
+            font-size: 14px !important;
+        }
+
+        .kependudukan-content .action-cell {
+            gap: 12px !important;
+        }
+
+        .kependudukan-content .table-footer {
+            padding: 16px 12px !important;
+            font-size: 14px !important;
+        }
+
+        .kependudukan-content .status-pill,
+        .kependudukan-content .status-badge {
+            font-size: 12px !important;
+            font-weight: 600 !important;
+            padding: 4px 12px !important;
+        }
+
+        .kependudukan-content .metrics-grid {
+            gap: 16px !important;
+            margin-bottom: 16px !important;
+        }
+
+        .kependudukan-content .metric-card {
+            min-height: auto !important;
+            padding: 20px !important;
+        }
+
+        .kependudukan-content .metric-label {
+            font-size: 11px !important;
+            margin-bottom: 6px !important;
+        }
+
+        .kependudukan-content .metric-value {
+            font-size: 28px !important;
+        }
+
+        .kependudukan-content .panel-grid {
+            gap: 16px !important;
+            margin-top: 24px !important;
+        }
+
+        .kependudukan-content .panel-card,
+        .kependudukan-content .form-card {
+            padding: 24px !important;
+        }
+
+        .kependudukan-content .panel-title {
+            font-size: 14px !important;
+            margin-bottom: 20px !important;
+        }
+
+        .kependudukan-content .bar-label,
+        .kependudukan-content .form-group label,
+        .kependudukan-content .detail-label,
+        .kependudukan-content .history p {
+            font-size: 14px !important;
+        }
+
+        .kependudukan-content .detail-card {
+            padding: 32px !important;
+        }
+
+        .kependudukan-content .detail-value {
+            font-size: 16px !important;
+        }
+
+        .kependudukan-content .profile-container {
+            padding-top: 24px !important;
+        }
+
+        .kependudukan-content .profile-title {
+            margin-bottom: 24px !important;
+        }
+
+        .kependudukan-content .profile-card {
+            max-width: 560px !important;
+            min-height: 0 !important;
+            padding: 32px 48px !important;
+        }
+
+        .kependudukan-content .profile-avatar-large {
+            width: 96px !important;
+            height: 96px !important;
+            margin-bottom: 24px !important;
+        }
+
+        .kependudukan-content .profile-avatar-large svg {
+            width: 54px !important;
+            height: 54px !important;
+        }
+
+        .kependudukan-content .profile-name-large {
+            font-size: 24px !important;
+        }
+
+        .kependudukan-content .profile-subtitle {
+            font-size: 14px !important;
+            margin-bottom: 24px !important;
+        }
+    </style>
     @stack('scripts')
 </body>
 </html>

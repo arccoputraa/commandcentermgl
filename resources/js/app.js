@@ -141,14 +141,14 @@ const DEPARTMENTS = {
 // ---------- CCTV dataset ----------
 // GANTI GAMBAR PER LOKASI DI SINI: Ubah property 'image' dengan path gambar yang sesuai untuk setiap CCTV
 const CCTV_POINTS = [
- { id: 'taman-badaan-barat', name: 'Taman Badaan Barat', area: 'Kecamatan Magelang Tengah', status: 'online', image: '/images/cctv_park.jpg' },
-  { id: 'taman-skateboard-magersari', name: 'Taman Skateboard Magersari', area: 'Kecamatan Magelang Selatan', status: 'online', image: '/images/cctv_park.jpg' },
-  { id: 'taman-depan-atria', name: 'Taman Depan Atria', area: 'Kecamatan Magelang Tengah', status: 'online', image: '/images/cctv_park.jpg' },
-  { id: 'batas-utara', name: 'Batas Utara Kota Magelang', area: 'Kecamatan Magelang Utara', status: 'online', image: '/images/cctv_park.jpg' },
-  { id: 'kebun-bibit-senopati', name: 'Kebun Bibit Senopati', area: 'Kecamatan Magelang Utara', status: 'online', image: '/images/cctv_park.jpg' },
-  { id: 'pertigaan-sman1', name: 'Pertigaan SMA Negeri 1', area: 'Kecamatan Magelang Tengah', status: 'online', image: '/images/cctv_park.jpg' },
-  { id: 'alun-alun', name: 'Alun-Alun Kota Magelang', area: 'Kecamatan Magelang Tengah', status: 'online', image: '/images/cctv_park.jpg' },
-  { id: 'pasar-rejowinangun', name: 'Pasar Rejowinangun', area: 'Kecamatan Magelang Selatan', status: 'offline', image: '/images/cctv_park.jpg' }
+  { id: 'taman-badaan-barat', name: 'Taman Badaan Barat', area: 'Kecamatan Magelang Tengah', status: 'online', image: '/images/tamanbadan.png' },
+  { id: 'taman-skateboard-magersari', name: 'Taman Skateboard Magersari', area: 'Kecamatan Magelang Selatan', status: 'online', image: '/images/tamanskateboard.png' },
+  { id: 'taman-depan-atria', name: 'Taman Depan Atria', area: 'Kecamatan Magelang Tengah', status: 'online', image: '/images/tamandepanatrian.png' },
+  { id: 'batas-utara', name: 'Batas Utara Kota Magelang', area: 'Kecamatan Magelang Utara', status: 'online', image: '/images/batasUtarakota_magelang.png' },
+  { id: 'kebun-bibit-senopati', name: 'Kebun Bibit Senopati', area: 'Kecamatan Magelang Utara', status: 'online', image: '/images/bibit_senopati.png' },
+  { id: 'pertigaan-sman1', name: 'Pertigaan SMA Negeri 1', area: 'Kecamatan Magelang Tengah', status: 'online', image: '/images/sman1kota.png' },
+  { id: 'alun-alun', name: 'Alun-Alun Kota Magelang', area: 'Kecamatan Magelang Tengah', status: 'online', image: '/images/alunalun_magelang.png' },
+  { id: 'pasar-rejowinangun', name: 'Pasar Rejowinangun', area: 'Kecamatan Magelang Selatan', status: 'online', image: '/images/pasar_rejowinangun.png' }
 ];
 
 function cctvCardHTML(cam) {
@@ -382,4 +382,3 @@ window.showDummyDetail = function(element) {
     modal.children[0].children[0].style.transform = 'translateY(0)';
   }, 10);
 };
-
