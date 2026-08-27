@@ -1,5 +1,8 @@
 <?php
 
+$code = <<<'PHP'
+<?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -381,3 +384,7 @@ class KependudukanController extends Controller
         return redirect()->route('kependudukan.informasi-terbaru.index')->with('success', 'Data berhasil dihapus');
     }
 }
+PHP;
+
+file_put_contents('app/Http/Controllers/KependudukanController.php', $code);
+echo "Done replacing KependudukanController.php\n";

@@ -63,7 +63,7 @@
         </div>
         <div>
             <p class="detail-label">Update</p>
-            <p class="detail-value">{{ $item['update'] }}</p>
+            <p class="detail-value">{{ \Carbon\Carbon::parse($item['updated_at'])->format('d M Y') }}</p>
         </div>
         <div>
             <p class="detail-label">Status</p>
@@ -73,7 +73,7 @@
 
     <div class="history">
         <h3>Riwayat Perubahan</h3>
-        <p>{{ $item['update'] }} · Data diperbarui oleh Operator Kependudukan.</p>
+        <p>{{ \Carbon\Carbon::parse($item['updated_at'])->format('d M Y') }} · Data diperbarui oleh Operator Kependudukan.</p>
         <p>02 Jul 2026 · Data diverifikasi oleh koordinator bidang.</p>
     </div>
 

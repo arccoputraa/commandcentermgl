@@ -9,6 +9,8 @@ class PembangunanProjectProgress extends Model
 {
     use HasFactory;
 
+    protected $table = 'pembangunan_project_progresses';
+
     protected $fillable = [
         'project_id',
         'report_date',

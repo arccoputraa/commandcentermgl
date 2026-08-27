@@ -161,6 +161,9 @@ function cctvCardHTML(cam) {
     <div class="cctv-thumb">
       <img src="${placeholderImage}" alt="${cam.name}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0;" />
       <div class="feed" style="z-index:1; background: repeating-linear-gradient(0deg, rgba(0,0,0,.08) 0 2px, transparent 2px 4px);"></div>
+      <button class="cctv-play-button" type="button" aria-label="Putar live ${cam.name}" onclick="window.showCctvLive('${cam.id}')">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+      </button>
       <div class="cam-icon" style="z-index:2; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">${ICONS.camera}</div>
       <span class="live-tag" style="z-index:2;">${isOnline ? 'LIVE' : 'OFFLINE'}</span>
     </div>

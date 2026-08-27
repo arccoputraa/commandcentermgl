@@ -71,7 +71,7 @@
         </div>
         <div>
             <p class="detail-label">Update</p>
-            <p class="detail-value">{{ $item['update'] }}</p>
+            <p class="detail-value">{{ \Carbon\Carbon::parse($item['updated_at'])->format('d M Y') }}</p>
         </div>
         <div>
             <p class="detail-label">Status</p>

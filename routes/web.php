@@ -397,7 +397,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
 });
 
 // Perizinan Routes (protected)
-Route::middleware('auth')->prefix('perizinan')->group(function () {
+Route::middleware(['auth', 'division:perizinan'])->prefix('perizinan')->group(function () {
     Route::get('/', [\App\Http\Controllers\PerizinanController::class, 'dashboard'])->name('perizinan.dashboard');
     
     // Data Perizinan
@@ -426,7 +426,7 @@ Route::middleware('auth')->prefix('perizinan')->group(function () {
 });
 
 // Pembangunan Routes (protected)
-Route::middleware('auth')->prefix('pembangunan')->group(function () {
+Route::middleware(['auth', 'division:pembangunan'])->prefix('pembangunan')->group(function () {
     Route::get('/', [\App\Http\Controllers\PembangunanController::class, 'dashboard'])->name('pembangunan.dashboard');
     
     // Proyek Pembangunan
@@ -452,7 +452,7 @@ Route::middleware('auth')->prefix('pembangunan')->group(function () {
 });
 
 // Kesehatan Routes (protected)
-Route::middleware('auth')->prefix('kesehatan')->group(function () {
+Route::middleware(['auth', 'division:kesehatan'])->prefix('kesehatan')->group(function () {
     Route::get('/', [\App\Http\Controllers\KesehatanController::class, 'dashboard'])->name('kesehatan.dashboard');
     
     // Program Kesehatan
@@ -474,7 +474,7 @@ Route::middleware('auth')->prefix('kesehatan')->group(function () {
 });
 
 // Keuangan Routes (protected)
-Route::middleware('auth')->prefix('keuangan')->group(function () {
+Route::middleware(['auth', 'division:keuangan'])->prefix('keuangan')->group(function () {
     Route::get('/', [\App\Http\Controllers\KeuanganController::class, 'dashboard'])->name('finance.dashboard');
     
     // Data Anggaran
@@ -514,7 +514,7 @@ Route::middleware('auth')->prefix('keuangan')->group(function () {
 });
 
 // Kepegawaian Routes (protected)
-Route::middleware('auth')->prefix('kepegawaian')->group(function () {
+Route::middleware(['auth', 'division:kepegawaian'])->prefix('kepegawaian')->group(function () {
     Route::get('/', [\App\Http\Controllers\KepegawaianController::class, 'dashboard'])->name('kepegawaian.dashboard');
     
     // Data Pegawai
@@ -555,7 +555,7 @@ Route::middleware('auth')->prefix('kepegawaian')->group(function () {
 });
 
 // Kependudukan Routes (protected)
-Route::middleware('auth')->prefix('kependudukan')->group(function () {
+Route::middleware(['auth', 'division:kependudukan'])->prefix('kependudukan')->group(function () {
     Route::get('/', [\App\Http\Controllers\KependudukanController::class, 'dashboard'])->name('kependudukan.dashboard');
     Route::get('/data-penduduk', [\App\Http\Controllers\KependudukanController::class, 'dataPendudukIndex'])->name('kependudukan.data-penduduk.index');
     Route::get('/data-penduduk/create', [\App\Http\Controllers\KependudukanController::class, 'dataPendudukCreate'])->name('kependudukan.data-penduduk.create');

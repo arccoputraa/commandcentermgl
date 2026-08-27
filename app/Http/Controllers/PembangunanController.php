@@ -296,13 +296,19 @@ class PembangunanController extends Controller
             'realized_budget' => 'nullable|numeric',
         ]);
 
-        PembangunanProjectProgress::create($request->all());
+        $project = PembangunanProject::find($request->project_id);
+        $data = $request->all();
+
+        if (empty($data['realized_budget'])) {
+            $data['realized_budget'] = $project->realized_budget;
+        }
+
+        PembangunanProjectProgress::create($data);
         
         // Update main project progress and realized_budget
-        $project = PembangunanProject::find($request->project_id);
         $project->update([
             'progress_percentage' => $request->progress_percentage,
-            'realized_budget' => $request->realized_budget ?? $project->realized_budget,
+            'realized_budget' => $data['realized_budget'],
         ]);
 
         return redirect()->route('pembangunan.progress.index')->with('success', 'Update progres berhasil ditambahkan.');

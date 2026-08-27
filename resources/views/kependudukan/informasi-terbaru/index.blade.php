@@ -110,7 +110,7 @@
                         <td>{{ $item['kategori'] }}</td>
                         <td>
                             @if(!empty($item['file_path']))
-                                <a class="file-link" href="{{ route('kependudukan.informasi-terbaru.pdf', $item['_id']) }}" target="_blank" rel="noopener">
+                                <a class="file-link" href="{{ route('kependudukan.informasi-terbaru.pdf', $item['id']) }}" target="_blank" rel="noopener">
                                     <i class="fa-regular fa-file-pdf"></i>
                                     {{ $item['file'] }}
                                 </a>
@@ -124,13 +124,13 @@
                         </td>
                         <td>
                             <div class="action-cell">
-                                <a class="action-link view" href="{{ route('kependudukan.informasi-terbaru.show', $item['_id']) }}" aria-label="Lihat detail">
+                                <a class="action-link view" href="{{ route('kependudukan.informasi-terbaru.show', $item['id']) }}" aria-label="Lihat detail">
                                     <i class="fa-regular fa-eye"></i>
                                 </a>
-                                <a class="action-link edit" href="{{ route('kependudukan.informasi-terbaru.edit', $item['_id']) }}" aria-label="Edit informasi">
+                                <a class="action-link edit" href="{{ route('kependudukan.informasi-terbaru.edit', $item['id']) }}" aria-label="Edit informasi">
                                     <i class="fa-regular fa-pen-to-square"></i>
                                 </a>
-                                <form action="{{ route('kependudukan.informasi-terbaru.destroy', $item['_id']) }}" method="POST" style="display:inline;" onsubmit="return confirm('Hapus informasi terbaru ini?');">
+                                <form action="{{ route('kependudukan.informasi-terbaru.destroy', $item['id']) }}" method="POST" style="display:inline;" onsubmit="return confirm('Hapus informasi terbaru ini?');">
                                     @csrf
                                     @method('DELETE')
                                     <button class="action-link delete" type="submit" aria-label="Hapus informasi">

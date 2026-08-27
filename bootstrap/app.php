@@ -14,10 +14,21 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'role' => \App\Http\Middleware\CheckRole::class,
+            'division' => \App\Http\Middleware\CheckDivision::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*'),
         );
+        $exceptions->render(function (\Throwable $e, Request $request) {
+            if (!$request->is('api/*') && $request->isMethodSafe() === false) {
+                // Catch any exception on POST, PUT, DELETE requests (like store/update)
+                // If it's a validation exception, let it pass normally.
+                if ($e instanceof \Illuminate\Validation\ValidationException || $e instanceof \Illuminate\Auth\AuthenticationException) {
+                    return null;
+                }
+                return back()->withInput()->withErrors(['Sistem' => 'Terjadi kesalahan: ' . $e->getMessage()]);
+            }
+        });
     })->create();

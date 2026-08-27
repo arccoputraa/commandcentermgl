@@ -117,13 +117,13 @@
                         <td class="status-cell"><span class="status-pill">{{ $item['status'] }}</span></td>
                         <td>
                             <div class="action-cell">
-                                <a class="action-link view" href="{{ route('kependudukan.data-wilayah.show', $item['_id']) }}" aria-label="Lihat detail">
+                                <a class="action-link view" href="{{ route('kependudukan.data-wilayah.show', $item['id']) }}" aria-label="Lihat detail">
                                     <i class="fa-regular fa-eye"></i>
                                 </a>
-                                <a class="action-link edit" href="{{ route('kependudukan.data-wilayah.edit', $item['_id']) }}" aria-label="Edit wilayah">
+                                <a class="action-link edit" href="{{ route('kependudukan.data-wilayah.edit', $item['id']) }}" aria-label="Edit wilayah">
                                     <i class="fa-regular fa-pen-to-square"></i>
                                 </a>
-                                <form action="{{ route('kependudukan.data-wilayah.destroy', $item['_id']) }}" method="POST" style="display:inline;" onsubmit="return confirm('Hapus data wilayah ini?');">
+                                <form action="{{ route('kependudukan.data-wilayah.destroy', $item['id']) }}" method="POST" style="display:inline;" onsubmit="return confirm('Hapus data wilayah ini?');">
                                     @csrf
                                     @method('DELETE')
                                     <button class="action-link disable" type="submit" aria-label="Hapus wilayah">

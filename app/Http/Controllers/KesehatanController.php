@@ -9,9 +9,12 @@ class KesehatanController extends Controller
 {
     public function dashboard()
     {
-        $totalProgram = 48;
-        $pasienTerpantau = 12450;
-        $kasusAktif = 324;
+        // Kasus aktif dinamis berdasarkan database tabel kesehatan_penyakit
+        $kasusAktif = \App\Models\KesehatanPenyakit::where('status', 'Aktif')->sum('jumlah') ?? 324;
+        
+        // Data program dan lainnya masih menggunakan dummy karena tabelnya belum tersedia
+        $totalProgram = \App\Models\KesehatanInformasi::count() ?? 48;
+        $pasienTerpantau = \App\Models\KesehatanPenyakit::sum('jumlah') ?? 12450;
         $imunisasi = 85210;
         $vaksinasi = 120400;
         $pencegahanStunting = 1240;

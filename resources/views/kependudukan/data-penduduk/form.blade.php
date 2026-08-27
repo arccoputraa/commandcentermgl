@@ -100,7 +100,7 @@
             </div>
             <div class="form-group">
                 <label for="update">Update Terakhir</label>
-                <input type="text" id="update" name="update" value="{{ old('update', $item['update'] ?? date('d M Y')) }}" required>
+                <input type="text" id="update" name="update" value="{{ old('update', \Carbon\Carbon::parse($item['updated_at'])->format('d M Y') ?? date('d M Y')) }}" required>
                 @error('update')<span class="error-text">{{ $message }}</span>@enderror
             </div>
             <div class="form-group">

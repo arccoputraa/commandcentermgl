@@ -112,13 +112,13 @@
                         <td>{{ number_format($item['perempuan'], 0, ',', '.') }}</td>
                         <td>{{ number_format($item['wajib_ktp'], 0, ',', '.') }}</td>
                         <td>{{ number_format($item['usia_produktif'], 0, ',', '.') }}</td>
-                        <td>{{ $item['update'] }}</td>
+                        <td>{{ \Carbon\Carbon::parse($item['updated_at'])->format('d M Y') }}</td>
                         <td>
                             <div class="action-cell">
-                                <a class="action-link view" href="{{ route('kependudukan.data-penduduk.show', $item['_id']) }}" aria-label="Lihat detail">
+                                <a class="action-link view" href="{{ route('kependudukan.data-penduduk.show', $item['id']) }}" aria-label="Lihat detail">
                                     <i class="fa-regular fa-eye"></i>
                                 </a>
-                                <a class="action-link edit" href="{{ route('kependudukan.data-penduduk.edit', $item['_id']) }}" aria-label="Edit data">
+                                <a class="action-link edit" href="{{ route('kependudukan.data-penduduk.edit', $item['id']) }}" aria-label="Edit data">
                                     <i class="fa-regular fa-pen-to-square"></i>
                                 </a>
                             </div>

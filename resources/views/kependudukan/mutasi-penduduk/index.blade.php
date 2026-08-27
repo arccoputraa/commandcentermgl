@@ -114,16 +114,16 @@
                         <td>{{ $item['kematian'] }}</td>
                         <td>{{ $item['pindah_datang'] }}</td>
                         <td>{{ $item['pindah_keluar'] }}</td>
-                        <td>{{ $item['update'] }}</td>
+                        <td>{{ \Carbon\Carbon::parse($item['updated_at'])->format('d M Y') }}</td>
                         <td>
                             <div class="action-cell">
-                                <a class="action-link view" href="{{ route('kependudukan.mutasi-penduduk.show', $item['_id']) }}" aria-label="Lihat detail">
+                                <a class="action-link view" href="{{ route('kependudukan.mutasi-penduduk.show', $item['id']) }}" aria-label="Lihat detail">
                                     <i class="fa-regular fa-eye"></i>
                                 </a>
-                                <a class="action-link edit" href="{{ route('kependudukan.mutasi-penduduk.edit', $item['_id']) }}" aria-label="Edit data">
+                                <a class="action-link edit" href="{{ route('kependudukan.mutasi-penduduk.edit', $item['id']) }}" aria-label="Edit data">
                                     <i class="fa-regular fa-pen-to-square"></i>
                                 </a>
-                                <form action="{{ route('kependudukan.mutasi-penduduk.destroy', $item['_id']) }}" method="POST" style="display:inline;" onsubmit="return confirm('Hapus data mutasi penduduk ini?');">
+                                <form action="{{ route('kependudukan.mutasi-penduduk.destroy', $item['id']) }}" method="POST" style="display:inline;" onsubmit="return confirm('Hapus data mutasi penduduk ini?');">
                                     @csrf
                                     @method('DELETE')
                                     <button class="action-link delete" type="submit" aria-label="Hapus data">
