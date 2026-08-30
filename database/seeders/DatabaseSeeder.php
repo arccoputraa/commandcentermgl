@@ -188,7 +188,7 @@ class DatabaseSeeder extends Seeder
             ]);
         }
         PegawaiMutasi::create(['nip' => '198001010001', 'nama_pegawai' => 'Pegawai 1', 'jenis' => 'Promosi', 'tanggal_efektif' => Carbon::now(), 'status_pengajuan' => 'Selesai']);
-        PegawaiInformasi::create(['judul' => 'Pengumuman Libur Nasional', 'kategori' => 'Umum', 'status_publikasi' => 'Rilis']);
+        PegawaiInformasi::create(['judul' => 'Pengumuman Libur Nasional', 'kategori' => 'Umum', 'format' => 'PDF', 'dokumen' => 'pengumuman.pdf', 'status_publikasi' => 'Rilis']);
 
         // 6. Keuangan
         for ($i = 1; $i <= 5; $i++) {
@@ -203,7 +203,7 @@ class DatabaseSeeder extends Seeder
         }
         FinancePad::create(['tahun' => 2026, 'sumber_pendapatan' => 'Pajak Daerah', 'sub_bidang' => 'Pajak', 'target_pad' => 5000000000, 'realisasi_pad' => 3000000000, 'status' => 'Aktif']);
         FinanceTax::create(['tahun' => 2026, 'bulan' => 'Januari', 'jenis_pajak' => 'Pajak Hotel', 'kecamatan' => 'Magelang Tengah', 'kelurahan' => 'Panjang', 'jumlah_pendapatan' => 1500000000]);
-        FinanceInformation::create(['judul' => 'Laporan Realisasi APBD Semester 1', 'kategori' => 'Laporan', 'status_publikasi' => 'Rilis']);
+        FinanceInformation::create(['judul' => 'Laporan Realisasi APBD Semester 1', 'kategori' => 'Laporan', 'format' => 'PDF', 'dokumen' => 'laporan.pdf', 'status_publikasi' => 'Rilis']);
 
         // 7. Kesehatan
         for ($i = 1; $i <= 5; $i++) {
