@@ -56,8 +56,11 @@
     <!-- Main Content -->
     <main class="admin-main">
         <!-- Topbar -->
-        <header class="admin-topbar">
+                <header class="admin-topbar">
             <div class="topbar-left">
+                <button class="mobile-toggle" onclick="document.querySelector('.admin-sidebar').classList.toggle('open')">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
                 <h2 class="topbar-title">Command Center</h2>
             </div>
             <div class="topbar-profile">
@@ -225,6 +228,19 @@
                     this.classList.remove('show');
                 }
             });
+        });
+    </script>
+
+    <script>
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(e) {
+            const sidebar = document.querySelector('.admin-sidebar');
+            const toggle = document.querySelector('.mobile-toggle');
+            if (window.innerWidth <= 991 && sidebar.classList.contains('open')) {
+                if (!sidebar.contains(e.target) && !toggle.contains(e.target)) {
+                    sidebar.classList.remove('open');
+                }
+            }
         });
     </script>
 </body>

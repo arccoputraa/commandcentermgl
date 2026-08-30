@@ -626,3 +626,33 @@ section.block{padding:80px 24px;}
   border-top:.67px solid rgba(255,255,255,.1);
   padding:20px 24px; text-align:center; font-size:12.5px; color:var(--slate-300);
 }
+/* --- Mobile Fixes (Added for Login and Header) --- */
+@media (max-width: 768px) {
+  /* Fix Header wrapping on small screens */
+  .brand-name {
+    font-size: 14px;
+    line-height: 1.2;
+  }
+  .brand-name .brand-subtitle {
+    font-size: 10px;
+  }
+  .brand-mark {
+    width: 24px;
+    height: 24px;
+  }
+  
+  /* Fix Login layout padding */
+  .login-visual, .login-form-side {
+    padding: 24px 16px;
+    flex: 1 1 100%;
+  }
+  .login-visual h1 {
+    font-size: 24px;
+    line-height: 30px;
+  }
+  .login-card-split {
+    margin: 16px;
+    width: auto;
+    border-radius: 20px;
+  }
+}
