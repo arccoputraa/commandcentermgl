@@ -22,7 +22,7 @@ class AdminSeeder extends Seeder
         $admin = \App\Models\User::create([
             'name' => 'Super Administrator',
             'email' => 'admin@magelangkota.go.id',
-            'password' => bcrypt('password'),
+            'password' => 'password',
             'nip' => '198001012005011001',
             'role' => 'admin',
             'status' => 'aktif',

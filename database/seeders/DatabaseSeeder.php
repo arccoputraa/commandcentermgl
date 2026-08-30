@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'admin_perhubungan@magelangkota.go.id'],
             [
                 'name' => 'Admin Perhubungan',
-                'password' => bcrypt('password'),
+                'password' => 'password',
                 'nip' => '198001012005011002',
                 'role' => 'admin',
                 'status' => 'aktif',
@@ -46,7 +46,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'admin_sig@magelangkota.go.id'],
             [
                 'name' => 'Admin SIG',
-                'password' => bcrypt('password'),
+                'password' => 'password',
                 'nip' => '198001012005011003',
                 'role' => 'admin',
                 'status' => 'aktif',
@@ -58,7 +58,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'admin_pembangunan@magelangkota.go.id'],
             [
                 'name' => 'Admin Pembangunan',
-                'password' => bcrypt('password'),
+                'password' => 'password',
                 'nip' => '198001012005011004',
                 'role' => 'admin',
                 'status' => 'aktif',
