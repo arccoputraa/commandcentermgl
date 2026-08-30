@@ -201,8 +201,8 @@ class DatabaseSeeder extends Seeder
                 'status' => 'Aktif'
             ]);
         }
-        FinancePad::create(['tahun' => 2026, 'sumber_pendapatan' => 'Pajak Daerah', 'target_pad' => 5000000000, 'realisasi_pad' => 3000000000, 'status' => 'Aktif']);
-        FinanceTax::create(['tahun' => 2026, 'jenis_pajak' => 'Pajak Hotel', 'jumlah_wajib_pajak' => 120, 'jumlah_pendapatan' => 1500000000, 'status' => 'Aktif']);
+        FinancePad::create(['tahun' => 2026, 'sumber_pendapatan' => 'Pajak Daerah', 'sub_bidang' => 'Pajak', 'target_pad' => 5000000000, 'realisasi_pad' => 3000000000, 'status' => 'Aktif']);
+        FinanceTax::create(['tahun' => 2026, 'bulan' => 'Januari', 'jenis_pajak' => 'Pajak Hotel', 'kecamatan' => 'Magelang Tengah', 'kelurahan' => 'Panjang', 'jumlah_pendapatan' => 1500000000]);
         FinanceInformation::create(['judul' => 'Laporan Realisasi APBD Semester 1', 'kategori' => 'Laporan', 'status_publikasi' => 'Rilis']);
 
         // 7. Kesehatan
