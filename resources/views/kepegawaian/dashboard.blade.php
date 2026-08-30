@@ -287,7 +287,7 @@
         <h3 style="margin:0 0 20px 0; font-size:14px; font-weight:700; color:#0f172a; text-transform:uppercase; letter-spacing:0.5px;">PEGAWAI PER UNIT KERJA</h3>
         <div style="display:flex; flex-direction:column; gap:16px;">
             @foreach($pegawaiPerUnit as $unit)
-            @php $percent = ($unit->total / $maxPerUnit) * 100; @endphp
+            @php $percent = $maxPerUnit > 0 ? ($unit->total / $maxPerUnit) * 100 : 0; @endphp
             <div>
                 <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:600; color:#334155; margin-bottom:6px;">
                     <span>{{ $unit->unit_kerja }}</span>

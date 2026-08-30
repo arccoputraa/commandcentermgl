@@ -148,9 +148,6 @@
             </tbody>
         </table>
     </div>
-    <div class="table-footer">
-        <span>Menampilkan {{ count($informasi) }} data</span>
-        <span>Halaman 1 dari 1</span>
-    </div>
+    {{ $informasi->links() }}
 </div>
 @endsection

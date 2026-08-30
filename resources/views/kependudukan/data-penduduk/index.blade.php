@@ -128,9 +128,6 @@
             </tbody>
         </table>
     </div>
-    <div class="table-footer">
-        <span>Menampilkan {{ count($penduduk) }} data</span>
-        <span>Halaman 1 dari 1</span>
-    </div>
+    {{ $penduduk->links() }}
 </div>
 @endsection

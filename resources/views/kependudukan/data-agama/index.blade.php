@@ -102,7 +102,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($agama as $item)
+                @foreach($agamaList as $item)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item['tahun'] }}</td>
@@ -134,9 +134,6 @@
             </tbody>
         </table>
     </div>
-    <div class="table-footer">
-        <span>Menampilkan {{ count($agama) }} data</span>
-        <span>Halaman 1 dari 1</span>
-    </div>
+    {{ $agamaList->links() }}
 </div>
 @endsection

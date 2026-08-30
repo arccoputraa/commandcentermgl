@@ -3,32 +3,6 @@
 @section('title', 'Perhubungan - Command Center Kota Magelang')
 
 @section('content')
-@php
-$statsPerhubungan = [
-    ['label' => 'Total KIR Kendaraan', 'value' => '7.064 Unit'],
-    ['label' => 'KIR Bulan Ini', 'value' => '163 Unit'],
-    ['label' => 'Lulus Uji', 'value' => '145 Unit'],
-    ['label' => 'Tidak Lulus', 'value' => '12 Unit'],
-    ['label' => 'Perlu Uji Ulang', 'value' => '6 Unit'],
-    ['label' => 'Jenis Kendaraan Terbanyak', 'value' => 'Mobil Barang Bak Tertutup'],
-    ['label' => 'Update Terakhir', 'value' => '03 Juli 2026'],
-];
-
-$tabelKIR = [
-    ['bulan_tahun' => 'Januari 2026', 'jenis_kendaraan' => 'Mobil Barang Bak Tertutup', 'total_ukir' => '152 Unit', 'lulus_uji' => '136', 'tidak_lulus' => '10', 'perlu_uji_ulang' => '6', 'keterangan' => 'Data Terbaru', 'badge' => 'bg-emerald-100 text-emerald-700'],
-    ['bulan_tahun' => 'Februari 2026', 'jenis_kendaraan' => 'Truk Pengangkut', 'total_ukir' => '140 Unit', 'lulus_uji' => '121', 'tidak_lulus' => '11', 'perlu_uji_ulang' => '8', 'keterangan' => 'Data Terbaru', 'badge' => 'bg-emerald-100 text-emerald-700'],
-    ['bulan_tahun' => 'Maret 2026', 'jenis_kendaraan' => 'Mobil Bus Kecil', 'total_ukir' => '171 Unit', 'lulus_uji' => '150', 'tidak_lulus' => '14', 'perlu_uji_ulang' => '7', 'keterangan' => 'Data Terbaru', 'badge' => 'bg-emerald-100 text-emerald-700'],
-    ['bulan_tahun' => 'April 2026', 'jenis_kendaraan' => 'Mobil Barang Bak Besar', 'total_ukir' => '160 Unit', 'lulus_uji' => '142', 'tidak_lulus' => '12', 'perlu_uji_ulang' => '6', 'keterangan' => 'Data Terbaru', 'badge' => 'bg-emerald-100 text-emerald-700'],
-    ['bulan_tahun' => 'Mei 2026', 'jenis_kendaraan' => 'Mobil Penarik', 'total_ukir' => '163 Unit', 'lulus_uji' => '145', 'tidak_lulus' => '12', 'perlu_uji_ulang' => '6', 'keterangan' => 'Data Terbaru', 'badge' => 'bg-emerald-100 text-emerald-700'],
-];
-
-$infoTerbaru = [
-    ['judul' => 'Rekap KIR Kendaraan Semester I 2026', 'kategori' => 'Rekap KIR Kendaraan', 'tanggal' => '03 Jul 2026', 'status' => 'Rilis', 'badge' => 'bg-emerald-100 text-emerald-700'],
-    ['judul' => 'Informasi Jadwal Layanan KIR Juli 2026', 'kategori' => 'Informasi Layanan KIR', 'tanggal' => '02 Jul 2026', 'status' => 'Rilis', 'badge' => 'bg-emerald-100 text-emerald-700'],
-    ['judul' => 'Laporan Pengujian Kendaraan Juni 2026', 'kategori' => 'Laporan Pengujian Kendaraan', 'tanggal' => '01 Jul 2026', 'status' => 'Draft', 'badge' => 'bg-amber-100 text-amber-700'],
-    ['judul' => 'Pengumuman Layanan Perhubungan', 'kategori' => 'Pengumuman Perhubungan', 'tanggal' => '02 Jul 2026', 'status' => 'Rilis', 'badge' => 'bg-emerald-100 text-emerald-700'],
-];
-@endphp
 
 <div class="wrap" style="padding-bottom: 80px;">
     <div class="breadcrumb" style="margin-top: 24px;">

@@ -169,168 +169,188 @@ Route::get('/layanan', function (Request $request) {
         $informasi = \App\Models\KesehatanInformasi::orderBy('created_at', 'desc')->limit(5)->get();
         $penyakit = \App\Models\KesehatanPenyakit::orderBy('jumlah', 'desc')->limit(5)->get();
         
+        $stats = [
+            'total' => \App\Models\KesehatanInformasi::count(),
+            'pasien' => \App\Models\KesehatanPenyakit::sum('jumlah'),
+            'kasus' => \App\Models\KesehatanPenyakit::where('status', 'Aktif')->sum('jumlah'),
+        ];
+        
         if (view()->exists('layanan.kesehatan')) {
-            return view('layanan.kesehatan', compact('informasi', 'penyakit', 'dept'));
+            return view('layanan.kesehatan', compact('informasi', 'penyakit', 'stats', 'dept'));
         }
     }
 
-    if ($dept === 'perhubungan' && view()->exists('layanan.perhubungan')) {
-        return view('layanan.perhubungan');
+    if ($dept === 'perhubungan') {
+        $stats = [
+            'total' => \App\Models\UjiKir::count(),
+            'lulus' => \App\Models\UjiKir::where('status_uji', 'Lulus Uji')->count(),
+            'tidak_lulus' => \App\Models\UjiKir::where('status_uji', 'Tidak Lulus')->count(),
+            'uji_ulang' => \App\Models\UjiKir::where('status_uji', 'Perlu Uji Ulang')->count(),
+        ];
+        
+        $statsPerhubungan = [
+            ['label' => 'Total KIR Kendaraan', 'value' => number_format($stats['total']) . ' Unit'],
+            ['label' => 'Lulus Uji', 'value' => number_format($stats['lulus']) . ' Unit'],
+            ['label' => 'Tidak Lulus', 'value' => number_format($stats['tidak_lulus']) . ' Unit'],
+            ['label' => 'Perlu Uji Ulang', 'value' => number_format($stats['uji_ulang']) . ' Unit'],
+        ];
+
+        $tabelKIRRaw = \App\Models\UjiKir::orderBy('tanggal_uji', 'desc')->limit(5)->get();
+        $tabelKIR = $tabelKIRRaw->map(function($row) {
+            return [
+                'bulan_tahun' => \Carbon\Carbon::parse($row->tanggal_uji)->format('M Y'),
+                'jenis_kendaraan' => $row->jenis_kendaraan,
+                'total_ukir' => '1 Unit', // Simplified
+                'lulus_uji' => $row->status_uji == 'Lulus Uji' ? '1' : '0',
+                'tidak_lulus' => $row->status_uji == 'Tidak Lulus' ? '1' : '0',
+                'perlu_uji_ulang' => $row->status_uji == 'Perlu Uji Ulang' ? '1' : '0',
+                'keterangan' => $row->keterangan,
+                'badge' => 'bg-emerald-100 text-emerald-700'
+            ];
+        });
+
+        $informasiRaw = \App\Models\DokumenPerhubungan::orderBy('tanggal_rilis', 'desc')->limit(4)->get();
+        $infoTerbaru = $informasiRaw->map(function($info) {
+            return [
+                'judul' => $info->judul,
+                'kategori' => $info->status_tag,
+                'tanggal' => \Carbon\Carbon::parse($info->tanggal_rilis)->format('d M Y'),
+                'status' => 'Rilis',
+                'badge' => 'bg-emerald-100 text-emerald-700'
+            ];
+        });
+        
+        if (view()->exists('layanan.perhubungan')) {
+            return view('layanan.perhubungan', compact('statsPerhubungan', 'tabelKIR', 'infoTerbaru', 'dept'));
+        }
     }
 
-    if ($dept === 'sig' && view()->exists('layanan.sig')) {
-        return view('layanan.sig');
+    if ($dept === 'sig') {
+        $stats = [
+            'layer' => \App\Models\LayerSig::count(),
+            'data' => \App\Models\DataSpasial::count(),
+        ];
+        
+        $statsSIG = [
+            ['label' => 'TOTAL DATA SPASIAL', 'value' => $stats['data']],
+            ['label' => 'TOTAL LAYER', 'value' => $stats['layer']],
+        ];
+
+        $layersRaw = \App\Models\LayerSig::where('status_aktif', true)->get();
+        $layerPublik = $layersRaw->pluck('nama_layer')->toArray();
+
+        $tabelSIGRaw = \App\Models\DataSpasial::with('layer')->orderBy('created_at', 'desc')->limit(6)->get();
+        $tabelSIG = $tabelSIGRaw->map(function($row) {
+            return [
+                'nama_data' => $row->nama_data,
+                'kategori' => $row->kategori,
+                'wilayah' => $row->wilayah,
+                'nilai_jumlah' => $row->nilai_jumlah . ' Titik',
+                'update_terakhir' => \Carbon\Carbon::parse($row->updated_at)->format('d M Y')
+            ];
+        });
+
+        $informasiRaw = \App\Models\DokumenSig::orderBy('tanggal_rilis', 'desc')->limit(4)->get();
+        $infoTerbaruSIG = $informasiRaw->map(function($info) {
+            return [
+                'judul' => $info->judul,
+                'kategori' => 'Laporan SIG',
+                'tanggal' => \Carbon\Carbon::parse($info->tanggal_rilis)->format('d M Y'),
+                'status' => $info->status_tag,
+                'badge' => 'success'
+            ];
+        });
+        
+        if (view()->exists('layanan.sig')) {
+            return view('layanan.sig', compact('statsSIG', 'layerPublik', 'tabelSIG', 'infoTerbaruSIG', 'dept'));
+        }
     }
 
     if ($dept === 'kependudukan') {
-        $defaultPenduduk = [
-            ['tahun' => 2026, 'kecamatan' => 'Magelang Tengah', 'kelurahan' => 'Panjang', 'penduduk' => 8240, 'laki_laki' => 4090, 'perempuan' => 4150, 'wajib_ktp' => 6120, 'usia_produktif' => 5430, 'anak' => 1620, 'lansia' => 1190, 'kk' => 2340, 'agama' => 'Islam', 'status' => 'Aktif', 'update' => '03 Jul 2026'],
-            ['tahun' => 2026, 'kecamatan' => 'Magelang Selatan', 'kelurahan' => 'Jurangombo Utara', 'penduduk' => 7850, 'laki_laki' => 3920, 'perempuan' => 3930, 'wajib_ktp' => 5870, 'usia_produktif' => 5110, 'anak' => 1510, 'lansia' => 1110, 'kk' => 2180, 'agama' => 'Islam', 'status' => 'Aktif', 'update' => '03 Jul 2026'],
-            ['tahun' => 2026, 'kecamatan' => 'Magelang Utara', 'kelurahan' => 'Kedungsari', 'penduduk' => 6730, 'laki_laki' => 3310, 'perempuan' => 3420, 'wajib_ktp' => 5020, 'usia_produktif' => 4480, 'anak' => 1320, 'lansia' => 930, 'kk' => 1920, 'agama' => 'Islam', 'status' => 'Aktif', 'update' => '02 Jul 2026'],
-            ['tahun' => 2026, 'kecamatan' => 'Magelang Tengah', 'kelurahan' => 'Kemirirejo', 'penduduk' => 5980, 'laki_laki' => 2930, 'perempuan' => 3050, 'wajib_ktp' => 4460, 'usia_produktif' => 3920, 'anak' => 1190, 'lansia' => 870, 'kk' => 1710, 'agama' => 'Islam', 'status' => 'Aktif', 'update' => '01 Jul 2026'],
-            ['tahun' => 2026, 'kecamatan' => 'Magelang Selatan', 'kelurahan' => 'Tidar Selatan', 'penduduk' => 6410, 'laki_laki' => 3180, 'perempuan' => 3230, 'wajib_ktp' => 4800, 'usia_produktif' => 4210, 'anak' => 1250, 'lansia' => 950, 'kk' => 1860, 'agama' => 'Islam', 'status' => 'Aktif', 'update' => '30 Jun 2026'],
-        ];
-        $defaultAgama = [
-            ['tahun' => 2026, 'kecamatan' => 'Magelang Tengah', 'kelurahan' => 'Panjang', 'agama' => 'Islam', 'penduduk' => 5120, 'persentase' => '62%', 'status' => 'Aktif', 'update' => '03 Jul 2026'],
-            ['tahun' => 2026, 'kecamatan' => 'Magelang Tengah', 'kelurahan' => 'Panjang', 'agama' => 'Kristen', 'penduduk' => 1120, 'persentase' => '14%', 'status' => 'Aktif', 'update' => '03 Jul 2026'],
-            ['tahun' => 2026, 'kecamatan' => 'Magelang Tengah', 'kelurahan' => 'Panjang', 'agama' => 'Katolik', 'penduduk' => 980, 'persentase' => '12%', 'status' => 'Aktif', 'update' => '03 Jul 2026'],
-            ['tahun' => 2026, 'kecamatan' => 'Magelang Selatan', 'kelurahan' => 'Jurangombo Utara', 'agama' => 'Islam', 'penduduk' => 5840, 'persentase' => '74%', 'status' => 'Aktif', 'update' => '02 Jul 2026'],
-            ['tahun' => 2026, 'kecamatan' => 'Magelang Utara', 'kelurahan' => 'Kedungsari', 'agama' => 'Islam', 'penduduk' => 4910, 'persentase' => '73%', 'status' => 'Aktif', 'update' => '01 Jul 2026'],
-            ['tahun' => 2026, 'kecamatan' => 'Magelang Tengah', 'kelurahan' => 'Panjang', 'agama' => 'Hindu', 'penduduk' => 140, 'persentase' => '2%', 'status' => 'Aktif', 'update' => '03 Jul 2026'],
-        ];
-        $defaultMutasi = [
-            ['tahun' => 2026, 'bulan' => 'Januari', 'kecamatan' => 'Magelang Tengah', 'kelurahan' => 'Panjang', 'kelahiran' => 18, 'kematian' => 7, 'pindah_datang' => 24, 'pindah_keluar' => 15, 'status' => 'Aktif', 'update' => '31 Jan 2026'],
-            ['tahun' => 2026, 'bulan' => 'Februari', 'kecamatan' => 'Magelang Selatan', 'kelurahan' => 'Jurangombo Utara', 'kelahiran' => 21, 'kematian' => 9, 'pindah_datang' => 18, 'pindah_keluar' => 12, 'status' => 'Aktif', 'update' => '28 Feb 2026'],
-            ['tahun' => 2026, 'bulan' => 'Maret', 'kecamatan' => 'Magelang Utara', 'kelurahan' => 'Kedungsari', 'kelahiran' => 15, 'kematian' => 6, 'pindah_datang' => 20, 'pindah_keluar' => 14, 'status' => 'Aktif', 'update' => '31 Mar 2026'],
-            ['tahun' => 2026, 'bulan' => 'April', 'kecamatan' => 'Magelang Tengah', 'kelurahan' => 'Kemirirejo', 'kelahiran' => 12, 'kematian' => 5, 'pindah_datang' => 16, 'pindah_keluar' => 10, 'status' => 'Aktif', 'update' => '30 Apr 2026'],
-        ];
-        $defaultInformasi = [
-            ['judul' => 'Rekap Data Kependudukan Semester I 2026', 'kategori' => 'Rekap Penduduk', 'file' => 'rekap-penduduk-semester-1.pdf', 'tanggal' => '03 Jul 2026', 'status' => 'Rilis'],
-            ['judul' => 'Statistik Pemeluk Agama 2026', 'kategori' => 'Data Agama', 'file' => 'statistik-agama-2026.pdf', 'tanggal' => '02 Jul 2026', 'status' => 'Rilis'],
-            ['judul' => 'Laporan Mutasi Penduduk Juni 2026', 'kategori' => 'Mutasi Penduduk', 'file' => 'mutasi-penduduk-juni.pdf', 'tanggal' => '01 Jul 2026', 'status' => 'Rilis'],
-            ['judul' => 'Publikasi Penduduk Berdasarkan Wilayah', 'kategori' => 'Statistik Wilayah', 'file' => 'penduduk-wilayah-2026.pdf', 'tanggal' => '30 Jun 2026', 'status' => 'Draft'],
-        ];
-
-        $dataPenduduk = session('kependudukan_data_penduduk', $defaultPenduduk);
-        $dataAgama = session('kependudukan_data_agama', $defaultAgama);
-        $dataMutasi = session('kependudukan_data_mutasi_penduduk', $defaultMutasi);
-        $dataInformasi = session('kependudukan_data_informasi_terbaru', $defaultInformasi);
-
+        $queryPenduduk = \App\Models\KependudukanPenduduk::query();
+        $queryAgama = \App\Models\KependudukanAgama::query();
+        $queryMutasi = \App\Models\KependudukanMutasi::query();
+        
         // Fetch options for filters before applying filters
-        $kecamatanOptions = array_values(array_unique(array_column($dataPenduduk, 'kecamatan')));
-        $kelurahanOptions = array_values(array_unique(array_column($dataPenduduk, 'kelurahan')));
-        $tahunOptions = array_values(array_unique(array_column($dataPenduduk, 'tahun')));
-        $agamaOptions = array_values(array_unique(array_column($dataAgama, 'agama')));
+        $kecamatanOptions = \App\Models\KependudukanPenduduk::distinct()->pluck('kecamatan')->filter()->toArray();
+        $kelurahanOptions = \App\Models\KependudukanPenduduk::distinct()->pluck('kelurahan')->filter()->toArray();
+        $tahunOptions = \App\Models\KependudukanPenduduk::distinct()->pluck('tahun')->filter()->toArray();
+        $agamaOptions = \App\Models\KependudukanAgama::distinct()->pluck('agama')->filter()->toArray();
         $statusOptions = ['Aktif', 'Nonaktif'];
-
+        
         // Get filter params
         $filters = $request->only(['kecamatan', 'kelurahan', 'tahun', 'agama', 'status']);
-
-        // Filter the data for stats, table, and charts
-        $filteredPenduduk = array_filter($dataPenduduk, function ($item) use ($filters) {
-            $matchesKecamatan = empty($filters['kecamatan']) || $item['kecamatan'] === $filters['kecamatan'];
-            $matchesKelurahan = empty($filters['kelurahan']) || $item['kelurahan'] === $filters['kelurahan'];
-            $matchesTahun = empty($filters['tahun']) || (string) $item['tahun'] === (string) $filters['tahun'];
-            $matchesStatus = empty($filters['status']) || $item['status'] === $filters['status'];
-            return $matchesKecamatan && $matchesKelurahan && $matchesTahun && $matchesStatus;
-        });
-
-        // Filter dataAgama as well (if filtered by kecamatan/kelurahan/tahun/status)
-        $filteredAgama = array_filter($dataAgama, function ($item) use ($filters) {
-            $matchesKecamatan = empty($filters['kecamatan']) || $item['kecamatan'] === $filters['kecamatan'];
-            $matchesKelurahan = empty($filters['kelurahan']) || $item['kelurahan'] === $filters['kelurahan'];
-            $matchesTahun = empty($filters['tahun']) || (string) $item['tahun'] === (string) $filters['tahun'];
-            $matchesStatus = empty($filters['status']) || $item['status'] === $filters['status'];
-            $matchesAgama = empty($filters['agama']) || $item['agama'] === $filters['agama'];
-            return $matchesKecamatan && $matchesKelurahan && $matchesTahun && $matchesStatus && $matchesAgama;
-        });
-
-        // Sum up stats dynamically using filtered data
-        $totalPenduduk = 0;
-        $lakiLaki = 0;
-        $perempuan = 0;
-        $totalKk = 0;
-        $wajibKtp = 0;
-        $usiaProduktif = 0;
-
-        foreach ($filteredPenduduk as $item) {
-            if ($item['status'] === 'Aktif') {
-                $totalPenduduk += $item['penduduk'];
-                $lakiLaki += $item['laki_laki'];
-                $perempuan += $item['perempuan'];
-                $totalKk += $item['kk'];
-                $wajibKtp += $item['wajib_ktp'];
-                $usiaProduktif += $item['usia_produktif'];
-            }
+        
+        // Apply Filters
+        if (!empty($filters['kecamatan'])) {
+            $queryPenduduk->where('kecamatan', $filters['kecamatan']);
+            $queryAgama->where('kecamatan', $filters['kecamatan']);
+            $queryMutasi->where('kecamatan', $filters['kecamatan']);
         }
-
-        $kelahiranTahunIni = 0;
-        $kematianTahunIni = 0;
-        foreach ($dataMutasi as $item) {
-            $matchesKecamatan = empty($filters['kecamatan']) || $item['kecamatan'] === $filters['kecamatan'];
-            $matchesKelurahan = empty($filters['kelurahan']) || $item['kelurahan'] === $filters['kelurahan'];
-            $matchesTahun = empty($filters['tahun']) || (string) $item['tahun'] === (string) $filters['tahun'];
-            $matchesStatus = empty($filters['status']) || $item['status'] === $filters['status'];
-            if ($item['status'] === 'Aktif' && $matchesKecamatan && $matchesKelurahan && $matchesTahun && $matchesStatus) {
-                $kelahiranTahunIni += $item['kelahiran'];
-                $kematianTahunIni += $item['kematian'];
-            }
+        if (!empty($filters['kelurahan'])) {
+            $queryPenduduk->where('kelurahan', $filters['kelurahan']);
+            $queryAgama->where('kelurahan', $filters['kelurahan']);
+            $queryMutasi->where('kelurahan', $filters['kelurahan']);
         }
-
+        if (!empty($filters['tahun'])) {
+            $queryPenduduk->where('tahun', $filters['tahun']);
+            $queryAgama->where('tahun', $filters['tahun']);
+            $queryMutasi->where('tahun', $filters['tahun']);
+        }
+        if (!empty($filters['status'])) {
+            $queryPenduduk->where('status', $filters['status']);
+            $queryAgama->where('status', $filters['status']);
+            $queryMutasi->where('status', $filters['status']);
+        }
+        if (!empty($filters['agama'])) {
+            $queryPenduduk->where('agama', $filters['agama']);
+            $queryAgama->where('agama', $filters['agama']);
+        }
+        
+        $filteredPenduduk = $queryPenduduk->get();
+        $filteredAgama = $queryAgama->get();
+        $filteredMutasi = $queryMutasi->get();
+        
+        // Data table
+        $dataPenduduk = $filteredPenduduk;
+        
+        // Stats
         $stats = [
-            'totalPenduduk' => $totalPenduduk,
-            'lakiLaki' => $lakiLaki,
-            'perempuan' => $perempuan,
-            'totalKk' => $totalKk,
-            'wajibKtp' => $wajibKtp,
-            'usiaProduktif' => $usiaProduktif,
-            'kelahiranTahunIni' => $kelahiranTahunIni,
-            'kematianTahunIni' => $kematianTahunIni,
+            'totalPenduduk' => $filteredPenduduk->where('status', 'Aktif')->sum('penduduk'),
+            'lakiLaki' => $filteredPenduduk->where('status', 'Aktif')->sum('laki_laki'),
+            'perempuan' => $filteredPenduduk->where('status', 'Aktif')->sum('perempuan'),
+            'totalKk' => $filteredPenduduk->where('status', 'Aktif')->sum('kk'),
+            'wajibKtp' => $filteredPenduduk->where('status', 'Aktif')->sum('wajib_ktp'),
+            'usiaProduktif' => $filteredPenduduk->where('status', 'Aktif')->sum('usia_produktif'),
+            'kelahiranTahunIni' => $filteredMutasi->where('status', 'Aktif')->sum('kelahiran'),
+            'kematianTahunIni' => $filteredMutasi->where('status', 'Aktif')->sum('kematian'),
         ];
-
-        // Charts data
-        // Agama Chart
-        $agamaGrouped = [];
-        foreach ($filteredAgama as $item) {
-            if ($item['status'] === 'Aktif') {
-                $agamaGrouped[$item['agama']] = ($agamaGrouped[$item['agama']] ?? 0) + $item['penduduk'];
-            }
-        }
+        
+        // Charts
+        $agamaGrouped = $filteredAgama->where('status', 'Aktif')->groupBy('agama')->map(function ($row) {
+            return $row->sum('penduduk');
+        })->toArray();
         $chartAgamaLabels = array_keys($agamaGrouped);
         $chartAgamaData = array_values($agamaGrouped);
-
-        // Gender Chart
+        
         $chartGenderLabels = ['Laki-laki', 'Perempuan'];
-        $chartGenderData = [$lakiLaki, $perempuan];
-
-        // Kecamatan Chart
-        $kecamatanGrouped = [];
-        foreach ($filteredPenduduk as $item) {
-            if ($item['status'] === 'Aktif') {
-                $kecamatanGrouped[$item['kecamatan']] = ($kecamatanGrouped[$item['kecamatan']] ?? 0) + $item['penduduk'];
-            }
-        }
+        $chartGenderData = [$stats['lakiLaki'], $stats['perempuan']];
+        
+        $kecamatanGrouped = $filteredPenduduk->where('status', 'Aktif')->groupBy('kecamatan')->map(function ($row) {
+            return $row->sum('penduduk');
+        })->toArray();
         $chartKecamatanLabels = array_keys($kecamatanGrouped);
         $chartKecamatanData = array_values($kecamatanGrouped);
-
-        // Kelurahan Chart
-        $kelurahanGrouped = [];
-        foreach ($filteredPenduduk as $item) {
-            if ($item['status'] === 'Aktif') {
-                $kelurahanGrouped[$item['kelurahan']] = ($kelurahanGrouped[$item['kelurahan']] ?? 0) + $item['penduduk'];
-            }
-        }
+        
+        $kelurahanGrouped = $filteredPenduduk->where('status', 'Aktif')->groupBy('kelurahan')->map(function ($row) {
+            return $row->sum('penduduk');
+        })->toArray();
         $chartKelurahanLabels = array_keys($kelurahanGrouped);
         $chartKelurahanData = array_values($kelurahanGrouped);
-
-        // Filter released updates
-        $informasiTerbaru = array_filter($dataInformasi, function ($item) {
-            return $item['status'] === 'Rilis';
-        });
-        $informasiTerbaru = array_slice($informasiTerbaru, 0, 4);
-
+        
+        $informasiTerbaru = \App\Models\KependudukanInformasi::where('status', 'Rilis')->limit(4)->get();
+        
         if (view()->exists('layanan.kependudukan_new')) {
-            $filteredPenduduk = array_values($filteredPenduduk);
             return view('layanan.kependudukan_new', compact(
                 'stats',
                 'filteredPenduduk',
@@ -352,7 +372,6 @@ Route::get('/layanan', function (Request $request) {
                 'filters',
                 'dept'
             ));
-
         }
     }
 

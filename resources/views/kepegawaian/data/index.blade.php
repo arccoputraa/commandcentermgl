@@ -21,7 +21,7 @@
         <form action="{{ route('kepegawaian.data.index') }}" method="GET" style="display:flex; flex-wrap:wrap; gap:12px; align-items:center;">
             <div style="position:relative; flex:1; min-width:250px; max-width:400px;">
                 <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:16px; top:12px; color:#94a3b8;"></i>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama atau NIP..." style="width:100%; padding:10px 16px 10px 42px; border:1px solid #e2e8f0; border-radius:8px; outline:none; font-size:14px;">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama atau NIP..." style="width:85%; padding:10px 16px 10px 42px; border:1px solid #e2e8f0; border-radius:8px; outline:none; font-size:14px;">
             </div>
             <!-- Removed empty mockup filters to match actual functionality -->
             <button type="submit" style="background:#4f46e5; color:#fff; border:none; padding:10px 24px; border-radius:8px; font-weight:600; cursor:pointer;">Cari</button>

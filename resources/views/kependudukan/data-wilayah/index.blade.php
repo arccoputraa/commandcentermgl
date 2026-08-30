@@ -137,9 +137,6 @@
             </tbody>
         </table>
     </div>
-    <div class="table-footer">
-        <span>Menampilkan {{ count($wilayah) }} data</span>
-        <span>Halaman 1 dari 1</span>
-    </div>
+    {{ $wilayah->links() }}
 </div>
 @endsection

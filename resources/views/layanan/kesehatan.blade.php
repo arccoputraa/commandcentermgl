@@ -17,17 +17,17 @@
     <div class="dashboard-stats-grid" style="grid-template-columns: repeat(3, 1fr);">
         <div class="stat-card color-blue">
             <h3 class="stat-card-title">Total Program / Faskes</h3>
-            <p class="stat-card-value">128</p>
+            <p class="stat-card-value">{{ number_format($stats['total'] ?? 0) }}</p>
             <p class="stat-card-desc">Fasilitas kesehatan aktif</p>
         </div>
         <div class="stat-card color-green">
             <h3 class="stat-card-title">Pasien Terpantau</h3>
-            <p class="stat-card-value">12,450</p>
+            <p class="stat-card-value">{{ number_format($stats['pasien'] ?? 0) }}</p>
             <p class="stat-card-desc">Masyarakat menerima layanan</p>
         </div>
         <div class="stat-card color-red">
             <h3 class="stat-card-title">Kasus Aktif / Perhatian Khusus</h3>
-            <p class="stat-card-value">86</p>
+            <p class="stat-card-value">{{ number_format($stats['kasus'] ?? 0) }}</p>
             <p class="stat-card-desc">Membutuhkan penanganan segera</p>
         </div>
     </div>

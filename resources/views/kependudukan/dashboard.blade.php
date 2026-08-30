@@ -82,7 +82,11 @@
     <div class="panel-card">
         <h3 class="panel-title">Populasi Berdasarkan Agama</h3>
         <div class="bar-list">
-            @php $maxAgama = max(array_column($agama, 'total')); @endphp
+            @php 
+                $agamaTotals = array_column($agama, 'total');
+                $maxAgama = count($agamaTotals) > 0 ? max($agamaTotals) : 1;
+                $maxAgama = $maxAgama > 0 ? $maxAgama : 1;
+            @endphp
             @foreach($agama as $item)
                 <div>
                     <div class="bar-label"><span>{{ $item['label'] }}</span><span>{{ number_format($item['total'], 0, ',', '.') }}</span></div>
@@ -95,7 +99,10 @@
     <div class="panel-card">
         <h3 class="panel-title">Populasi Berdasarkan Jenis Kelamin</h3>
         <div class="bar-list">
-            @php $maxGender = max($stats['lakiLaki'], $stats['perempuan']); @endphp
+            @php 
+                $maxGender = max($stats['lakiLaki'], $stats['perempuan']); 
+                $maxGender = $maxGender > 0 ? $maxGender : 1;
+            @endphp
             <div>
                 <div class="bar-label"><span>Laki-laki</span><span>{{ number_format($stats['lakiLaki'], 0, ',', '.') }}</span></div>
                 <div class="bar-track"><div class="bar-fill" style="width:{{ ($stats['lakiLaki'] / $maxGender) * 100 }}%; background:#10b981;"></div></div>

@@ -3,36 +3,6 @@
 @section('title', 'SIG - Command Center Kota Magelang')
 
 @section('content')
-@php
-$statsSIG = [
-    ['label' => 'RUMAH SANITASI', 'value' => '15'],
-    ['label' => 'SUMUR RESAPAN', 'value' => '15'],
-    ['label' => 'WIFI', 'value' => '15'],
-    ['label' => 'RUANG TERBUKA HIJAU', 'value' => '15'],
-    ['label' => 'UMKM', 'value' => '15'],
-    ['label' => 'CCTV', 'value' => '15'],
-];
-
-$layerPublik = [
-    'Mata Air', 'Kemiskinan', 'Bahaya Banjir', 'Distribusi Pangan', 'Bahaya Genangan', 'Distribusi Sanitasi', 'Kerentanan Pangan', 'Volume to Capacity Ratio', 'Batas Wilayah Administrasi'
-];
-
-$tabelSIG = [
-    ['nama_data' => 'Sanitasi Tidar Selatan 01', 'kategori' => 'Rumah Sanitasi', 'wilayah' => 'Tidar Selatan', 'nilai_jumlah' => '1 Titik', 'update_terakhir' => '03 Jul 2026'],
-    ['nama_data' => 'Sumur Resapan Panjang 02', 'kategori' => 'Sumur Resapan', 'wilayah' => 'Panjang', 'nilai_jumlah' => '1 Titik', 'update_terakhir' => '03 Jul 2026'],
-    ['nama_data' => 'WIFI Alun-Alun Kota', 'kategori' => 'WIFI', 'wilayah' => 'Kemirirejo', 'nilai_jumlah' => '1 Titik', 'update_terakhir' => '02 Jul 2026'],
-    ['nama_data' => 'Taman Kedungsari Hijau', 'kategori' => 'Ruang Terbuka Hijau', 'wilayah' => 'Kedungsari', 'nilai_jumlah' => '1 Titik', 'update_terakhir' => '02 Jul 2026'],
-    ['nama_data' => 'Sentra UMKM Rejowinangun', 'kategori' => 'UMKM', 'wilayah' => 'Rejowinangun', 'nilai_jumlah' => '1 Titik', 'update_terakhir' => '01 Jul 2026'],
-    ['nama_data' => 'CCTV Simpang Trio', 'kategori' => 'CCTV', 'wilayah' => 'Panjang', 'nilai_jumlah' => '1 Titik', 'update_terakhir' => '01 Jul 2026'],
-];
-
-$infoTerbaruSIG = [
-    ['judul' => 'Laporan SIG Kota Semester I 2026', 'kategori' => 'Laporan SIG', 'tanggal' => '03 Jul 2026', 'status' => 'Rilis', 'badge' => 'success'],
-    ['judul' => 'Peta Tematik Sanitasi Kota', 'kategori' => 'Peta Tematik', 'tanggal' => '02 Jul 2026', 'status' => 'Rilis', 'badge' => 'success'],
-    ['judul' => 'Analisis Kerentanan Pangan 2026', 'kategori' => 'Analisis Spasial', 'tanggal' => '01 Jul 2026', 'status' => 'Draft', 'badge' => 'warning'],
-    ['judul' => 'Publikasi Titik CCTV Kota', 'kategori' => 'Publikasi Fasilitas Kota', 'tanggal' => '30 Jun 2026', 'status' => 'Rilis', 'badge' => 'success'],
-];
-@endphp
 
 <div class="wrap" style="padding-bottom: 80px;">
     <div class="breadcrumb" style="margin-top: 24px;">

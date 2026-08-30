@@ -108,14 +108,16 @@ class KependudukanController extends Controller
         if ($request->q) $query->where('kecamatan', 'like', '%'.$request->q.'%')->orWhere('agama', 'like', '%'.$request->q.'%');
         if ($request->kecamatan) $query->where('kecamatan', $request->kecamatan);
         if ($request->tahun) $query->where('tahun', $request->tahun);
+        if ($request->agama) $query->where('agama', $request->agama);
         
         $agamaList = $query->paginate(10);
-        $filters = $request->only(['q', 'kecamatan', 'tahun']);
+        $filters = $request->only(['q', 'kecamatan', 'tahun', 'agama']);
         
         $kecamatanOptions = KependudukanAgama::select('kecamatan')->distinct()->pluck('kecamatan')->toArray();
         $tahunOptions = KependudukanAgama::select('tahun')->distinct()->pluck('tahun')->toArray();
+        $agamaOptions = KependudukanAgama::select('agama')->distinct()->pluck('agama')->toArray();
 
-        return view('kependudukan.data-agama.index', compact('agamaList', 'filters', 'kecamatanOptions', 'tahunOptions'));
+        return view('kependudukan.data-agama.index', compact('agamaList', 'filters', 'kecamatanOptions', 'tahunOptions', 'agamaOptions'));
     }
 
     public function dataAgamaShow(int $id)
@@ -160,13 +162,15 @@ class KependudukanController extends Controller
         $query = KependudukanWilayah::query();
         if ($request->q) $query->where('kecamatan', 'like', '%'.$request->q.'%')->orWhere('kelurahan', 'like', '%'.$request->q.'%');
         if ($request->kecamatan) $query->where('kecamatan', $request->kecamatan);
+        if ($request->status) $query->where('status', $request->status);
         
         $wilayah = $query->paginate(10);
-        $filters = $request->only(['q', 'kecamatan']);
+        $filters = $request->only(['q', 'kecamatan', 'status']);
         
         $kecamatanOptions = KependudukanWilayah::select('kecamatan')->distinct()->pluck('kecamatan')->toArray();
+        $statusOptions = KependudukanWilayah::select('status')->distinct()->pluck('status')->toArray();
 
-        return view('kependudukan.data-wilayah.index', compact('wilayah', 'filters', 'kecamatanOptions'));
+        return view('kependudukan.data-wilayah.index', compact('wilayah', 'filters', 'kecamatanOptions', 'statusOptions'));
     }
 
     public function dataWilayahShow(int $id)
@@ -319,13 +323,15 @@ class KependudukanController extends Controller
         $query = KependudukanInformasi::query();
         if ($request->q) $query->where('judul', 'like', '%'.$request->q.'%')->orWhere('kategori', 'like', '%'.$request->q.'%');
         if ($request->kategori) $query->where('kategori', $request->kategori);
+        if ($request->status) $query->where('status', $request->status);
         
         $informasi = $query->paginate(10);
-        $filters = $request->only(['q', 'kategori']);
+        $filters = $request->only(['q', 'kategori', 'status']);
         
         $kategoriOptions = KependudukanInformasi::select('kategori')->distinct()->pluck('kategori')->toArray();
+        $statusOptions = KependudukanInformasi::select('status')->distinct()->pluck('status')->toArray();
 
-        return view('kependudukan.informasi-terbaru.index', compact('informasi', 'filters', 'kategoriOptions'));
+        return view('kependudukan.informasi-terbaru.index', compact('informasi', 'filters', 'kategoriOptions', 'statusOptions'));
     }
 
     public function informasiTerbaruCreate()

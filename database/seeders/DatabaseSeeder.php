@@ -2,271 +2,326 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Faker\Factory as Faker;
+use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
-use App\Models\User;
-use App\Models\Division;
-use App\Models\UjiKir;
-use App\Models\DataSpasial;
-use App\Models\LayerSig;
-use App\Models\PembangunanProject;
-use App\Models\PembangunanDocument;
-use App\Models\PerizinanJenis;
-use App\Models\PerizinanData;
-use App\Models\PerizinanPublikasi;
-use App\Models\PegawaiData;
-use App\Models\PegawaiMutasi;
-use App\Models\PegawaiInformasi;
-use App\Models\FinanceBudget;
-use App\Models\FinancePad;
-use App\Models\FinanceTax;
-use App\Models\FinanceInformation;
-use App\Models\KesehatanInformasi;
-use App\Models\KesehatanPenyakit;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->call([
-            AdminSeeder::class,
-        ]);
+        $faker = Faker::create('id_ID');
 
-        $divPerhubungan = Division::firstOrCreate(['name' => 'Perhubungan']);
-        $divSig = Division::firstOrCreate(['name' => 'SIG']);
-        $divPembangunan = Division::firstOrCreate(['name' => 'Pembangunan']);
-        $divKepegawaian = Division::firstOrCreate(['name' => 'Kepegawaian']);
-
-        User::firstOrCreate(
-            ['email' => 'admin_perhubungan@magelangkota.go.id'],
+        // Setup Admin User
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@admin.com'],
             [
-                'name' => 'Admin Perhubungan',
-                'password' => 'password',
-                'nip' => '198001012005011002',
+                'name' => 'Administrator',
+                'password' => Hash::make('password'),
                 'role' => 'admin',
                 'status' => 'aktif',
-                'division_id' => $divPerhubungan->id,
             ]
         );
 
-        User::firstOrCreate(
-            ['email' => 'admin_sig@magelangkota.go.id'],
-            [
-                'name' => 'Admin SIG',
-                'password' => 'password',
-                'nip' => '198001012005011003',
-                'role' => 'admin',
-                'status' => 'aktif',
-                'division_id' => $divSig->id,
-            ]
-        );
+        // 1. MODULE PEMBANGUNAN
+        $this->command->info('Seeding Pembangunan...');
+        DB::table('pembangunan_project_progresses')->delete();
+        DB::table('pembangunan_projects')->delete();
         
-        User::firstOrCreate(
-            ['email' => 'admin_pembangunan@magelangkota.go.id'],
-            [
-                'name' => 'Admin Pembangunan',
-                'password' => 'password',
-                'nip' => '198001012005011004',
-                'role' => 'admin',
-                'status' => 'aktif',
-                'division_id' => $divPembangunan->id,
-            ]
-        );
-        
-        $divPerizinan = Division::firstOrCreate(['name' => 'Perizinan']);
-        $divKesehatan = Division::firstOrCreate(['name' => 'Kesehatan']);
-        $divKeuangan = Division::firstOrCreate(['name' => 'Keuangan']);
-        
-        User::firstOrCreate(
-            ['email' => 'admin_kepegawaian@magelangkota.go.id'],
-            ['name' => 'Admin Kepegawaian', 'password' => 'password', 'nip' => '198001012005011006', 'role' => 'admin', 'status' => 'aktif', 'division_id' => $divKepegawaian->id]
-        );
-        User::firstOrCreate(
-            ['email' => 'admin_perizinan@magelangkota.go.id'],
-            ['name' => 'Admin Perizinan', 'password' => 'password', 'nip' => '198001012005011007', 'role' => 'admin', 'status' => 'aktif', 'division_id' => $divPerizinan->id]
-        );
-        User::firstOrCreate(
-            ['email' => 'admin_kesehatan@magelangkota.go.id'],
-            ['name' => 'Admin Kesehatan', 'password' => 'password', 'nip' => '198001012005011008', 'role' => 'admin', 'status' => 'aktif', 'division_id' => $divKesehatan->id]
-        );
-        User::firstOrCreate(
-            ['email' => 'admin_keuangan@magelangkota.go.id'],
-            ['name' => 'Admin Keuangan', 'password' => 'password', 'nip' => '198001012005011009', 'role' => 'admin', 'status' => 'aktif', 'division_id' => $divKeuangan->id]
-        );
+        $kategoriPembangunan = ['Jalan', 'Drainase', 'Gedung', 'Fasilitas Umum', 'Taman'];
+        $statusPembangunan = ['Selesai', 'Berjalan', 'Tertunda'];
+        $kecamatan = ['Magelang Selatan', 'Magelang Tengah', 'Magelang Utara'];
 
-        // 1. Pembangunan
-        $statuses = ['Berjalan', 'Selesai', 'Tertunda'];
-        $categories = ['Infrastruktur', 'Gedung', 'Fasilitas Publik'];
-        for ($i = 1; $i <= 10; $i++) {
-            $prj = PembangunanProject::create([
-                'project_code' => 'PRJ-' . date('Y') . '-' . str_pad($i, 3, '0', STR_PAD_LEFT),
-                'name' => 'Proyek Pembangunan ' . $i . ' Kota Magelang',
-                'category' => $categories[array_rand($categories)],
-                'kecamatan' => ['Magelang Utara', 'Magelang Tengah', 'Magelang Selatan'][rand(0, 2)],
-                'kelurahan' => 'Kelurahan ' . $i,
-                'total_budget' => rand(100, 1000) * 1000000,
-                'realized_budget' => rand(50, 500) * 1000000,
-                'progress_percentage' => rand(10, 100),
-                'status' => $statuses[array_rand($statuses)],
-                'latitude' => '-7.' . rand(450000, 480000),
-                'longitude' => '110.' . rand(210000, 240000),
+        for ($i = 0; $i < 30; $i++) {
+            $total_budget = $faker->numberBetween(5, 50) * 100000000; // 500M - 5Miliar
+            $stat = $faker->randomElement($statusPembangunan);
+            
+            if ($stat == 'Selesai') {
+                $realized_budget = $total_budget;
+                $progress_percentage = 100;
+            } elseif ($stat == 'Tertunda') {
+                $realized_budget = $total_budget * ($faker->numberBetween(10, 40) / 100);
+                $progress_percentage = round(($realized_budget / $total_budget) * 100);
+            } else {
+                $realized_budget = $total_budget * ($faker->numberBetween(20, 90) / 100);
+                $progress_percentage = round(($realized_budget / $total_budget) * 100);
+            }
+
+            // Magelang Coords: Lat: -7.50 to -7.45, Lng: 110.20 to 110.24
+            $lat = $faker->randomFloat(6, -7.50, -7.45);
+            $lng = $faker->randomFloat(6, 110.20, 110.24);
+
+            $project_id = DB::table('pembangunan_projects')->insertGetId([
+                'project_code' => 'PRJ-' . Carbon::now()->format('Y') . '-' . str_pad($i + 1, 4, '0', STR_PAD_LEFT),
+                'name' => 'Pembangunan ' . $faker->randomElement($kategoriPembangunan) . ' ' . $faker->streetName,
+                'category' => $faker->randomElement($kategoriPembangunan),
+                'kecamatan' => $faker->randomElement($kecamatan),
+                'kelurahan' => $faker->citySuffix,
+                'total_budget' => $total_budget,
+                'realized_budget' => $realized_budget,
+                'progress_percentage' => $progress_percentage,
+                'status' => $stat,
+                'latitude' => $lat,
+                'longitude' => $lng,
+                'created_at' => Carbon::now()->subDays(rand(1, 100)),
+                'updated_at' => Carbon::now(),
             ]);
-            PembangunanDocument::create([
-                'pembangunan_project_id' => $prj->id,
-                'title' => 'Dokumentasi ' . $prj->name,
-                'type' => 'Image',
-                'file_path' => 'dummy/path/to/image.jpg',
-                'upload_date' => Carbon::now()->subDays(rand(1, 10)),
-                'status_tag' => 'Rilis',
-                'description' => 'Foto dokumentasi proyek',
+
+            // Add progress
+            DB::table('pembangunan_project_progresses')->insert([
+                'project_id' => $project_id,
+                'report_date' => Carbon::now()->subDays(rand(1, 10)),
+                'progress_percentage' => $progress_percentage,
+                'realized_budget' => $realized_budget,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
         }
 
-        // 2. Perhubungan
-        $jenisKendaraan = ['Mobil Penumpang', 'Bus', 'Truk', 'Kendaraan Khusus'];
-        $statusUji = ['Lulus Uji', 'Tidak Lulus', 'Perlu Uji Ulang'];
-        $unitLayanan = ['UPT KIR Magelang', 'Pos Pembantu'];
-        for ($i = 1; $i <= 10; $i++) {
-            UjiKir::create([
+        // 2. MODULE PERHUBUNGAN
+        $this->command->info('Seeding Perhubungan...');
+        DB::table('uji_kir')->delete();
+        
+        $statusKir = ['Lulus Uji', 'Tidak Lulus', 'Perlu Uji Ulang'];
+        $jenisKendaraan = ['Truk', 'Pickup', 'Bus', 'Minibus', 'Taksi'];
+        $unitLayanan = ['Unit A', 'Unit B', 'Unit C'];
+
+        for ($i = 0; $i < 30; $i++) {
+            DB::table('uji_kir')->insert([
                 'tanggal_uji' => Carbon::now()->subDays(rand(1, 30)),
-                'jenis_kendaraan' => $jenisKendaraan[array_rand($jenisKendaraan)],
-                'status_uji' => $statusUji[array_rand($statusUji)],
-                'unit_layanan' => $unitLayanan[array_rand($unitLayanan)],
-                'keterangan' => 'Uji KIR otomatis ke-' . $i,
+                'jenis_kendaraan' => $faker->randomElement($jenisKendaraan),
+                'status_uji' => $faker->randomElement($statusKir),
+                'unit_layanan' => $faker->randomElement($unitLayanan),
+                'keterangan' => $faker->sentence,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
         }
 
-        // 3. SIG
-        $layers = [
-            LayerSig::create(['nama_layer' => 'Batas Administrasi', 'status_aktif' => true]),
-            LayerSig::create(['nama_layer' => 'Jaringan Jalan', 'status_aktif' => true]),
-            LayerSig::create(['nama_layer' => 'Fasilitas Umum', 'status_aktif' => true]),
-        ];
+        // 3. MODULE SIG
+        $this->command->info('Seeding SIG...');
+        DB::table('data_spasial')->delete();
+        DB::table('layer_sig')->delete();
 
-        for ($i = 1; $i <= 10; $i++) {
-            $layer = $layers[array_rand($layers)];
-            DataSpasial::create([
-                'layer_id' => $layer->id,
-                'nama_data' => 'Data Spasial ' . $i,
-                'kategori' => 'Kategori ' . rand(1, 5),
-                'wilayah' => 'Kecamatan ' . ['Magelang Utara', 'Magelang Tengah', 'Magelang Selatan'][rand(0, 2)],
-                'nilai_jumlah' => rand(10, 100),
-                'latitude' => '-7.' . rand(450000, 480000),
-                'longitude' => '110.' . rand(210000, 240000),
+        $layers = ['Layer Jalan', 'Layer Rumah Sakit', 'Layer Sekolah', 'Layer Perkantoran', 'Layer Taman'];
+        $layerIds = [];
+        foreach ($layers as $layer) {
+            $layerIds[] = DB::table('layer_sig')->insertGetId([
+                'nama_layer' => $layer,
+                'status_aktif' => 1,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
         }
 
-        // 4. Perizinan
-        $jenis = PerizinanJenis::create(['jenis_izin' => 'Izin Mendirikan Bangunan (IMB)', 'kategori' => 'Pembangunan', 'sla' => 14, 'status' => 'Aktif']);
-        $statusPerizinan = ['Disetujui', 'Proses', 'Ditolak'];
-        for ($i = 1; $i <= 15; $i++) {
-            PerizinanData::create([
-                'no_dokumen' => 'IZIN-' . date('Y') . '-' . str_pad($i, 4, '0', STR_PAD_LEFT),
-                'nama_pemohon' => 'Pemohon ' . $i,
-                'perizinan_jenis_id' => $jenis->id,
-                'jenis_permohonan' => ['Baru', 'Perpanjangan'][rand(0, 1)],
-                'tanggal' => Carbon::now()->subMonths(rand(0, 6)),
-                'status' => $statusPerizinan[array_rand($statusPerizinan)],
-                'lokasi_kecamatan' => ['Magelang Utara', 'Magelang Tengah', 'Magelang Selatan'][rand(0, 2)],
+        for ($i = 0; $i < 25; $i++) {
+            DB::table('data_spasial')->insert([
+                'layer_id' => $faker->randomElement($layerIds),
+                'nama_data' => 'Titik ' . $faker->company,
+                'kategori' => 'Fasilitas',
+                'wilayah' => $faker->randomElement($kecamatan),
+                'nilai_jumlah' => $faker->numberBetween(1, 100),
+                'latitude' => $faker->randomFloat(6, -7.50, -7.45),
+                'longitude' => $faker->randomFloat(6, 110.20, 110.24),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
         }
-        PerizinanPublikasi::create(['judul' => 'SOP Perizinan 2026', 'kategori' => 'Regulasi', 'status' => 'Aktif', 'format' => 'PDF']);
 
-        // 5. Kepegawaian
-        for ($i = 1; $i <= 20; $i++) {
-            PegawaiData::create([
-                'nip' => '19800101' . str_pad($i, 4, '0', STR_PAD_LEFT),
-                'nama' => 'Pegawai ' . $i,
-                'jenis_pegawai' => ['PNS', 'PPPK', 'Non-ASN'][rand(0, 2)],
-                'jenis_kelamin' => ['Laki-laki', 'Perempuan'][rand(0, 1)],
-                'jabatan' => 'Staf Pelaksana',
-                'golongan' => ['III/a', 'III/b', 'IV/a', 'II/c'][rand(0, 3)],
-                'unit_kerja' => ['Dinas Pendidikan', 'Dinas Kesehatan', 'Dinas Perhubungan'][rand(0, 2)],
+        // 4. MODULE KEUANGAN
+        $this->command->info('Seeding Keuangan...');
+        DB::table('finance_budgets')->delete();
+        DB::table('finance_pads')->delete();
+        DB::table('finance_taxes')->delete();
+
+        $subBidang = ['Bidang Pendidikan', 'Bidang Kesehatan', 'Bidang Infrastruktur', 'Bidang Sosial'];
+        for ($i = 0; $i < 20; $i++) {
+            $anggaran = $faker->numberBetween(100, 500) * 10000000;
+            $realisasi = $anggaran * ($faker->numberBetween(40, 95) / 100);
+            DB::table('finance_budgets')->insert([
+                'tahun' => 2026,
+                'sub_bidang' => $faker->randomElement($subBidang),
+                'nama_anggaran' => 'Anggaran ' . $faker->company,
+                'total_anggaran' => $anggaran,
+                'total_realisasi' => $realisasi,
+                'periode' => $faker->randomElement(['Q1', 'Q2', 'Q3', 'Q4']),
+                'status' => 'Aktif',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]);
+        }
+
+        $sumberPad = ['Pajak Daerah', 'Retribusi Daerah', 'Hasil Pengelolaan Kekayaan', 'Lain-lain PAD yang Sah'];
+        for ($i = 0; $i < 20; $i++) {
+            $target = $faker->numberBetween(50, 200) * 10000000;
+            $realisasiPad = $target * ($faker->numberBetween(30, 110) / 100); 
+            DB::table('finance_pads')->insert([
+                'tahun' => 2026,
+                'sumber_pendapatan' => $faker->randomElement($sumberPad),
+                'sub_bidang' => $faker->randomElement($subBidang),
+                'target_pad' => $target,
+                'realisasi_pad' => $realisasiPad,
+                'periode' => $faker->randomElement(['Q1', 'Q2', 'Q3', 'Q4']),
+                'status' => 'Aktif',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]);
+        }
+
+        // 5. MODULE KEPEGAWAIAN
+        $this->command->info('Seeding Kepegawaian...');
+        DB::table('pegawai_mutasis')->delete();
+        DB::table('pegawai_data')->delete();
+
+        $jenisPeg = ['PNS', 'PPPK', 'Non-ASN'];
+        $gol = ['III/a', 'III/b', 'III/c', 'IV/a', 'II/b'];
+        $units = ['Dinas Pendidikan', 'Dinas Kesehatan', 'Bappeda', 'Inspektorat', 'Sekretariat Daerah'];
+
+        for ($i = 0; $i < 30; $i++) {
+            $nip = $faker->numerify('19##########');
+            $nama = $faker->name;
+            DB::table('pegawai_data')->insert([
+                'nip' => $nip,
+                'nama' => $nama,
+                'jenis_pegawai' => $faker->randomElement($jenisPeg),
+                'jenis_kelamin' => $faker->randomElement(['Laki-laki', 'Perempuan']),
+                'jabatan' => 'Staf Ahli',
+                'golongan' => $faker->randomElement($gol),
+                'unit_kerja' => $faker->randomElement($units),
                 'status_pegawai' => 'Aktif',
-                'tanggal_bergabung' => Carbon::now()->subYears(rand(1, 10)),
+                'tanggal_bergabung' => Carbon::now()->subYears(rand(1, 15)),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
-        }
-        PegawaiMutasi::create(['nip' => '198001010001', 'nama_pegawai' => 'Pegawai 1', 'jenis' => 'Promosi', 'tanggal_efektif' => Carbon::now(), 'status_pengajuan' => 'Selesai']);
-        PegawaiInformasi::create(['judul' => 'Pengumuman Libur Nasional', 'kategori' => 'Umum', 'format' => 'PDF', 'dokumen' => 'pengumuman.pdf', 'status_publikasi' => 'Rilis']);
 
-        // 6. Keuangan
-        for ($i = 1; $i <= 5; $i++) {
-            FinanceBudget::create([
-                'tahun' => 2026,
-                'sub_bidang' => ['Pendidikan', 'Kesehatan', 'Infrastruktur', 'Sosial', 'Ekonomi'][$i-1],
-                'nama_anggaran' => 'Anggaran Bidang ' . $i,
-                'total_anggaran' => rand(1000, 5000) * 1000000,
-                'total_realisasi' => rand(500, 4000) * 1000000,
-                'status' => 'Aktif'
-            ]);
+            if ($i % 3 == 0) {
+                DB::table('pegawai_mutasis')->insert([
+                    'nip' => $nip,
+                    'nama_pegawai' => $nama,
+                    'jenis' => $faker->randomElement(['Mutasi', 'Promosi', 'Pensiun']),
+                    'tanggal_efektif' => Carbon::now()->addDays(rand(1, 30)),
+                    'keterangan' => 'Pengajuan bulan ini',
+                    'status_pengajuan' => 'Disetujui',
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ]);
+            }
         }
-        FinancePad::create(['tahun' => 2026, 'sumber_pendapatan' => 'Pajak Daerah', 'sub_bidang' => 'Pajak', 'target_pad' => 5000000000, 'realisasi_pad' => 3000000000, 'status' => 'Aktif']);
-        FinanceTax::create(['tahun' => 2026, 'bulan' => 'Januari', 'jenis_pajak' => 'Pajak Hotel', 'kecamatan' => 'Magelang Tengah', 'kelurahan' => 'Panjang', 'jumlah_pendapatan' => 1500000000]);
-        FinanceInformation::create(['judul' => 'Laporan Realisasi APBD Semester 1', 'kategori' => 'Laporan', 'format' => 'PDF', 'dokumen' => 'laporan.pdf', 'status_publikasi' => 'Rilis']);
 
-        // 7. Kesehatan
-        for ($i = 1; $i <= 5; $i++) {
-            KesehatanPenyakit::create([
-                'nama' => ['DBD', 'ISPA', 'Diare', 'Tipes', 'Hipertensi'][$i-1],
-                'jumlah' => rand(50, 500),
-                'tahun' => 2026,
-                'bulan' => rand(1, 6),
-                'wilayah' => ['Magelang Utara', 'Magelang Tengah', 'Magelang Selatan'][rand(0, 2)],
-                'status' => 'Aktif'
-            ]);
+        // 6. MODULE KEPENDUDUKAN
+        $this->command->info('Seeding Kependudukan...');
+        DB::table('kependudukan_penduduks')->delete();
+        DB::table('kependudukan_agamas')->delete();
+        DB::table('kependudukan_wilayahs')->delete();
+        DB::table('kependudukan_mutasis')->delete();
+
+        $agamas = ['Islam', 'Kristen', 'Katolik', 'Hindu', 'Buddha'];
+        foreach ($kecamatan as $kec) {
+            for ($j=0; $j<8; $j++) {
+                $laki = $faker->numberBetween(1000, 5000);
+                $perempuan = $faker->numberBetween(1000, 5000);
+                $total = $laki + $perempuan;
+                $kel = $faker->citySuffix;
+
+                DB::table('kependudukan_penduduks')->insert([
+                    'tahun' => 2026,
+                    'kecamatan' => $kec,
+                    'kelurahan' => $kel,
+                    'penduduk' => $total,
+                    'laki_laki' => $laki,
+                    'perempuan' => $perempuan,
+                    'wajib_ktp' => round($total * 0.7),
+                    'usia_produktif' => round($total * 0.6),
+                    'anak' => round($total * 0.2),
+                    'lansia' => round($total * 0.1),
+                    'kk' => round($total / 4),
+                    'agama' => $faker->randomElement($agamas),
+                    'status' => 'Aktif',
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ]);
+
+                DB::table('kependudukan_agamas')->insert([
+                    'tahun' => 2026,
+                    'kecamatan' => $kec,
+                    'kelurahan' => $kel,
+                    'agama' => $faker->randomElement($agamas),
+                    'penduduk' => round($total * 0.8),
+                    'persentase' => '80%',
+                    'status' => 'Aktif',
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ]);
+
+                DB::table('kependudukan_wilayahs')->insert([
+                    'kecamatan' => $kec,
+                    'kelurahan' => $kel,
+                    'kode' => $faker->numerify('##.##.##.####'),
+                    'penduduk' => $total,
+                    'kk' => round($total / 4),
+                    'laki_laki' => $laki,
+                    'perempuan' => $perempuan,
+                    'status' => 'Aktif',
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ]);
+            }
         }
-        KesehatanInformasi::create(['judul' => 'Jadwal Imunisasi Balita', 'file_pdf' => 'jadwal.pdf']);
 
-        // 8. Kependudukan
-        $divKependudukan = Division::firstOrCreate(['name' => 'Kependudukan']);
-        User::firstOrCreate(
-            ['email' => 'admin_kependudukan@magelangkota.go.id'],
-            [
-                'name' => 'Admin Kependudukan',
-                'password' => 'password',
-                'nip' => '198001012005011005',
-                'role' => 'admin',
-                'status' => 'aktif',
-                'division_id' => $divKependudukan->id,
-            ]
-        );
-        for ($i = 1; $i <= 5; $i++) {
-            \App\Models\KependudukanPenduduk::create([
-                'tahun' => 2026,
-                'kecamatan' => ['Magelang Utara', 'Magelang Tengah', 'Magelang Selatan'][rand(0, 2)],
-                'kelurahan' => 'Kelurahan ' . $i,
-                'penduduk' => rand(5000, 10000),
-                'laki_laki' => rand(2000, 5000),
-                'perempuan' => rand(2000, 5000),
-                'wajib_ktp' => rand(3000, 7000),
-                'usia_produktif' => rand(2000, 6000),
-                'anak' => rand(500, 2000),
-                'lansia' => rand(500, 1500),
-                'kk' => rand(1000, 3000),
-                'agama' => 'Islam',
+        // 7. MODULE PERIZINAN
+        $this->command->info('Seeding Perizinan...');
+        DB::table('perizinan_data')->delete();
+        DB::table('perizinan_jenis')->delete();
+
+        $jenisIds = [];
+        $jenisNames = ['IMB', 'SIUP', 'TDP', 'Izin Reklame', 'Izin Usaha'];
+        foreach($jenisNames as $jn) {
+            $jenisIds[] = DB::table('perizinan_jenis')->insertGetId([
+                'jenis_izin' => $jn,
+                'kategori' => 'Perizinan Dasar',
+                'sla' => $faker->numberBetween(3, 14) . ' Hari',
                 'status' => 'Aktif',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
         }
-        for ($i = 1; $i <= 3; $i++) {
-            \App\Models\KependudukanMutasi::create([
+
+        $statusIzin = ['Disetujui', 'Proses', 'Ditolak'];
+        for ($i = 0; $i < 30; $i++) {
+            DB::table('perizinan_data')->insert([
+                'no_dokumen' => 'DOC-' . $faker->numerify('#####'),
+                'nama_pemohon' => $faker->name,
+                'perizinan_jenis_id' => $faker->randomElement($jenisIds),
+                'jenis_permohonan' => $faker->randomElement(['Baru', 'Perpanjangan']),
+                'tanggal' => Carbon::now()->subDays(rand(1, 30)),
+                'status' => $faker->randomElement($statusIzin),
+                'lokasi_kecamatan' => $faker->randomElement($kecamatan),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]);
+        }
+
+        // 8. MODULE KESEHATAN
+        $this->command->info('Seeding Kesehatan...');
+        DB::table('kesehatan_penyakits')->truncate();
+
+        $penyakit = ['DBD', 'ISPA', 'Diare', 'Tipes', 'Hipertensi', 'Diabetes'];
+        for ($i = 0; $i < 20; $i++) {
+            DB::table('kesehatan_penyakits')->insert([
+                'nama' => $faker->randomElement($penyakit),
+                'jumlah' => $faker->numberBetween(10, 500),
                 'tahun' => 2026,
-                'bulan' => ['Januari', 'Februari', 'Maret'][$i-1],
-                'kecamatan' => 'Magelang Tengah',
-                'kelurahan' => 'Kelurahan 1',
-                'kelahiran' => rand(5, 20),
-                'kematian' => rand(2, 10),
-                'pindah_datang' => rand(10, 30),
-                'pindah_keluar' => rand(5, 15),
+                'bulan' => $faker->randomElement(['Januari', 'Februari', 'Maret', 'April']),
+                'wilayah' => $faker->randomElement($kecamatan),
                 'status' => 'Aktif',
-            ]);
-            \App\Models\KependudukanInformasi::create([
-                'judul' => 'Informasi Kependudukan ' . $i,
-                'kategori' => 'Umum',
-                'file' => 'info.pdf',
-                'tanggal' => Carbon::now()->subDays($i),
-                'status' => 'Rilis',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ]);
         }
+
+        $this->command->info('Database seeding completed successfully!');
     }
 }

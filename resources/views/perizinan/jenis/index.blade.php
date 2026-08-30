@@ -208,12 +208,7 @@
         </table>
     </div>
     
-    <div class="pagination-container">
-        <div>Menampilkan {{ $data->firstItem() ?? 0 }} - {{ $data->lastItem() ?? 0 }} dari {{ $data->total() }} data</div>
-        <div>
-            {{ $data->links('pagination::bootstrap-4') }}
-        </div>
-    </div>
+    {{ $data->links() }}
 </div>
 
 <!-- Modal Delete -->

@@ -102,7 +102,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($kartuKeluarga as $item)
+                @foreach($kkList as $item)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item['tahun'] }}</td>
@@ -134,9 +134,6 @@
             </tbody>
         </table>
     </div>
-    <div class="table-footer">
-        <span>Menampilkan {{ count($kartuKeluarga) }} data</span>
-        <span>Halaman 1 dari 1</span>
-    </div>
+    {{ $kkList->links() }}
 </div>
 @endsection
