@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="wrap" style="padding-bottom: 80px;">
+<div class="w-full max-w-7xl mx-auto px-4 md:px-8 pb-10 md:pb-20">
     <div class="breadcrumb" style="margin-top: 24px;">
         <a href="{{ route('home') }}">Beranda</a> &rsaquo; <span>Data SIG</span>
     </div>
@@ -14,8 +14,8 @@
         <p class="dashboard-hero-desc">Informasi publik dan statistik spasial Kota Magelang.</p>
     </div>
 
-    <div class="dashboard-filter-bar">
-        <div class="filter-dropdowns">
+    <div class="flex flex-col md:flex-row gap-4 items-center bg-white p-4 rounded-xl border border-slate-200 mt-6">
+        <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto">
             <select><option>Kecamatan</option></select>
             <select><option>Kategori</option></select>
             <select><option>Tahun</option></select>
@@ -24,8 +24,8 @@
         <button class="btn btn-primary">Terapkan Filter</button>
     </div>
 
-    <div class="dashboard-layout-sidebar sig-map-layout">
-        <div class="dashboard-sidebar-col">
+    <div class="flex flex-col lg:flex-row gap-6 mt-6">
+        <div class="w-full lg:w-1/3">
             <div class="dashboard-chart-card" style="padding-bottom: 20px;">
                 <h3 class="chart-header">Layer Publik</h3>
                 <div class="layer-list">
@@ -35,18 +35,18 @@
                 </div>
             </div>
         </div>
-        <div class="dashboard-main-col">
+        <div class="w-full lg:w-2/3">
             <div class="dashboard-chart-card" style="padding-bottom: 20px;">
                 <div class="dashboard-chart-toolbar">
                     <h3 class="chart-header" style="margin-bottom:0;">Peta Utama: Mata Air</h3>
                     <span class="status-badge success" style="font-size:11px; padding:5px 10px;">Layer Aktif</span>
                 </div>
-                <div id="map" class="dashboard-map" style="height: 360px;"></div>
+                <div id="map" class="dashboard-map w-full h-64 md:h-96 rounded-xl" style="height: 360px;"></div>
             </div>
         </div>
     </div>
 
-    <div class="dashboard-stats-grid" style="margin-top: 24px; grid-template-columns: repeat(6, minmax(0, 1fr));">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mt-6">
         @foreach ($statsSIG as $stat)
             <div class="stat-card">
                 <h3 class="stat-card-title">{{ $stat['label'] }}</h3>
@@ -63,7 +63,8 @@
                     <h3 class="dashboard-table-title">Tabel Data SIG Publik</h3>
                 </div>
                 <div class="dashboard-table-wrap">
-                    <table class="dashboard-table">
+                    <div class="w-full overflow-x-auto">
+            <table class="dashboard-table min-w-max">
                         <thead>
                             <tr>
                                 <th>Nama Data</th>
@@ -87,6 +88,7 @@
                             @endforeach
                         </tbody>
                     </table>
+        </div>
                 </div>
             </div>
         </div>

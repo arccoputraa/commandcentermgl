@@ -15,7 +15,7 @@ if(isset($stats)) {
 }
 @endphp
 
-<div class="wrap" style="padding-bottom: 80px;">
+<div class="w-full max-w-7xl mx-auto px-4 md:px-8 pb-10 md:pb-20">
     <div class="breadcrumb" style="margin-top: 24px;">
         <a href="{{ route('home') }}">Beranda</a> &rsaquo; <span>Data Pembangunan</span>
     </div>
@@ -27,7 +27,7 @@ if(isset($stats)) {
         <p class="dashboard-hero-desc">Informasi publik dan statistik sektoral pembangunan Kota Magelang.</p>
     </div>
 
-    <div class="dashboard-stats-grid" style="margin-top: 24px;">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mt-6">
         @foreach ($formattedStats as $stat)
             <div class="stat-card">
                 <h3 class="stat-card-title">{{ $stat['label'] }}</h3>
@@ -36,46 +36,46 @@ if(isset($stats)) {
         @endforeach
     </div>
 
-    <div class="dashboard-filter-bar">
-        <div class="filter-dropdowns">
+    <div class="flex flex-col md:flex-row gap-4 items-center bg-white p-4 rounded-xl border border-slate-200 mt-6">
+        <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto">
             <select><option>Kecamatan</option></select>
             <select><option>Kategori</option></select>
             <select><option>Status</option></select>
             <select><option>Tahun</option></select>
         </div>
-        <div class="filter-search" style="flex:1; min-width:260px;">
+        <div class="w-full md:flex-1">
             <input type="text" placeholder="Search proyek" />
         </div>
         <button class="btn btn-primary">Terapkan Filter</button>
     </div>
 
-    <div class="dashboard-charts-grid">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mt-6">
         <div class="dashboard-chart-card">
             <h3 class="chart-header">Progres Proyek per Bulan</h3>
-            <div id="chartProgres" style="min-height: 260px;"></div>
+            <div id="chartProgres" class="w-full h-64 md:h-80"></div>
         </div>
         <div class="dashboard-chart-card">
             <h3 class="chart-header">Status Proyek</h3>
-            <div id="chartStatusProyek" style="min-height: 260px;"></div>
+            <div id="chartStatusProyek" class="w-full h-64 md:h-80"></div>
         </div>
         <div class="dashboard-chart-card">
             <h3 class="chart-header">Realisasi Anggaran Pembangunan</h3>
-            <div id="chartRealisasi" style="min-height: 260px;"></div>
+            <div id="chartRealisasi" class="w-full h-64 md:h-80"></div>
         </div>
         <div class="dashboard-chart-card">
             <h3 class="chart-header">Proyek Berdasarkan Kategori</h3>
-            <div id="chartKategori" style="min-height: 260px;"></div>
+            <div id="chartKategori" class="w-full h-64 md:h-80"></div>
         </div>
     </div>
 
-    <div class="dashboard-layout-sidebar">
-        <div class="dashboard-main-col">
+    <div class="flex flex-col lg:flex-row gap-6 mt-6">
+        <div class="w-full lg:w-2/3">
             <div class="dashboard-chart-card" style="padding-bottom: 20px;">
                 <h3 class="chart-header">Peta / Visual Lokasi Pembangunan</h3>
-                <div id="map2" class="dashboard-map"></div>
+                <div id="map2" class="dashboard-map w-full h-64 md:h-96 rounded-xl"></div>
             </div>
         </div>
-        <div class="dashboard-sidebar-col">
+        <div class="w-full lg:w-1/3">
             <div class="summary-widget">
                 <h3 class="summary-widget-title">Informasi Terbaru</h3>
                 <div>
@@ -99,7 +99,8 @@ if(isset($stats)) {
             <h3 class="dashboard-table-title">Tabel Ringkas Proyek Pembangunan</h3>
         </div>
         <div class="dashboard-table-wrap">
-            <table class="dashboard-table">
+            <div class="w-full overflow-x-auto">
+            <table class="dashboard-table min-w-max">
                 <thead>
                     <tr>
                         <th>Kode Proyek</th>
@@ -129,6 +130,7 @@ if(isset($stats)) {
                     @endforeach
                 </tbody>
             </table>
+        </div>
         </div>
     </div>
 
