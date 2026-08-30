@@ -31,7 +31,7 @@ class CheckDivision
             if ($user->division) {
                 $userDiv = strtolower($user->division->name);
                 // Redirect them to their respective division dashboard if it exists
-                if (in_array($userDiv, ['pembangunan', 'perizinan', 'kesehatan', 'keuangan', 'kepegawaian', 'kependudukan'])) {
+                if (in_array($userDiv, ['pembangunan', 'perizinan', 'kesehatan', 'keuangan', 'kepegawaian', 'kependudukan', 'sig', 'perhubungan'])) {
                     return redirect()->route("{$userDiv}.dashboard")->withErrors(['Hak Akses' => "Anda tidak memiliki akses ke halaman divisi {$divisionName}."]);
                 }
             }

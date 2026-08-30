@@ -21,6 +21,14 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*'),
         );
+        
+        // 404 Route Fallback
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e, Request $request) {
+            if (!$request->is('api/*')) {
+                return redirect()->route('home')->withErrors(['Sistem' => 'Halaman yang Anda cari tidak ditemukan.']);
+            }
+        });
+
         $exceptions->render(function (\Throwable $e, Request $request) {
             if (!$request->is('api/*') && $request->isMethodSafe() === false) {
                 // Catch any exception on POST, PUT, DELETE requests (like store/update)

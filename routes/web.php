@@ -601,6 +601,46 @@ Route::middleware(['auth', 'division:kependudukan'])->prefix('kependudukan')->gr
     Route::delete('/informasi-terbaru/{id}', [\App\Http\Controllers\KependudukanController::class, 'informasiTerbaruDestroy'])->name('kependudukan.informasi-terbaru.destroy');
 });
 
+// Perhubungan Routes (protected)
+Route::middleware(['auth', 'division:perhubungan'])->prefix('admin/perhubungan')->group(function () {
+    Route::get('/', [\App\Http\Controllers\PerhubunganController::class, 'dashboard'])->name('perhubungan.dashboard');
+    
+    // Uji KIR
+    Route::get('/ujikir', [\App\Http\Controllers\PerhubunganController::class, 'ujiKirIndex'])->name('perhubungan.ujikir.index');
+    Route::post('/ujikir', [\App\Http\Controllers\PerhubunganController::class, 'ujiKirStore'])->name('perhubungan.ujikir.store');
+    Route::put('/ujikir/{id}', [\App\Http\Controllers\PerhubunganController::class, 'ujiKirUpdate'])->name('perhubungan.ujikir.update');
+    Route::delete('/ujikir/{id}', [\App\Http\Controllers\PerhubunganController::class, 'ujiKirDestroy'])->name('perhubungan.ujikir.destroy');
+
+    // Dokumen Perhubungan
+    Route::get('/dokumen', [\App\Http\Controllers\PerhubunganController::class, 'dokumenIndex'])->name('perhubungan.dokumen.index');
+    Route::post('/dokumen', [\App\Http\Controllers\PerhubunganController::class, 'dokumenStore'])->name('perhubungan.dokumen.store');
+    Route::put('/dokumen/{id}', [\App\Http\Controllers\PerhubunganController::class, 'dokumenUpdate'])->name('perhubungan.dokumen.update');
+    Route::delete('/dokumen/{id}', [\App\Http\Controllers\PerhubunganController::class, 'dokumenDestroy'])->name('perhubungan.dokumen.destroy');
+});
+
+// SIG Routes (protected)
+Route::middleware(['auth', 'division:sig'])->prefix('admin/sig')->group(function () {
+    Route::get('/', [\App\Http\Controllers\SigController::class, 'dashboard'])->name('sig.dashboard');
+    
+    // Layer SIG
+    Route::get('/layer', [\App\Http\Controllers\SigController::class, 'layerIndex'])->name('sig.layer.index');
+    Route::post('/layer', [\App\Http\Controllers\SigController::class, 'layerStore'])->name('sig.layer.store');
+    Route::put('/layer/{id}', [\App\Http\Controllers\SigController::class, 'layerUpdate'])->name('sig.layer.update');
+    Route::delete('/layer/{id}', [\App\Http\Controllers\SigController::class, 'layerDestroy'])->name('sig.layer.destroy');
+
+    // Data Spasial
+    Route::get('/data-spasial', [\App\Http\Controllers\SigController::class, 'dataSpasialIndex'])->name('sig.data-spasial.index');
+    Route::post('/data-spasial', [\App\Http\Controllers\SigController::class, 'dataSpasialStore'])->name('sig.data-spasial.store');
+    Route::put('/data-spasial/{id}', [\App\Http\Controllers\SigController::class, 'dataSpasialUpdate'])->name('sig.data-spasial.update');
+    Route::delete('/data-spasial/{id}', [\App\Http\Controllers\SigController::class, 'dataSpasialDestroy'])->name('sig.data-spasial.destroy');
+
+    // Dokumen SIG
+    Route::get('/dokumen', [\App\Http\Controllers\SigController::class, 'dokumenIndex'])->name('sig.dokumen.index');
+    Route::post('/dokumen', [\App\Http\Controllers\SigController::class, 'dokumenStore'])->name('sig.dokumen.store');
+    Route::put('/dokumen/{id}', [\App\Http\Controllers\SigController::class, 'dokumenUpdate'])->name('sig.dokumen.update');
+    Route::delete('/dokumen/{id}', [\App\Http\Controllers\SigController::class, 'dokumenDestroy'])->name('sig.dokumen.destroy');
+});
+
 Route::get('/{page}', function (Request $request, string $page) {
     $viewName = preg_replace('/\.(blade\.php|html)$/', '', $page);
 

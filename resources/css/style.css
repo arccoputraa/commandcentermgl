@@ -219,7 +219,10 @@ section.block{padding:80px 24px;}
   background:var(--white); border:.67px solid var(--slate-100);
   box-shadow:var(--shadow-card); border-radius:var(--radius-card);
   overflow:hidden; isolation:isolate;
+  display:flex; flex-direction:column;
+  transition:transform .15s ease, box-shadow .15s ease;
 }
+.cctv-card:hover{transform:translateY(-3px); box-shadow:0 8px 20px rgba(10,25,47,.12);}
 .cctv-thumb{
   position:relative; width:100%; aspect-ratio:393/221; background:var(--slate-100);
   overflow:hidden;
@@ -254,8 +257,8 @@ section.block{padding:80px 24px;}
   background:rgba(0,0,0,.5); color:#fff; font-size:11px; font-weight:600;
   padding:4px 8px; border-radius:6px; letter-spacing:.04em;
 }
-.cctv-body{padding:16px;}
-.cctv-top{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding-bottom:16px;}
+.cctv-body{padding:16px; flex:1; display:flex; flex-direction:column;}
+.cctv-top{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding-bottom:16px; flex:1;}
 .cctv-top h3{font-size:18px; line-height:25px; font-weight:700; margin:0; color:var(--slate-900);}
 
 .status-pill{
@@ -269,6 +272,69 @@ section.block{padding:80px 24px;}
 .status-pill.offline .dot{width:8px; height:8px; border-radius:50%; background:#EF4444;}
 
 .cctv-more{display:flex; justify-content:center; padding-top:32px;}
+
+/* CCTV Live Viewer Styles */
+.cctv-live-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px 0 40px;
+}
+.back-link {
+  display: inline-block;
+  margin-bottom: 20px;
+  color: var(--blue);
+  font-weight: 600;
+  font-size: 14px;
+}
+.back-link:hover { text-decoration: underline; }
+.cctv-live-player {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: #000;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+.cctv-live-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.85;
+}
+.play-icon-overlay {
+  position: absolute;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 64px; height: 64px;
+  background: rgba(15, 23, 42, 0.75);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.play-icon-overlay svg {
+  width: 30px; height: 30px; margin-left: 4px;
+}
+.cctv-live-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 24px;
+  padding: 20px;
+  background: var(--white);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--slate-100);
+  box-shadow: var(--shadow-card);
+}
+.cctv-live-title {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--slate-900);
+}
+.cctv-live-meta {
+  margin: 0;
+  color: var(--slate-600);
+  font-size: 15px;
+}
 
 /* ---------- Generic content blocks (Tentang / Layanan) ---------- */
 .content-narrow{max-width:820px; margin:0 auto;}

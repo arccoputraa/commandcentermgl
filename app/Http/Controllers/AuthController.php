@@ -38,23 +38,42 @@ class AuthController extends Controller
             ]);
 
             $user = Auth::user();
-            if ($user->division && strtolower($user->division->name) === 'perizinan') {
-                return redirect()->route('perizinan.dashboard');
+            
+            // Check roles first if explicitly set
+            if ($user->role === 'admin_sig') {
+                return redirect()->route('sig.dashboard');
             }
-            if ($user->division && strtolower($user->division->name) === 'kesehatan') {
-                return redirect()->route('kesehatan.dashboard');
+            if ($user->role === 'admin_perhubungan') {
+                return redirect()->route('perhubungan.dashboard');
             }
-            if ($user->division && strtolower($user->division->name) === 'keuangan') {
-                return redirect()->route('finance.dashboard');
-            }
-            if ($user->division && strtolower($user->division->name) === 'kepegawaian') {
-                return redirect()->route('kepegawaian.dashboard');
-            }
-            if ($user->division && strtolower($user->division->name) === 'pembangunan') {
-                return redirect()->route('pembangunan.dashboard');
-            }
-            if ($user->division && strtolower($user->division->name) === 'kependudukan') {
-                return redirect()->route('kependudukan.dashboard');
+
+            // Check divisions
+            if ($user->division) {
+                $divName = strtolower($user->division->name);
+                if ($divName === 'sig') {
+                    return redirect()->route('sig.dashboard');
+                }
+                if ($divName === 'perhubungan') {
+                    return redirect()->route('perhubungan.dashboard');
+                }
+                if ($divName === 'perizinan') {
+                    return redirect()->route('perizinan.dashboard');
+                }
+                if ($divName === 'kesehatan') {
+                    return redirect()->route('kesehatan.dashboard');
+                }
+                if ($divName === 'keuangan') {
+                    return redirect()->route('finance.dashboard');
+                }
+                if ($divName === 'kepegawaian') {
+                    return redirect()->route('kepegawaian.dashboard');
+                }
+                if ($divName === 'pembangunan') {
+                    return redirect()->route('pembangunan.dashboard');
+                }
+                if ($divName === 'kependudukan') {
+                    return redirect()->route('kependudukan.dashboard');
+                }
             }
 
             return redirect()->route('admin.dashboard');
