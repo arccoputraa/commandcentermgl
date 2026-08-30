@@ -11,8 +11,10 @@ class PegawaiJabatanController extends Controller
     {
         $search = $request->input('search');
         $jabatans = PegawaiJabatan::when($search, function($query) use ($search) {
-            return $query->where('nama_jabatan', 'like', "%{$search}%")
-                         ->orWhere('kode_unit', 'like', "%{$search}%");
+            return $query->where(function($q) use ($search) {
+                $q->where('nama_jabatan', 'like', "%{$search}%")
+                  ->orWhere('kode_unit', 'like', "%{$search}%");
+            });
         })->get();
 
         $totalUnit = PegawaiJabatan::count();

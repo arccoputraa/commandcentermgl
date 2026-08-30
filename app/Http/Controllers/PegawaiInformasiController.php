@@ -11,10 +11,12 @@ class PegawaiInformasiController extends Controller
     {
         $query = PegawaiInformasi::query();
         
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $search = $request->search;
-            $query->where('judul', 'like', "%{$search}%")
+            $query->where(function($q) use ($search) {
+                $q->where('judul', 'like', "%{$search}%")
                   ->orWhere('kategori', 'like', "%{$search}%");
+            });
         }
         
         $informasis = $query->orderBy('created_at', 'desc')->get();

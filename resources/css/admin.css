@@ -26,6 +26,10 @@ body {
     min-height: 100vh;
 }
 
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 /* Sidebar */
 .admin-sidebar {
     width: 260px;

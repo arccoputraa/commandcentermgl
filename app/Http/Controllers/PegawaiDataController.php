@@ -11,11 +11,13 @@ class PegawaiDataController extends Controller
     {
         $query = PegawaiData::query();
         
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $search = $request->search;
-            $query->where('nama', 'like', "%{$search}%")
+            $query->where(function($q) use ($search) {
+                $q->where('nama', 'like', "%{$search}%")
                   ->orWhere('nip', 'like', "%{$search}%")
                   ->orWhere('jabatan', 'like', "%{$search}%");
+            });
         }
         
         $pegawais = $query->orderBy('created_at', 'desc')->get();
