@@ -81,39 +81,89 @@
 <div class="panel-grid">
     <div class="panel-card">
         <h3 class="panel-title">Populasi Berdasarkan Agama</h3>
-        <div class="bar-list">
-            @php 
-                $agamaTotals = array_column($agama, 'total');
-                $maxAgama = count($agamaTotals) > 0 ? max($agamaTotals) : 1;
-                $maxAgama = $maxAgama > 0 ? $maxAgama : 1;
-            @endphp
-            @foreach($agama as $item)
-                <div>
-                    <div class="bar-label"><span>{{ $item['label'] }}</span><span>{{ number_format($item['total'], 0, ',', '.') }}</span></div>
-                    <div class="bar-track"><div class="bar-fill" style="width:{{ ($item['total'] / $maxAgama) * 100 }}%; background:#2563eb;"></div></div>
-                </div>
-            @endforeach
-        </div>
+        <canvas id="agamaPieChart" style="max-height: 250px;"></canvas>
     </div>
 
     <div class="panel-card">
         <h3 class="panel-title">Populasi Berdasarkan Jenis Kelamin</h3>
-        <div class="bar-list">
-            @php 
-                $maxGender = max($stats['lakiLaki'], $stats['perempuan']); 
-                $maxGender = $maxGender > 0 ? $maxGender : 1;
-            @endphp
-            <div>
-                <div class="bar-label"><span>Laki-laki</span><span>{{ number_format($stats['lakiLaki'], 0, ',', '.') }}</span></div>
-                <div class="bar-track"><div class="bar-fill" style="width:{{ ($stats['lakiLaki'] / $maxGender) * 100 }}%; background:#10b981;"></div></div>
-            </div>
-            <div>
-                <div class="bar-label"><span>Perempuan</span><span>{{ number_format($stats['perempuan'], 0, ',', '.') }}</span></div>
-                <div class="bar-track"><div class="bar-fill" style="width:{{ ($stats['perempuan'] / $maxGender) * 100 }}%; background:#10b981;"></div></div>
-            </div>
-        </div>
+        <canvas id="genderPieChart" style="max-height: 250px;"></canvas>
+    </div>
+    
+    <div class="panel-card" style="grid-column: 1 / -1;">
+        <h3 class="panel-title">Indikator Pertumbuhan (Kelahiran & Kematian)</h3>
+        <canvas id="pertumbuhanBarChart" style="max-height: 300px;"></canvas>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Data Agama
+        const agamaData = {!! json_encode($agama) !!};
+        new Chart(document.getElementById('agamaPieChart'), {
+            type: 'pie',
+            data: {
+                labels: agamaData.map(d => d.label),
+                datasets: [{
+                    data: agamaData.map(d => d.total),
+                    backgroundColor: ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'],
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Data Gender
+        const genderData = {
+            laki: {{ $stats['lakiLaki'] }},
+            perempuan: {{ $stats['perempuan'] }}
+        };
+        new Chart(document.getElementById('genderPieChart'), {
+            type: 'pie',
+            data: {
+                labels: ['Laki-laki', 'Perempuan'],
+                datasets: [{
+                    data: [genderData.laki, genderData.perempuan],
+                    backgroundColor: ['#3b82f6', '#ec4899'],
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Data Pertumbuhan
+        const pertumbuhanData = {!! json_encode($pertumbuhan ?? []) !!};
+        new Chart(document.getElementById('pertumbuhanBarChart'), {
+            type: 'bar',
+            data: {
+                labels: pertumbuhanData.map(d => d.tahun),
+                datasets: [
+                    {
+                        label: 'Kelahiran',
+                        data: pertumbuhanData.map(d => d.kelahiran),
+                        backgroundColor: '#10b981'
+                    },
+                    {
+                        label: 'Kematian',
+                        data: pertumbuhanData.map(d => d.kematian),
+                        backgroundColor: '#ef4444'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    });
+</script>
 
 <div class="content-grid">
     <div class="panel-card">

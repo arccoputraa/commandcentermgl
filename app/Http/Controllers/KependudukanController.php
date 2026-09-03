@@ -34,12 +34,18 @@ class KependudukanController extends Controller
         $kecRaw = KependudukanPenduduk::where('status', 'Aktif')->selectRaw('kecamatan, sum(penduduk) as total')->groupBy('kecamatan')->get();
         $kecamatan = $kecRaw->map(function($i) { return ['label' => $i->kecamatan, 'total' => $i->total]; })->toArray();
 
+        // Pertumbuhan chart (Mutasi)
+        $mutasiRaw = KependudukanMutasi::where('status', 'Aktif')->selectRaw('tahun, sum(kelahiran) as kelahiran, sum(kematian) as kematian')->groupBy('tahun')->orderBy('tahun', 'asc')->get();
+        $pertumbuhan = $mutasiRaw->map(function($i) { 
+            return ['tahun' => $i->tahun, 'kelahiran' => $i->kelahiran, 'kematian' => $i->kematian]; 
+        })->toArray();
+
         // Kelurahan table
         $kelurahan = KependudukanPenduduk::orderBy('id', 'desc')->limit(10)->get();
 
         $publikasi = KependudukanInformasi::where('status', 'Rilis')->orderBy('tanggal', 'desc')->limit(4)->get();
 
-        return view('kependudukan.dashboard', compact('stats', 'agama', 'kecamatan', 'kelurahan', 'publikasi'));
+        return view('kependudukan.dashboard', compact('stats', 'agama', 'kecamatan', 'kelurahan', 'publikasi', 'pertumbuhan'));
     }
 
     public function dataPendudukIndex(Request $request)

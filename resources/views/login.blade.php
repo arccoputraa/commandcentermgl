@@ -22,6 +22,19 @@
       <nav class="main-nav" aria-label="Navigasi utama">
         <a href="{{ route('home') }}">Beranda</a>
         <a href="{{ route('tentang') }}">Tentang</a>
+        <div class="nav-dropdown">
+            <button class="nav-dropdown-btn">Layanan Divisi &#9662;</button>
+            <div class="nav-dropdown-content">
+                <a href="{{ route('layanan', ['dept' => 'kependudukan']) }}">Kependudukan</a>
+                <a href="{{ route('layanan', ['dept' => 'kesehatan']) }}">Kesehatan</a>
+                <a href="{{ route('layanan', ['dept' => 'perizinan']) }}">Perizinan</a>
+                <a href="{{ route('layanan', ['dept' => 'pembangunan']) }}">Pembangunan</a>
+                <a href="{{ route('layanan', ['dept' => 'keuangan']) }}">Keuangan</a>
+                <a href="{{ route('layanan', ['dept' => 'kepegawaian']) }}">Kepegawaian</a>
+                <a href="{{ route('layanan', ['dept' => 'perhubungan']) }}">Perhubungan</a>
+                <a href="{{ route('layanan', ['dept' => 'sig']) }}">SIG</a>
+            </div>
+        </div>
       </nav>
       <button class="nav-toggle" aria-label="Buka menu">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
@@ -31,6 +44,19 @@
   <nav class="mobile-nav" aria-label="Navigasi mobile">
     <a href="{{ route('home') }}">Beranda</a>
     <a href="{{ route('tentang') }}">Tentang</a>
+    <div style="padding: 12px 0; border-bottom: 1px solid var(--slate-100);">
+        <div style="font-weight: 600; color: var(--slate-600); margin-bottom: 8px;">Layanan Divisi</div>
+        <div style="display: flex; flex-direction: column; padding-left: 12px; gap: 8px;">
+            <a href="{{ route('layanan', ['dept' => 'kependudukan']) }}" style="border: none; padding: 4px 0;">Kependudukan</a>
+            <a href="{{ route('layanan', ['dept' => 'kesehatan']) }}" style="border: none; padding: 4px 0;">Kesehatan</a>
+            <a href="{{ route('layanan', ['dept' => 'perizinan']) }}" style="border: none; padding: 4px 0;">Perizinan</a>
+            <a href="{{ route('layanan', ['dept' => 'pembangunan']) }}" style="border: none; padding: 4px 0;">Pembangunan</a>
+            <a href="{{ route('layanan', ['dept' => 'keuangan']) }}" style="border: none; padding: 4px 0;">Keuangan</a>
+            <a href="{{ route('layanan', ['dept' => 'kepegawaian']) }}" style="border: none; padding: 4px 0;">Kepegawaian</a>
+            <a href="{{ route('layanan', ['dept' => 'perhubungan']) }}" style="border: none; padding: 4px 0;">Perhubungan</a>
+            <a href="{{ route('layanan', ['dept' => 'sig']) }}" style="border: none; padding: 4px 0;">SIG</a>
+        </div>
+    </div>
   </nav>
 </header>
 

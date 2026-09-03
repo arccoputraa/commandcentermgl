@@ -85,6 +85,16 @@ a:focus-visible, button:focus-visible, input:focus-visible{
 .main-nav a.active{color:var(--blue); font-weight:600; border-bottom-color:var(--blue);}
 .main-nav a:hover{color:var(--blue);}
 
+/* Dropdown */
+.nav-dropdown { position: relative; display: inline-block; }
+.nav-dropdown-btn { background: none; border: none; font-weight: 500; font-size: 14px; line-height: 20px; color: var(--slate-500); padding: 20px 0; cursor: pointer; display: inline-flex; align-items: center; }
+.nav-dropdown-btn:hover { color: var(--blue); }
+.nav-dropdown-content { display: none; position: absolute; top: 100%; left: 0; background: var(--white); min-width: 200px; box-shadow: var(--shadow-card); border-radius: var(--radius-btn); border: 1px solid var(--slate-200); padding: 8px 0; z-index: 100; }
+.nav-dropdown-content a { display: block; padding: 8px 16px; border: none; font-weight: 400; color: var(--slate-600); }
+.nav-dropdown-content a:hover { background: var(--slate-100); color: var(--blue); border: none; }
+.nav-dropdown:hover .nav-dropdown-content { display: block; }
+
+
 .btn{
   display:inline-flex; align-items:center; justify-content:center; gap:8px;
   padding:8px 16px; border-radius:var(--radius-btn);
@@ -400,7 +410,7 @@ section.block{padding:80px 24px;}
   color: #fff;
   overflow: hidden;
   background-color: var(--navy-900);
-  background-image: url('/images/cmdcenterlogo.jpg');
+  background-image: url('/images/cmdcenterlogo.png');
   background-size: cover;
   background-position: center;
 }
