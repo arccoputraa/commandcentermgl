@@ -410,7 +410,7 @@ section.block{padding:80px 24px;}
   color: #fff;
   overflow: hidden;
   background-color: var(--navy-900);
-  background-image: url('/images/cmdcenterlogo.png');
+  background-image: var(--container-image, url('/images/container.png'));
   background-size: cover;
   background-position: center;
 }
@@ -464,7 +464,7 @@ section.block{padding:80px 24px;}
   content:""; position:absolute; inset:0;
   background:
     linear-gradient(135deg, rgba(10,25,47,.88) 0%, rgba(15,38,71,.78) 55%, rgba(18,48,88,.88) 100%),
-    url('/images/container.png') center/cover no-repeat;
+    var(--container-image, url('/images/container.png')) center/cover no-repeat;
   background-blend-mode:darken, normal;
 }
 .login-visual .blob{
