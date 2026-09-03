@@ -75,8 +75,8 @@
                     <div id="chartKecamatan" style="min-height: 250px;"></div>
                 </div>
                 <div class="dashboard-chart-card">
-                    <h3 class="chart-header">Populasi Berdasarkan Kelurahan</h3>
-                    <div id="chartKelurahan" style="min-height: 250px;"></div>
+                    <h3 class="chart-header">Indikator Pertumbuhan Penduduk (Kelahiran &amp; Kematian)</h3>
+                    <div id="chartPertumbuhan" style="min-height: 250px;"></div>
                 </div>
             </div>
         </div>
@@ -93,7 +93,7 @@
                             <p class="pub-info-title">Rekap Data Kependudukan Semester I 2026</p>
                             <span class="status-badge success">Rilis</span>
                         </div>
-                        <p class="pub-info-meta">Rekap Penduduk · 03 Jul 2026</p>
+                        <p class="pub-info-meta">Rekap Penduduk Â· 03 Jul 2026</p>
                         <a href="/sample-document.pdf" target="_blank" class="action-link">Lihat PDF</a>
                     </div>
                     <div class="pub-info-item">
@@ -101,7 +101,7 @@
                             <p class="pub-info-title">Statistik Pemeluk Agama 2026</p>
                             <span class="status-badge success">Rilis</span>
                         </div>
-                        <p class="pub-info-meta">Data Agama · 02 Jul 2026</p>
+                        <p class="pub-info-meta">Data Agama Â· 02 Jul 2026</p>
                         <a href="/sample-document.pdf" target="_blank" class="action-link">Lihat PDF</a>
                     </div>
                     <div class="pub-info-item">
@@ -109,7 +109,7 @@
                             <p class="pub-info-title">Laporan Mutasi Penduduk Juni 2026</p>
                             <span class="status-badge success">Rilis</span>
                         </div>
-                        <p class="pub-info-meta">Mutasi Penduduk · 01 Jul 2026</p>
+                        <p class="pub-info-meta">Mutasi Penduduk Â· 01 Jul 2026</p>
                         <a href="/sample-document.pdf" target="_blank" class="action-link">Lihat PDF</a>
                     </div>
                     <div class="pub-info-item">
@@ -117,7 +117,7 @@
                             <p class="pub-info-title">Publikasi Penduduk Berdasarkan Wilayah</p>
                             <span class="status-badge warning">Draft</span>
                         </div>
-                        <p class="pub-info-meta">Statistik Wilayah · 30 Jun 2026</p>
+                        <p class="pub-info-meta">Statistik Wilayah Â· 30 Jun 2026</p>
                         <a href="/sample-document.pdf" target="_blank" class="action-link">Lihat PDF</a>
                     </div>
                 </div>
@@ -209,20 +209,62 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-const barOpts = (categories, data, color) => ({
-    chart: { type: 'bar', height: 220, toolbar: { show: false } },
-    plotOptions: { bar: { horizontal: true, borderRadius: 4, barHeight: '55%' } },
-    dataLabels: { enabled: true, style: { colors: ['#334155'] }, offsetX: 20 },
-    series: [{ name: 'Jiwa', data }],
-    xaxis: { categories, labels: { show: false } },
-    colors: [color],
-    grid: { show: false }
+const pieOpts = (labels, series, colors) => ({
+    chart: { type: 'donut', height: 260 },
+    labels: labels,
+    series: series.map(Number),
+    colors: colors,
+    legend: { position: 'bottom', fontSize: '12px', markers: { radius: 12 } },
+    plotOptions: {
+        pie: {
+            donut: {
+                size: '60%',
+                labels: {
+                    show: true,
+                    total: {
+                        show: true,
+                        label: 'Total',
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        color: '#64748b',
+                        formatter: function (w) {
+                            return w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('id-ID');
+                        }
+                    }
+                }
+            }
+        }
+    },
+    dataLabels: { enabled: false }
 });
 
-new ApexCharts(document.querySelector('#chartAgama'), barOpts(['Islam','Kristen','Katolik','Hindu','Buddha','Konghucu'], [68240,11200,9800,1420,500,280], '#2563eb')).render();
-new ApexCharts(document.querySelector('#chartGender'), barOpts(['Laki-laki','Perempuan'], [62410,64430], '#10b981')).render();
-new ApexCharts(document.querySelector('#chartKecamatan'), barOpts(['Magelang Tengah','Magelang Selatan','Magelang Utara'], [43620,42160,40895], '#f59e0b')).render();
-new ApexCharts(document.querySelector('#chartKelurahan'), barOpts(['Panjang','Jurangombo Utara','Kedungsari','Kemirirejo','Tidar Selatan'], [8240,7850,6730,5980,6410], '#8b5cf6')).render();
+const barPertumbuhanOpts = (categories, kelahiran, kematian) => ({
+    chart: { type: 'bar', height: 260, toolbar: { show: false } },
+    plotOptions: {
+        bar: {
+            horizontal: false,
+            columnWidth: '45%',
+            borderRadius: 4
+        }
+    },
+    dataLabels: { enabled: false },
+    stroke: { show: true, width: 2, colors: ['transparent'] },
+    series: [
+        { name: 'Kelahiran', data: kelahiran },
+        { name: 'Kematian', data: kematian }
+    ],
+    xaxis: { categories: categories },
+    yaxis: { title: { text: 'Jiwa', style: { fontSize: '12px', color: '#64748b' } } },
+    fill: { opacity: 1 },
+    colors: ['#10b981', '#ef4444'],
+    legend: { position: 'bottom', fontSize: '12px' },
+    grid: { borderColor: '#f1f5f9' }
+});
+
+new ApexCharts(document.querySelector('#chartAgama'), pieOpts(['Islam','Kristen','Katolik','Hindu','Buddha','Konghucu'], [68240,11200,9800,1420,500,280], ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'])).render();
+new ApexCharts(document.querySelector('#chartGender'), pieOpts(['Laki-laki','Perempuan'], [62410,64430], ['#3b82f6', '#ec4899'])).render();
+new ApexCharts(document.querySelector('#chartKecamatan'), pieOpts(['Magelang Tengah','Magelang Selatan','Magelang Utara'], [43620,42160,40895], ['#3b82f6', '#10b981', '#f59e0b'])).render();
+new ApexCharts(document.querySelector('#chartPertumbuhan'), barPertumbuhanOpts(['2023', '2024', '2025', '2026'], [1250, 1340, 1420, 1180], [850, 890, 910, 760])).render();
 
 const map3 = L.map('map3').setView([-7.4797, 110.2177], 13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(map3);

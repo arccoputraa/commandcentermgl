@@ -133,8 +133,8 @@
                     <div id="chartKecamatan" style="min-height: 250px;"></div>
                 </div>
                 <div class="dashboard-chart-card">
-                    <h3 class="chart-header">Populasi Berdasarkan Kelurahan</h3>
-                    <div id="chartKelurahan" style="min-height: 250px;"></div>
+                    <h3 class="chart-header">Indikator Pertumbuhan Penduduk (Kelahiran &amp; Kematian)</h3>
+                    <div id="chartPertumbuhan" style="min-height: 250px;"></div>
                 </div>
             </div>
         </div>
@@ -249,20 +249,83 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 // ── Charts ────────────────────────────────────────────────────────────────────
-const barOpts = (categories, data, color) => ({
-    chart: { type: 'bar', height: 220, toolbar: { show: false } },
-    plotOptions: { bar: { horizontal: true, borderRadius: 4, barHeight: '55%' } },
-    dataLabels: { enabled: true, style: { colors: ['#334155'] }, offsetX: 20 },
-    series: [{ name: 'Jiwa', data }],
-    xaxis: { categories, labels: { show: false } },
-    colors: [color],
-    grid: { show: false }
+const pieOpts = (labels, series, colors) => ({
+    chart: { type: 'donut', height: 260 },
+    labels: labels && labels.length > 0 ? labels : ['Data Kosong'],
+    series: series && series.length > 0 ? series.map(Number) : [1],
+    colors: colors,
+    legend: { position: 'bottom', fontSize: '12px', markers: { radius: 12 } },
+    plotOptions: {
+        pie: {
+            donut: {
+                size: '60%',
+                labels: {
+                    show: true,
+                    total: {
+                        show: true,
+                        label: 'Total',
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        color: '#64748b',
+                        formatter: function (w) {
+                            return w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('id-ID');
+                        }
+                    }
+                }
+            }
+        }
+    },
+    dataLabels: { enabled: false }
 });
 
-new ApexCharts(document.querySelector('#chartAgama'),     barOpts({!! json_encode($chartAgamaLabels) !!},     {!! json_encode($chartAgamaData) !!},     '#2563eb')).render();
-new ApexCharts(document.querySelector('#chartGender'),    barOpts({!! json_encode($chartGenderLabels) !!},    {!! json_encode($chartGenderData) !!},    '#10b981')).render();
-new ApexCharts(document.querySelector('#chartKecamatan'), barOpts({!! json_encode($chartKecamatanLabels) !!}, {!! json_encode($chartKecamatanData) !!}, '#f59e0b')).render();
-new ApexCharts(document.querySelector('#chartKelurahan'), barOpts({!! json_encode($chartKelurahanLabels) !!}, {!! json_encode($chartKelurahanData) !!}, '#8b5cf6')).render();
+const barPertumbuhanOpts = (categories, kelahiran, kematian) => ({
+    chart: { type: 'bar', height: 260, toolbar: { show: false } },
+    plotOptions: {
+        bar: {
+            horizontal: false,
+            columnWidth: '45%',
+            borderRadius: 4
+        }
+    },
+    dataLabels: { enabled: false },
+    stroke: { show: true, width: 2, colors: ['transparent'] },
+    series: [
+        { name: 'Kelahiran', data: kelahiran },
+        { name: 'Kematian', data: kematian }
+    ],
+    xaxis: { categories: categories },
+    yaxis: { title: { text: 'Jiwa', style: { fontSize: '12px', color: '#64748b' } } },
+    fill: { opacity: 1 },
+    colors: ['#10b981', '#ef4444'],
+    legend: { position: 'bottom', fontSize: '12px' },
+    grid: { borderColor: '#f1f5f9' }
+});
+
+// Data Umum -> PIE / DONUT CHARTS
+new ApexCharts(document.querySelector('#chartAgama'), pieOpts(
+    {!! json_encode($chartAgamaLabels) !!},
+    {!! json_encode($chartAgamaData) !!},
+    ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899']
+)).render();
+
+new ApexCharts(document.querySelector('#chartGender'), pieOpts(
+    {!! json_encode($chartGenderLabels) !!},
+    {!! json_encode($chartGenderData) !!},
+    ['#3b82f6', '#ec4899']
+)).render();
+
+new ApexCharts(document.querySelector('#chartKecamatan'), pieOpts(
+    {!! json_encode($chartKecamatanLabels) !!},
+    {!! json_encode($chartKecamatanData) !!},
+    ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4']
+)).render();
+
+// Indikator Pertumbuhan -> BAR CHART
+new ApexCharts(document.querySelector('#chartPertumbuhan'), barPertumbuhanOpts(
+    {!! json_encode(!empty($chartPertumbuhanTahun) ? $chartPertumbuhanTahun : ['2023', '2024', '2025', '2026']) !!},
+    {!! json_encode(!empty($chartPertumbuhanKelahiran) ? $chartPertumbuhanKelahiran : [1250, 1340, 1420, $stats['kelahiranTahunIni']]) !!},
+    {!! json_encode(!empty($chartPertumbuhanKematian) ? $chartPertumbuhanKematian : [850, 890, 910, $stats['kematianTahunIni']]) !!}
+)).render();
 
 // ── Peta ─────────────────────────────────────────────────────────────────────
 const map3 = L.map('map3').setView([-7.4797, 110.2177], 13);
