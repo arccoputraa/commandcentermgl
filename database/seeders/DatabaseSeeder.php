@@ -15,8 +15,67 @@ class DatabaseSeeder extends Seeder
     {
         $faker = Faker::create('id_ID');
 
-        // Setup Admin User
-        $admin = User::firstOrCreate(
+        // Setup Divisions
+        $divisionsList = [
+            'Perizinan',
+            'Kesehatan',
+            'Pendidikan',
+            'Keuangan',
+            'Pariwisata',
+            'Infrastruktur',
+            'Perhubungan',
+            'SIG',
+            'Pembangunan',
+            'Kepegawaian',
+            'Kependudukan',
+        ];
+
+        $divisions = [];
+        foreach ($divisionsList as $dName) {
+            $divisions[$dName] = \App\Models\Division::firstOrCreate(['name' => $dName]);
+        }
+
+        // Setup Super Administrator
+        User::updateOrCreate(
+            ['email' => 'admin@magelangkota.go.id'],
+            [
+                'name' => 'Super Administrator',
+                'password' => Hash::make('password'),
+                'nip' => '198001012005011001',
+                'role' => 'admin',
+                'status' => 'aktif',
+                'division_id' => null,
+            ]
+        );
+
+        // Setup Admin Divisi
+        $divisiAdmins = [
+            'perhubungan'   => ['name' => 'Admin Perhubungan', 'div' => 'Perhubungan', 'nip' => '198503152010011002'],
+            'sig'           => ['name' => 'Admin SIG', 'div' => 'SIG', 'nip' => '198707202011011003'],
+            'pembangunan'   => ['name' => 'Admin Pembangunan', 'div' => 'Pembangunan', 'nip' => '198205102008011004'],
+            'kepegawaian'   => ['name' => 'Admin Kepegawaian', 'div' => 'Kepegawaian', 'nip' => '198911252014012005'],
+            'perizinan'     => ['name' => 'Admin Perizinan', 'div' => 'Perizinan', 'nip' => '198402182009011006'],
+            'kesehatan'     => ['name' => 'Admin Kesehatan', 'div' => 'Kesehatan', 'nip' => '198608122010012007'],
+            'keuangan'      => ['name' => 'Admin Keuangan', 'div' => 'Keuangan', 'nip' => '198304052007011008'],
+            'kependudukan'  => ['name' => 'Admin Kependudukan', 'div' => 'Kependudukan', 'nip' => '198809302012011009'],
+        ];
+
+        foreach ($divisiAdmins as $key => $data) {
+            User::updateOrCreate(
+                ['email' => "admin_{$key}@magelangkota.go.id"],
+                [
+                    'name' => $data['name'],
+                    'password' => Hash::make('password'),
+                    'nip' => $data['nip'],
+                    'role' => 'admin',
+                    'status' => 'aktif',
+                    'division_id' => $divisions[$data['div']]->id,
+                ]
+            );
+        }
+
+        // Fallback Administrator
+        User::firstOrCreate(
             ['email' => 'admin@admin.com'],
             [
                 'name' => 'Administrator',

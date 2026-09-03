@@ -67,14 +67,28 @@ Akses aplikasi melalui browser di: [http://127.0.0.1:8000](http://127.0.0.1:8000
 
 ---
 
-## Akun Login Default (Admin & Divisi)
+## Akun Login Default (Super Admin & Admin Divisi)
 
-Setelah menjalankan `php artisan migrate:fresh --seed`, akun bawaan yang dapat digunakan untuk login ke sistem:
+Setelah menjalankan `php artisan migrate:fresh --seed`, seluruh akun berikut otomatis dibuat dengan **password default:** `password`
 
-- **Email:** `admin@admin.com`
+### 1. Super Administrator (Dashboard Utama)
+- **Email:** `admin@magelangkota.go.id`
 - **Password:** `password`
+*(Akan diarahkan ke `/admin`)*
 
-*(Atau alternatif: `admin@magelangkota.go.id` / `password`)*
+### 2. Admin Per Divisi
+Setiap akun admin divisi otomatis langsung diarahkan ke dashboard internal divisinya masing-masing saat login:
+
+| Divisi | Email Login | Password | Dashboard Tujuan |
+|---|---|---|---|
+| **Perizinan** | `admin_perizinan@magelangkota.go.id` | `password` | `/perizinan` |
+| **Kesehatan** | `admin_kesehatan@magelangkota.go.id` | `password` | `/kesehatan` |
+| **Keuangan** | `admin_keuangan@magelangkota.go.id` | `password` | `/keuangan` |
+| **Kepegawaian** | `admin_kepegawaian@magelangkota.go.id` | `password` | `/kepegawaian` |
+| **Pembangunan** | `admin_pembangunan@magelangkota.go.id` | `password` | `/pembangunan` |
+| **Kependudukan** | `admin_kependudukan@magelangkota.go.id` | `password` | `/kependudukan` |
+| **Perhubungan** | `admin_perhubungan@magelangkota.go.id` | `password` | `/admin/perhubungan` |
+| **SIG** | `admin_sig@magelangkota.go.id` | `password` | `/admin/sig` |
 
 ---
 
