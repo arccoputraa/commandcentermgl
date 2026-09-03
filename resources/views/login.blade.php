@@ -69,7 +69,9 @@
         <div class="blob"></div>
         <div class="lv-content">
           <div class="badge">
-            <img class="brand-mark" src="{{ asset('images/cmdcenterlogo.png') }}" alt="Command Center Kota Magelang" />
+            <span class="mark">
+              <img src="{{ asset('images/cmdcenterlogo.png') }}" alt="Command Center Kota Magelang" style="width: 28px; height: 28px; object-fit: contain;" />
+            </span>
             <div class="txt">
               <b>Command Center</b>
               <span>Kota Magelang</span>
@@ -85,7 +87,7 @@
       <section class="login-form-side">
         <div class="login-form-inner">
           <div class="lock-badge">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <img src="{{ asset('images/cmdcenterlogo.png') }}" alt="Logo Command Center" style="width: 36px; height: 36px; object-fit: contain;" />
           </div>
           <h2>Login Sistem</h2>
           <p class="sub">Masukkan username dan password akun resmi Anda.</p>

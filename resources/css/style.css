@@ -409,10 +409,7 @@ section.block{padding:80px 24px;}
   justify-content: center;
   color: #fff;
   overflow: hidden;
-  background-color: var(--navy-900);
-  background-image: var(--container-image, url('/images/container.png'));
-  background-size: cover;
-  background-position: center;
+  background-color: var(--navy, #0A192F);
 }
 .login-hero::before {
   content: "";
