@@ -90,8 +90,8 @@
     </div>
     
     <div class="panel-card" style="grid-column: 1 / -1;">
-        <h3 class="panel-title">Indikator Pertumbuhan (Kelahiran & Kematian)</h3>
-        <canvas id="pertumbuhanBarChart" style="max-height: 300px;"></canvas>
+        <h3 class="panel-title">Populasi Berdasarkan Kelurahan</h3>
+        <canvas id="kelurahanDonutChart" style="max-height: 300px;"></canvas>
     </div>
 </div>
 
@@ -135,34 +135,40 @@
             }
         });
 
-        // Data Pertumbuhan
-        const pertumbuhanData = {!! json_encode($pertumbuhan ?? []) !!};
-        new Chart(document.getElementById('pertumbuhanBarChart'), {
-            type: 'bar',
-            data: {
-                labels: pertumbuhanData.map(d => d.tahun),
-                datasets: [
-                    {
-                        label: 'Kelahiran',
-                        data: pertumbuhanData.map(d => d.kelahiran),
-                        backgroundColor: '#10b981'
-                    },
-                    {
-                        label: 'Kematian',
-                        data: pertumbuhanData.map(d => d.kematian),
-                        backgroundColor: '#ef4444'
-                    }
-                ]
-            },
+        // Data Kelurahan (Donut)
+                    const kelurahanChartData = {!! json_encode($kelurahanChart ?? []) !!};
+                    new Chart(document.getElementById('kelurahanDonutChart'), {
+                        type: 'doughnut',
+                        data: {
+                            labels: kelurahanChartData.map(d => d.label),
+                            datasets: [{
+                                data: kelurahanChartData.map(d => d.total),
+                                backgroundColor: [
+                                    '#2563eb', '#10b981', '#f59e0b', '#ef4444',
+                                    '#8b5cf6', '#06b6d4', '#f97316', '#84cc16',
+                                    '#e11d48', '#0891b2', '#7c3aed', '#059669'
+                                ],
+                            }]
+                        },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                scales: {
-                    y: { beginAtZero: true }
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const pct = ((context.parsed / total) * 100).toFixed(1);
+                                return context.label + ': ' + context.parsed.toLocaleString('id-ID') + ' jiwa (' + pct + '%)';
+                            }
+                        }
+                    }
                 }
             }
         });
-    });
 </script>
 
 <div class="content-grid">

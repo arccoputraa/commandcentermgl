@@ -133,8 +133,8 @@
                     <div id="chartKecamatan" style="min-height: 250px;"></div>
                 </div>
                 <div class="dashboard-chart-card">
-                    <h3 class="chart-header">Indikator Pertumbuhan Penduduk (Kelahiran &amp; Kematian)</h3>
-                    <div id="chartPertumbuhan" style="min-height: 250px;"></div>
+                    <h3 class="chart-header">Populasi Berdasarkan Kelurahan</h3>
+                    <div id="chartKelurahan" style="min-height: 250px;"></div>
                 </div>
             </div>
         </div>
@@ -278,29 +278,6 @@ const pieOpts = (labels, series, colors) => ({
     dataLabels: { enabled: false }
 });
 
-const barPertumbuhanOpts = (categories, kelahiran, kematian) => ({
-    chart: { type: 'bar', height: 260, toolbar: { show: false } },
-    plotOptions: {
-        bar: {
-            horizontal: false,
-            columnWidth: '45%',
-            borderRadius: 4
-        }
-    },
-    dataLabels: { enabled: false },
-    stroke: { show: true, width: 2, colors: ['transparent'] },
-    series: [
-        { name: 'Kelahiran', data: kelahiran },
-        { name: 'Kematian', data: kematian }
-    ],
-    xaxis: { categories: categories },
-    yaxis: { title: { text: 'Jiwa', style: { fontSize: '12px', color: '#64748b' } } },
-    fill: { opacity: 1 },
-    colors: ['#10b981', '#ef4444'],
-    legend: { position: 'bottom', fontSize: '12px' },
-    grid: { borderColor: '#f1f5f9' }
-});
-
 // Data Umum -> PIE / DONUT CHARTS
 new ApexCharts(document.querySelector('#chartAgama'), pieOpts(
     {!! json_encode($chartAgamaLabels) !!},
@@ -320,11 +297,10 @@ new ApexCharts(document.querySelector('#chartKecamatan'), pieOpts(
     ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4']
 )).render();
 
-// Indikator Pertumbuhan -> BAR CHART
-new ApexCharts(document.querySelector('#chartPertumbuhan'), barPertumbuhanOpts(
-    {!! json_encode(!empty($chartPertumbuhanTahun) ? $chartPertumbuhanTahun : ['2023', '2024', '2025', '2026']) !!},
-    {!! json_encode(!empty($chartPertumbuhanKelahiran) ? $chartPertumbuhanKelahiran : [1250, 1340, 1420, $stats['kelahiranTahunIni']]) !!},
-    {!! json_encode(!empty($chartPertumbuhanKematian) ? $chartPertumbuhanKematian : [850, 890, 910, $stats['kematianTahunIni']]) !!}
+new ApexCharts(document.querySelector('#chartKelurahan'), pieOpts(
+    {!! json_encode($chartKelurahanLabels) !!},
+    {!! json_encode($chartKelurahanData) !!},
+    ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#f97316', '#84cc16', '#e11d48']
 )).render();
 
 // ── Peta ─────────────────────────────────────────────────────────────────────

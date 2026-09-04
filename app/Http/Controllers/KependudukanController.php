@@ -34,10 +34,14 @@ class KependudukanController extends Controller
         $kecRaw = KependudukanPenduduk::where('status', 'Aktif')->selectRaw('kecamatan, sum(penduduk) as total')->groupBy('kecamatan')->get();
         $kecamatan = $kecRaw->map(function($i) { return ['label' => $i->kecamatan, 'total' => $i->total]; })->toArray();
 
-        // Pertumbuhan chart (Mutasi)
-        $mutasiRaw = KependudukanMutasi::where('status', 'Aktif')->selectRaw('tahun, sum(kelahiran) as kelahiran, sum(kematian) as kematian')->groupBy('tahun')->orderBy('tahun', 'asc')->get();
-        $pertumbuhan = $mutasiRaw->map(function($i) { 
-            return ['tahun' => $i->tahun, 'kelahiran' => $i->kelahiran, 'kematian' => $i->kematian]; 
+        // Kelurahan donut chart (menggantikan Pertumbuhan)
+        $kelurahanChartRaw = KependudukanPenduduk::where('status', 'Aktif')
+            ->selectRaw('kelurahan, sum(penduduk) as total')
+            ->groupBy('kelurahan')
+            ->orderBy('total', 'desc')
+            ->get();
+        $kelurahanChart = $kelurahanChartRaw->map(function($i) {
+            return ['label' => $i->kelurahan, 'total' => (int) $i->total];
         })->toArray();
 
         // Kelurahan table
@@ -45,7 +49,7 @@ class KependudukanController extends Controller
 
         $publikasi = KependudukanInformasi::where('status', 'Rilis')->orderBy('tanggal', 'desc')->limit(4)->get();
 
-        return view('kependudukan.dashboard', compact('stats', 'agama', 'kecamatan', 'kelurahan', 'publikasi', 'pertumbuhan'));
+        return view('kependudukan.dashboard', compact('stats', 'agama', 'kecamatan', 'kelurahan', 'publikasi', 'kelurahanChart'));
     }
 
     public function dataPendudukIndex(Request $request)

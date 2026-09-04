@@ -316,30 +316,13 @@ class LayananPublikController extends Controller
                 
                 $chartKelurahanLabels = [];
                 $chartKelurahanData = [];
-                $kelGroups = (clone $qPendudukAktif)->selectRaw('kelurahan, SUM(penduduk) as total')->groupBy('kelurahan')->get();
+                $kelGroups = (clone $qPendudukAktif)->selectRaw('kelurahan, SUM(penduduk) as total')->groupBy('kelurahan')->orderByDesc('total')->get();
                 foreach($kelGroups as $g) {
                     if($g->kelurahan) { $chartKelurahanLabels[] = $g->kelurahan; $chartKelurahanData[] = $g->total; }
                 }
                 
                 $informasiTerbaru = \App\Models\KependudukanInformasi::where('status', 'Rilis')->limit(4)->get();
                 
-                // Indikator Pertumbuhan Penduduk (Kelahiran & Kematian per Tahun)
-                $mutasiGroups = (clone $queryMutasi)->where('status', 'Aktif')
-                                ->selectRaw('tahun, SUM(kelahiran) as kelahiran, SUM(kematian) as kematian')
-                                ->groupBy('tahun')
-                                ->orderBy('tahun', 'asc')
-                                ->get();
-                $chartPertumbuhanTahun = [];
-                $chartPertumbuhanKelahiran = [];
-                $chartPertumbuhanKematian = [];
-                foreach ($mutasiGroups as $m) {
-                    if ($m->tahun) {
-                        $chartPertumbuhanTahun[] = (string)$m->tahun;
-                        $chartPertumbuhanKelahiran[] = (int)$m->kelahiran;
-                        $chartPertumbuhanKematian[] = (int)$m->kematian;
-                    }
-                }
-
                 // Data table (limit for performance, instead of fetching millions of rows)
                 $filteredPenduduk = $queryPenduduk->limit(100)->get();
                 $dataPenduduk = $filteredPenduduk;
@@ -348,8 +331,7 @@ class LayananPublikController extends Controller
                     return view('layanan.kependudukan_new', compact(
                         'stats', 'filteredPenduduk', 'dataPenduduk', 'chartAgamaLabels', 'chartAgamaData',
                         'chartGenderLabels', 'chartGenderData', 'chartKecamatanLabels', 'chartKecamatanData',
-                        'chartKelurahanLabels', 'chartKelurahanData', 'chartPertumbuhanTahun', 'chartPertumbuhanKelahiran',
-                        'chartPertumbuhanKematian', 'informasiTerbaru', 'kecamatanOptions',
+                        'chartKelurahanLabels', 'chartKelurahanData', 'informasiTerbaru', 'kecamatanOptions',
                         'kelurahanOptions', 'tahunOptions', 'agamaOptions', 'statusOptions', 'filters', 'dept'
                     ))->render();
                 }
