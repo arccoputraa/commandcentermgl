@@ -8,8 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-@vite(['resources/css/style.css', 'resources/css/dashboard.css', 'resources/js/app.js'])
+<script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+@vite(['resources/css/app.css', 'resources/css/style.css', 'resources/css/dashboard.css', 'resources/js/app.js'])
 @yield('extraStyles')
 </head>
 <body class="@yield('body_class')">

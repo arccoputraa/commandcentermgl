@@ -169,6 +169,7 @@
                 }
             }
         });
+    });
 </script>
 
 <div class="content-grid">
