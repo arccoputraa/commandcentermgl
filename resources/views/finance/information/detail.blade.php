@@ -210,7 +210,7 @@
                             if (str_starts_with($docPath, 'http://') || str_starts_with($docPath, 'https://') || str_starts_with($docPath, '/')) {
                                 $targetUrl = $docPath;
                             } else {
-                                $targetUrl = asset('storage/' . $docPath);
+                                $targetUrl = Storage::url($docPath);
                             }
                         @endphp
                         <a href="{{ $targetUrl }}" target="_blank" class="file-link">

@@ -23,7 +23,7 @@ class KesehatanInformasiController extends Controller
 
         $file = $request->file('file_pdf');
         $fileName = time() . '_' . $file->getClientOriginalName();
-        $file->storeAs('public/kesehatan/informasi', $fileName);
+        $file->storeAs('kesehatan/informasi', $fileName, 'public');
 
         KesehatanInformasi::create([
             'judul' => $request->judul,
@@ -44,13 +44,13 @@ class KesehatanInformasiController extends Controller
 
         if ($request->hasFile('file_pdf')) {
             // Delete old file
-            if (Storage::exists('public/kesehatan/informasi/' . $informasi->file_pdf)) {
-                Storage::delete('public/kesehatan/informasi/' . $informasi->file_pdf);
+            if (Storage::disk('public')->exists('kesehatan/informasi/' . $informasi->file_pdf)) {
+                Storage::disk('public')->delete('kesehatan/informasi/' . $informasi->file_pdf);
             }
 
             $file = $request->file('file_pdf');
             $fileName = time() . '_' . $file->getClientOriginalName();
-            $file->storeAs('public/kesehatan/informasi', $fileName);
+            $file->storeAs('kesehatan/informasi', $fileName, 'public');
             $informasi->file_pdf = $fileName;
         }
 
@@ -65,8 +65,8 @@ class KesehatanInformasiController extends Controller
         $informasi = KesehatanInformasi::findOrFail($id);
 
         // Delete file
-        if (Storage::exists('public/kesehatan/informasi/' . $informasi->file_pdf)) {
-            Storage::delete('public/kesehatan/informasi/' . $informasi->file_pdf);
+        if (Storage::disk('public')->exists('kesehatan/informasi/' . $informasi->file_pdf)) {
+            Storage::disk('public')->delete('kesehatan/informasi/' . $informasi->file_pdf);
         }
 
         $informasi->delete();

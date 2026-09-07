@@ -45,7 +45,7 @@
                     <td>
                         <div style="display: flex; gap: 8px;">
                             @if($d->file_path)
-                                <a href="{{ asset($d->file_path) }}" target="_blank" class="btn btn-outline btn-sm" style="color: var(--admin-text-muted); border-color: var(--admin-border);">
+                                <a href="{{ Storage::url($d->file_path) }}" target="_blank" class="btn btn-outline btn-sm" style="color: var(--admin-text-muted); border-color: var(--admin-border);">
                                     <i class="fas fa-download"></i> Unduh
                                 </a>
                             @endif

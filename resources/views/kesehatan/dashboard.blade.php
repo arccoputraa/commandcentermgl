@@ -163,7 +163,7 @@
                     @php
                         $pdfPath = $info->file_pdf ? storage_path('app/public/kesehatan/informasi/' . basename($info->file_pdf)) : null;
                         $pdfUrl  = ($pdfPath && file_exists($pdfPath))
-                            ? asset('storage/kesehatan/informasi/' . basename($info->file_pdf))
+                            ? Storage::url('kesehatan/informasi/' . $info->file_pdf)
                             : asset('sample-document.pdf');
                     @endphp
                     <a href="{{ $pdfUrl }}" target="_blank" style="font-size:12px; font-weight:600; color:#009966; text-decoration:none;">Lihat PDF</a>

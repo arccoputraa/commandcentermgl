@@ -209,8 +209,7 @@ class PembangunanController extends Controller
         if ($request->hasFile('file')) {
             $file = $request->file('file');
             $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('public/pembangunan/documents', $filename);
-            $data['file_path'] = str_replace('public/', 'storage/', $path);
+            $data['file_path'] = $file->storeAs('pembangunan/documents', $filename, 'public');
         }
 
         PembangunanDocument::create($data);
@@ -244,14 +243,12 @@ class PembangunanController extends Controller
         if ($request->hasFile('file')) {
             // Delete old file if exists
             if ($document->file_path) {
-                $oldPath = str_replace('storage/', 'public/', $document->file_path);
-                Storage::delete($oldPath);
+                Storage::disk('public')->delete($document->file_path);
             }
 
             $file = $request->file('file');
             $filename = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('public/pembangunan/documents', $filename);
-            $data['file_path'] = str_replace('public/', 'storage/', $path);
+            $data['file_path'] = $file->storeAs('pembangunan/documents', $filename, 'public');
         }
 
         $document->update($data);
@@ -264,8 +261,7 @@ class PembangunanController extends Controller
         $document = PembangunanDocument::findOrFail($id);
         
         if ($document->file_path) {
-            $oldPath = str_replace('storage/', 'public/', $document->file_path);
-            Storage::delete($oldPath);
+            Storage::disk('public')->delete($document->file_path);
         }
         
         $document->delete();

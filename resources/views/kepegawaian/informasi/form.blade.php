@@ -39,7 +39,7 @@
                 <label style="display:block; font-size:13px; font-weight:600; color:#334155; margin-bottom:8px;">Upload File PDF</label>
                 <input type="file" name="dokumen" accept=".pdf" style="width:100%; padding:12px; border:1px solid #cbd5e1; border-radius:8px; outline:none; font-size:14px; background:#fff;">
                 @if(isset($informasi) && $informasi->dokumen)
-                    <p style="margin-top:4px; font-size:12px; color:#64748b;">File saat ini: <a href="{{ asset('storage/' . $informasi->dokumen) }}" target="_blank" style="color:#4f46e5; text-decoration:none;">{{ basename($informasi->dokumen) }}</a></p>
+                    <p style="margin-top:4px; font-size:12px; color:#64748b;">File saat ini: <a href="{{ Storage::url($informasi->dokumen) }}" target="_blank" style="color:#4f46e5; text-decoration:none;">{{ basename($informasi->dokumen) }}</a></p>
                 @endif
             </div>
             <div>

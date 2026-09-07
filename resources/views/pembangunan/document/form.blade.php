@@ -84,7 +84,7 @@
             <small style="color: var(--admin-text-muted); font-size: 12px; display: block; margin-top: 6px;">Maksimal 10MB. Format menyesuaikan tipe.</small>
             @if(isset($document) && $document->file_path)
                 <div style="margin-top: 12px;">
-                    <a href="{{ asset($document->file_path) }}" target="_blank" class="status-badge" style="background: rgba(59, 130, 246, 0.1); color: var(--admin-primary); text-decoration: none;">
+                    <a href="{{ Storage::url($document->file_path) }}" target="_blank" class="status-badge" style="background: rgba(59, 130, 246, 0.1); color: var(--admin-primary); text-decoration: none;">
                         <i class="fas fa-file"></i> Lihat file saat ini
                     </a>
                 </div>

@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', 'Pusat Data SIG - Command Center Kota Magelang')
 
@@ -148,7 +148,7 @@
                         <div>
                             @php
                                 $filePath = isset($info['file_path']) && file_exists(storage_path('app/public/' . $info['file_path'])) 
-                                    ? asset('storage/' . $info['file_path']) 
+                                    ? Storage::url($info['file_path']) 
                                     : asset('sample-document.pdf');
                             @endphp
                             <a href="{{ $filePath }}" target="_blank" 

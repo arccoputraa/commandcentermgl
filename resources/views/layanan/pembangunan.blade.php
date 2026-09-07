@@ -138,7 +138,7 @@ if(isset($stats)) {
         @foreach ($dokumentasi as $dok)
             <div class="doc-card">
                 @if($dok->file_path)
-                    <div class="doc-placeholder" style="background-image: url('{{ asset($dok->file_path) }}'); background-size: cover; background-position: center; color: transparent;">??</div>
+                    <div class="doc-placeholder" style="background-image: url('{{ Storage::url($dok->file_path) }}'); background-size: cover; background-position: center; color: transparent;">??</div>
                 @else
                     <div class="doc-placeholder">??</div>
                 @endif
