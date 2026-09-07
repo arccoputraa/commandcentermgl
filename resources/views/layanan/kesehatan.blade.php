@@ -79,13 +79,33 @@
     </div>
 
     <!-- Filter Bar -->
-    <div style="display:flex; gap:12px; margin-bottom:24px; align-items:center; flex-wrap:wrap;">
-        <input type="text" placeholder="Tahun 2025" style="border:1px solid #e2e8f0; border-radius:8px; padding:9px 16px; font-size:13px; color:#64748b; background:#fff; min-width:130px;">
-        <input type="text" placeholder="Semua Faskes" style="border:1px solid #e2e8f0; border-radius:8px; padding:9px 16px; font-size:13px; color:#64748b; background:#fff; min-width:130px;">
-        <input type="text" placeholder="Semua Wilayah" style="border:1px solid #e2e8f0; border-radius:8px; padding:9px 16px; font-size:13px; color:#64748b; background:#fff; min-width:130px;">
-        <input type="text" placeholder="Cari indikator..." style="border:1px solid #e2e8f0; border-radius:8px; padding:9px 16px; font-size:13px; color:#64748b; background:#fff; flex:1; min-width:180px;">
-        <button style="background:#009966; color:#fff; border:none; border-radius:8px; padding:9px 22px; font-weight:600; font-size:13px; cursor:pointer;">Terapkan Filter</button>
-    </div>
+    <form method="GET" action="{{ route('layanan') }}" style="display:flex; gap:12px; margin-bottom:24px; align-items:center; flex-wrap:wrap;">
+        <input type="hidden" name="dept" value="kesehatan">
+        <select name="tahun" style="border:1px solid #e2e8f0; border-radius:8px; padding:9px 16px; font-size:13px; color:#64748b; background:#fff; min-width:130px; outline:none;">
+            <option value="">Semua Tahun</option>
+            <option value="2026" {{ request('tahun') == '2026' ? 'selected' : '' }}>Tahun 2026</option>
+            <option value="2025" {{ request('tahun') == '2025' ? 'selected' : '' }}>Tahun 2025</option>
+            <option value="2024" {{ request('tahun') == '2024' ? 'selected' : '' }}>Tahun 2024</option>
+        </select>
+        <select name="faskes" style="border:1px solid #e2e8f0; border-radius:8px; padding:9px 16px; font-size:13px; color:#64748b; background:#fff; min-width:130px; outline:none;">
+            <option value="">Semua Faskes</option>
+            <option value="rsud_tidar" {{ request('faskes') == 'rsud_tidar' ? 'selected' : '' }}>RSUD Tidar</option>
+            <option value="puskesmas_utara" {{ request('faskes') == 'puskesmas_utara' ? 'selected' : '' }}>Puskesmas Magelang Utara</option>
+            <option value="puskesmas_tengah" {{ request('faskes') == 'puskesmas_tengah' ? 'selected' : '' }}>Puskesmas Magelang Tengah</option>
+            <option value="puskesmas_selatan" {{ request('faskes') == 'puskesmas_selatan' ? 'selected' : '' }}>Puskesmas Magelang Selatan</option>
+        </select>
+        <select name="wilayah" style="border:1px solid #e2e8f0; border-radius:8px; padding:9px 16px; font-size:13px; color:#64748b; background:#fff; min-width:130px; outline:none;">
+            <option value="">Semua Wilayah</option>
+            <option value="Magelang Utara" {{ request('wilayah') == 'Magelang Utara' ? 'selected' : '' }}>Magelang Utara</option>
+            <option value="Magelang Tengah" {{ request('wilayah') == 'Magelang Tengah' ? 'selected' : '' }}>Magelang Tengah</option>
+            <option value="Magelang Selatan" {{ request('wilayah') == 'Magelang Selatan' ? 'selected' : '' }}>Magelang Selatan</option>
+        </select>
+        <input type="text" name="keyword" value="{{ request('keyword') }}" placeholder="Cari indikator / penyakit..." style="border:1px solid #e2e8f0; border-radius:8px; padding:9px 16px; font-size:13px; color:#64748b; background:#fff; flex:1; min-width:180px; outline:none;">
+        <button type="submit" style="background:#009966; color:#fff; border:none; border-radius:8px; padding:9px 22px; font-weight:600; font-size:13px; cursor:pointer;">Terapkan Filter</button>
+        @if(request('tahun') || request('faskes') || request('wilayah') || request('keyword'))
+            <a href="{{ route('layanan', ['dept' => 'kesehatan']) }}" style="font-size:13px; color:#ef4444; text-decoration:none; font-weight:600; padding:0 8px;">Reset</a>
+        @endif
+    </form>
 
     <!-- Main 2-column layout -->
     <div style="display:grid; grid-template-columns:1fr 340px; gap:24px; align-items:start;">
@@ -128,7 +148,7 @@
                     <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15828.910901596201!2d110.2078652!3d-7.4815454!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a8f4c4054a8e3%3A0xc3b4cc374be2e022!2sMagelang%2C%20Magelang%20City%2C%20Central%20Java!5e0!3m2!1sen!2sid!4v1715000000000!5m2!1sen!2sid" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div>
                 <div style="padding:12px;">
-                    <button style="width:100%; background:#009966; color:#fff; border:none; border-radius:8px; padding:10px; font-weight:600; font-size:13px; cursor:pointer;">Buka Peta Interaktif</button>
+                    <a href="https://maps.google.com/?q=Kota+Magelang" target="_blank" style="display:block; text-align:center; width:100%; background:#009966; color:#fff; border:none; border-radius:8px; padding:10px 0; font-weight:600; font-size:13px; cursor:pointer; text-decoration:none; box-sizing:border-box;">Buka Peta Interaktif</a>
                 </div>
             </div>
 
@@ -157,7 +177,7 @@
                             $pdfPath = $info->file_pdf ? storage_path('app/public/kesehatan/informasi/' . basename($info->file_pdf)) : null;
                             $pdfUrl = ($pdfPath && file_exists($pdfPath))
                                 ? Storage::url('kesehatan/informasi/' . $info->file_pdf)
-                                : asset('sample-document.pdf');
+                                : asset('dokumen/sample-laporan-keuangan.pdf');
                         @endphp
                         <a href="{{ $pdfUrl }}" target="_blank" style="font-size:12px; font-weight:600; color:#009966; text-decoration:none;">Lihat PDF</a>
                     </div>
@@ -171,83 +191,105 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    if (typeof Chart === 'undefined') return;
-    Chart.defaults.font.family = 'Inter, sans-serif';
-    Chart.defaults.color = '#62748E';
-
-    // Tren Pasien Per Bulan
-    const bulanLabels = {!! json_encode($bulanList ?? ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des']) !!};
-    const trenData    = {!! json_encode(array_values($trenBulanan ?? array_fill(0, 12, 0))) !!};
-    new Chart(document.getElementById('trenPasienChart').getContext('2d'), {
-        type: 'bar',
-        data: {
-            labels: bulanLabels,
-            datasets: [{
-                label: 'Jumlah Pasien',
-                data: trenData,
-                backgroundColor: '#009966',
-                borderRadius: 4,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                y: { beginAtZero: true, grid: { borderDash: [4,4], color: '#E2E8F0' } },
-                x: { grid: { display: false } }
-            }
+(function initKesehatanCharts() {
+    function start() {
+        if (typeof Chart === 'undefined') {
+            setTimeout(start, 50);
+            return;
         }
-    });
 
-    // Top 5 Penyakit (Horizontal Bar)
-    new Chart(document.getElementById('topPenyakitChart').getContext('2d'), {
-        type: 'bar',
-        data: {
-            labels: {!! isset($topPenyakit) ? json_encode($topPenyakit->pluck('nama')) : (isset($penyakit) ? json_encode($penyakit->pluck('nama')) : json_encode(['ISPA','Hipertensi','Diabetes','Diare','DBD'])) !!},
-            datasets: [{
-                label: 'Jumlah Kasus',
-                data: {!! isset($topPenyakit) ? json_encode($topPenyakit->pluck('jumlah')) : (isset($penyakit) ? json_encode($penyakit->pluck('jumlah')) : json_encode([1200,950,780,450,320])) !!},
-                backgroundColor: '#f59e0b',
-                borderRadius: 4,
-                indexAxis: 'y',
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                x: { beginAtZero: true, grid: { borderDash: [4,4], color: '#E2E8F0' } },
-                y: { grid: { display: false } }
-            }
-        }
-    });
+        Chart.defaults.font.family = 'Inter, sans-serif';
+        Chart.defaults.color = '#62748E';
 
-    // Kasus Aktif per Wilayah (Donut)
-    const wilayahLabels = {!! isset($kasusWilayah) && $kasusWilayah->count() ? json_encode($kasusWilayah->pluck('wilayah')) : json_encode(['Magelang Utara','Magelang Tengah','Magelang Selatan']) !!};
-    const wilayahData   = {!! isset($kasusWilayah) && $kasusWilayah->count() ? json_encode($kasusWilayah->pluck('total')) : json_encode([45,25,16]) !!};
-    new Chart(document.getElementById('kasusWilayahChart').getContext('2d'), {
-        type: 'doughnut',
-        data: {
-            labels: wilayahLabels,
-            datasets: [{
-                data: wilayahData,
-                backgroundColor: ['#00BC7D','#E17100','#E7000B','#3B82F6'],
-                borderWidth: 0,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 16 } } }
+        // 1. Tren Pasien Per Bulan
+        const canvasTren = document.getElementById('trenPasienChart');
+        if (canvasTren) {
+            const bulanLabels = {!! json_encode($bulanList ?? ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des']) !!};
+            const trenData    = {!! json_encode(array_values($trenBulanan ?? array_fill(0, 12, 0))) !!};
+            new Chart(canvasTren.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: bulanLabels,
+                    datasets: [{
+                        label: 'Jumlah Pasien',
+                        data: trenData,
+                        backgroundColor: '#009966',
+                        borderRadius: 4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { borderDash: [4,4], color: '#E2E8F0' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
         }
-    });
-});
+
+        // 2. Top 5 Penyakit (Horizontal Bar)
+        const canvasTop = document.getElementById('topPenyakitChart');
+        if (canvasTop) {
+            const penyakitLabels = {!! isset($penyakit) && $penyakit->count() ? json_encode($penyakit->pluck('nama')) : json_encode(['ISPA','Hipertensi','Diabetes','Diare','DBD']) !!};
+            const penyakitData   = {!! isset($penyakit) && $penyakit->count() ? json_encode($penyakit->pluck('jumlah')) : json_encode([1200,950,780,450,320]) !!};
+            new Chart(canvasTop.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: penyakitLabels,
+                    datasets: [{
+                        label: 'Jumlah Kasus',
+                        data: penyakitData,
+                        backgroundColor: '#f59e0b',
+                        borderRadius: 4,
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { beginAtZero: true, grid: { borderDash: [4,4], color: '#E2E8F0' } },
+                        y: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // 3. Kasus Aktif per Wilayah (Donut)
+        const canvasWilayah = document.getElementById('kasusWilayahChart');
+        if (canvasWilayah) {
+            const wilayahLabels = {!! isset($kasusWilayah) && $kasusWilayah->count() ? json_encode($kasusWilayah->pluck('wilayah')) : json_encode(['Magelang Utara','Magelang Tengah','Magelang Selatan']) !!};
+            const wilayahData   = {!! isset($kasusWilayah) && $kasusWilayah->count() ? json_encode($kasusWilayah->pluck('total')) : json_encode([45,25,16]) !!};
+            new Chart(canvasWilayah.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: wilayahLabels,
+                    datasets: [{
+                        data: wilayahData,
+                        backgroundColor: ['#00BC7D','#E17100','#E7000B','#3B82F6'],
+                        borderWidth: 0,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 16 } } }
+                }
+            });
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', start);
+    } else {
+        start();
+    }
+})();
 </script>
 
 @endsection
+

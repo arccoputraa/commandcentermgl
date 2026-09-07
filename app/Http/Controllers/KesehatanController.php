@@ -9,39 +9,58 @@ class KesehatanController extends Controller
 {
     public function dashboard()
     {
-        $totalProgram        = \App\Models\KesehatanInformasi::count();
-        $pasienTerpantau     = \App\Models\KesehatanPenyakit::sum('jumlah');
-        $kasusAktif          = \App\Models\KesehatanPenyakit::where('status', 'Aktif')->sum('jumlah') ?: 324;
-        $vaksinasi           = 85210;
+        $totalProgram        = 48;
+        $pasienTerpantau     = 12450;
+        $kasusAktif          = 324;
+        $imunisasi           = 85210;
+        $vaksinasi           = 120400;
         $pencegahanStunting  = 1240;
         $kartuSehat          = 32150;
+        $updateTerakhir      = 'Hari Ini';
 
-        // Tren Pasien Per Bulan
-        $bulanList = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-        $trenBulanan = array_fill(0, 12, 0);
-        $penyakitBulanan = \App\Models\KesehatanPenyakit::selectRaw('bulan, SUM(jumlah) as total')
-            ->groupBy('bulan')->get();
-        foreach ($penyakitBulanan as $row) {
-            $idx = array_search($row->bulan, $bulanList);
-            if ($idx !== false) {
-                $trenBulanan[$idx] = (int) $row->total;
-            }
-        }
-
-        // Kasus per wilayah (untuk donut chart)
-        $kasusWilayah = \App\Models\KesehatanPenyakit::selectRaw('wilayah, SUM(jumlah) as total')
-            ->groupBy('wilayah')->orderByDesc('total')->limit(4)->get();
-
-        // Top 5 penyakit
-        $topPenyakit = \App\Models\KesehatanPenyakit::orderBy('jumlah', 'desc')->limit(5)->get();
-
-        // Informasi terbaru
-        $informasi = \App\Models\KesehatanInformasi::orderBy('created_at', 'desc')->limit(5)->get();
+        $programUtama = [
+            [
+                'judul' => 'Pencegahan Stunting',
+                'status' => 'Aktif',
+                'badge_class' => 'bg-emerald-100 text-emerald-600',
+                'jumlah' => '1,240 Data',
+                'persentase' => 65,
+                'bar_color' => '#f59e0b',
+                'route' => route('kesehatan.program.index'),
+            ],
+            [
+                'judul' => 'Vaksin Covid-19',
+                'status' => 'Aktif',
+                'badge_class' => 'bg-emerald-100 text-emerald-600',
+                'jumlah' => '120,400 Dosis',
+                'persentase' => 85,
+                'bar_color' => '#3b82f6',
+                'route' => route('kesehatan.program.index'),
+            ],
+            [
+                'judul' => 'Imunisasi Balita',
+                'status' => 'Selesai',
+                'badge_class' => 'bg-slate-100 text-slate-600',
+                'jumlah' => '85,210 Anak',
+                'persentase' => 100,
+                'bar_color' => '#10b981',
+                'route' => route('kesehatan.program.index'),
+            ],
+            [
+                'judul' => 'Distribusi Kartu Sehat',
+                'status' => 'Aktif',
+                'badge_class' => 'bg-emerald-100 text-emerald-600',
+                'jumlah' => '32,150 KK',
+                'persentase' => 45,
+                'bar_color' => '#a855f7',
+                'route' => route('kesehatan.program.index'),
+            ],
+        ];
 
         return view('kesehatan.dashboard', compact(
-            'totalProgram', 'pasienTerpantau', 'kasusAktif',
-            'vaksinasi', 'pencegahanStunting', 'kartuSehat',
-            'bulanList', 'trenBulanan', 'kasusWilayah', 'topPenyakit', 'informasi'
+            'totalProgram', 'pasienTerpantau', 'kasusAktif', 'imunisasi',
+            'vaksinasi', 'pencegahanStunting', 'kartuSehat', 'updateTerakhir',
+            'programUtama'
         ));
     }
 
