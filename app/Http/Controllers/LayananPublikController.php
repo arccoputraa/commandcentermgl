@@ -306,35 +306,69 @@ class LayananPublikController extends Controller
             }
 
             if ($dept === 'kesehatan') {
+                $queryPenyakit = \App\Models\KesehatanPenyakit::query();
+
+                // Handle filter jika disubmit
+                if ($request->filled('tahun')) {
+                    $queryPenyakit->where('tahun', $request->input('tahun'));
+                }
+                if ($request->filled('wilayah')) {
+                    $queryPenyakit->where('wilayah', $request->input('wilayah'));
+                }
+                if ($request->filled('keyword')) {
+                    $keyword = $request->input('keyword');
+                    $queryPenyakit->where(function($q) use ($keyword) {
+                        $q->where('nama', 'like', "%{$keyword}%")
+                          ->orWhere('wilayah', 'like', "%{$keyword}%")
+                          ->orWhere('bulan', 'like', "%{$keyword}%");
+                    });
+                }
+
                 $informasi = \App\Models\KesehatanInformasi::orderBy('created_at', 'desc')->limit(5)->get();
-                $penyakit   = \App\Models\KesehatanPenyakit::orderBy('jumlah', 'desc')->limit(5)->get();
+                $penyakit = (clone $queryPenyakit)->orderBy('jumlah', 'desc')->limit(5)->get();
 
                 $stats = [
                     'total'               => \App\Models\KesehatanInformasi::count(),
-                    'pasien'              => \App\Models\KesehatanPenyakit::sum('jumlah'),
-                    'kasus'               => \App\Models\KesehatanPenyakit::where('status', 'Aktif')->sum('jumlah'),
-                    'vaksinasi'           => 85210,
+                    'pasien'              => (clone $queryPenyakit)->sum('jumlah'),
+                    'kasus'               => (clone $queryPenyakit)->where('status', 'Aktif')->sum('jumlah'),
+                    'vaksinasi'           => 120400,
                     'pencegahan_stunting' => 1240,
                     'kartu_sehat'         => 32150,
                 ];
 
-                // Tren Pasien Per Bulan (dari data penyakit per bulan)
+                // Tren Pasien Per Bulan (dari data real penyakit di database)
                 $bulanList = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+                $bulanMap = [
+                    'januari' => 0, 'jan' => 0,
+                    'februari' => 1, 'feb' => 1,
+                    'maret' => 2, 'mar' => 2,
+                    'april' => 3, 'apr' => 3,
+                    'mei' => 4, 'may' => 4,
+                    'juni' => 5, 'jun' => 5,
+                    'juli' => 6, 'jul' => 6,
+                    'agustus' => 7, 'agu' => 7, 'aug' => 7,
+                    'september' => 8, 'sep' => 8,
+                    'oktober' => 9, 'okt' => 9, 'oct' => 9,
+                    'november' => 10, 'nov' => 10,
+                    'desember' => 11, 'des' => 11, 'dec' => 11
+                ];
                 $trenBulanan = array_fill(0, 12, 0);
-                $penyakitBulanan = \App\Models\KesehatanPenyakit::selectRaw('bulan, SUM(jumlah) as total')
+                $penyakitBulanan = (clone $queryPenyakit)->selectRaw('bulan, SUM(jumlah) as total')
                     ->groupBy('bulan')->get();
                 foreach ($penyakitBulanan as $row) {
-                    $idx = array_search($row->bulan, $bulanList);
-                    if ($idx !== false) {
-                        $trenBulanan[$idx] = (int) $row->total;
+                    $key = strtolower(trim($row->bulan));
+                    if (isset($bulanMap[$key])) {
+                        $trenBulanan[$bulanMap[$key]] += (int) $row->total;
                     }
                 }
 
-                // Kasus per wilayah (donut chart)
-                $kasusWilayah = \App\Models\KesehatanPenyakit::selectRaw('wilayah, SUM(jumlah) as total')
+                // Kasus per wilayah (donut chart) dari data real di database
+                $kasusWilayah = (clone $queryPenyakit)->selectRaw('wilayah, SUM(jumlah) as total')
                     ->groupBy('wilayah')->orderByDesc('total')->limit(4)->get();
 
-                if (view()->exists('layanan.kesehatan')) return view('layanan.kesehatan', compact('informasi', 'penyakit', 'stats', 'dept', 'bulanList', 'trenBulanan', 'kasusWilayah'))->render();
+                if (view()->exists('layanan.kesehatan')) {
+                    return view('layanan.kesehatan', compact('informasi', 'penyakit', 'stats', 'dept', 'bulanList', 'trenBulanan', 'kasusWilayah'))->render();
+                }
             }
 
             if ($dept === 'perhubungan') {
