@@ -81,94 +81,120 @@
 <div class="panel-grid">
     <div class="panel-card">
         <h3 class="panel-title">Populasi Berdasarkan Agama</h3>
-        <canvas id="agamaPieChart" style="max-height: 250px;"></canvas>
+        <div id="chartAgama" style="min-height: 250px;"></div>
     </div>
 
     <div class="panel-card">
         <h3 class="panel-title">Populasi Berdasarkan Jenis Kelamin</h3>
-        <canvas id="genderPieChart" style="max-height: 250px;"></canvas>
+        <div id="chartGender" style="min-height: 250px;"></div>
     </div>
     
     <div class="panel-card" style="grid-column: 1 / -1;">
         <h3 class="panel-title">Populasi Berdasarkan Kelurahan</h3>
-        <canvas id="kelurahanDonutChart" style="max-height: 300px;"></canvas>
+        <div id="chartKelurahan" style="min-height: 400px;"></div>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Data Agama
-        const agamaData = {!! json_encode($agama) !!};
-        new Chart(document.getElementById('agamaPieChart'), {
-            type: 'pie',
-            data: {
-                labels: agamaData.map(d => d.label),
-                datasets: [{
-                    data: agamaData.map(d => d.total),
-                    backgroundColor: ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'],
-                }]
+        const pieOpts = (labels, series, colors) => ({
+            chart: { type: 'donut', height: 260 },
+            labels: labels && labels.length > 0 ? labels : ['Data Kosong'],
+            series: series && series.length > 0 ? series.map(Number) : [1],
+            colors: colors,
+            legend: { position: 'bottom', fontSize: '12px', markers: { radius: 12 } },
+            plotOptions: {
+                pie: {
+                    donut: {
+                        size: '60%',
+                        labels: {
+                            show: true,
+                            total: {
+                                show: true,
+                                label: 'Total',
+                                fontSize: '13px',
+                                fontWeight: 600,
+                                formatter: function (w) {
+                                    return w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('id-ID');
+                                }
+                            }
+                        }
+                    }
+                }
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
+            dataLabels: {
+                enabled: true,
+                formatter: function (val, opts) {
+                    return val.toFixed(1) + "%"; 
+                }
+            },
+            tooltip: {
+                y: { formatter: function(val) { return val.toLocaleString('id-ID') + " jiwa"; } }
             }
         });
+
+        const barOpts = (labels, series, colors) => ({
+            chart: { type: 'bar', height: 400, toolbar: { show: false }, stacked: true },
+            series: [
+                { name: 'Populasi', data: series && series.length > 0 ? series.map(Number) : [0] },
+                { name: 'Dummy', data: series && series.length > 0 ? series.map(() => 0) : [0] }
+            ],
+            colors: ['#2563eb', 'transparent'],
+            plotOptions: {
+                bar: { horizontal: true, borderRadius: 4, dataLabels: { position: 'top' } }
+            },
+            dataLabels: {
+                enabled: true,
+                enabledOnSeries: [1],
+                offsetX: 40,
+                style: { fontSize: '12px', colors: ['#333'] },
+                formatter: function (val, opts) {
+                    let realVal = opts.w.config.series[0].data[opts.dataPointIndex];
+                    return realVal.toLocaleString('id-ID');
+                }
+            },
+            stroke: { width: 1, colors: ['#fff'] },
+            xaxis: {
+                categories: labels && labels.length > 0 ? labels : ['Kosong'],
+                labels: { formatter: function (val) { return val.toLocaleString('id-ID'); } }
+            },
+            yaxis: { title: { text: undefined } },
+            tooltip: {
+                y: { formatter: function (val, opts) {
+                    if (opts.seriesIndex === 1) return undefined;
+                    return val.toLocaleString('id-ID') + " jiwa";
+                }}
+            },
+            legend: { show: false }
+        });
+
+        // Data Agama
+        const agamaData = {!! json_encode($agama) !!};
+        new ApexCharts(document.querySelector('#chartAgama'), pieOpts(
+            agamaData.map(d => d.label),
+            agamaData.map(d => d.total),
+            ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899']
+        )).render();
 
         // Data Gender
         const genderData = {
             laki: {{ $stats['lakiLaki'] }},
             perempuan: {{ $stats['perempuan'] }}
         };
-        new Chart(document.getElementById('genderPieChart'), {
-            type: 'pie',
-            data: {
-                labels: ['Laki-laki', 'Perempuan'],
-                datasets: [{
-                    data: [genderData.laki, genderData.perempuan],
-                    backgroundColor: ['#3b82f6', '#ec4899'],
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
-            }
-        });
+        new ApexCharts(document.querySelector('#chartGender'), pieOpts(
+            ['Laki-laki', 'Perempuan'],
+            [genderData.laki, genderData.perempuan],
+            ['#3b82f6', '#ec4899']
+        )).render();
 
-        // Data Kelurahan (Donut)
-                    const kelurahanChartData = {!! json_encode($kelurahanChart ?? []) !!};
-                    new Chart(document.getElementById('kelurahanDonutChart'), {
-                        type: 'doughnut',
-                        data: {
-                            labels: kelurahanChartData.map(d => d.label),
-                            datasets: [{
-                                data: kelurahanChartData.map(d => d.total),
-                                backgroundColor: [
-                                    '#2563eb', '#10b981', '#f59e0b', '#ef4444',
-                                    '#8b5cf6', '#06b6d4', '#f97316', '#84cc16',
-                                    '#e11d48', '#0891b2', '#7c3aed', '#059669'
-                                ],
-                            }]
-                        },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'right',
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                const pct = ((context.parsed / total) * 100).toFixed(1);
-                                return context.label + ': ' + context.parsed.toLocaleString('id-ID') + ' jiwa (' + pct + '%)';
-                            }
-                        }
-                    }
-                }
-            }
-        });
+        // Data Kelurahan
+        const kelurahanChartData = {!! json_encode($kelurahanChart ?? []) !!};
+        new ApexCharts(document.querySelector('#chartKelurahan'), barOpts(
+            kelurahanChartData.map(d => d.label),
+            kelurahanChartData.map(d => d.total),
+            ['#2563eb']
+        )).render();
     });
 </script>
 
