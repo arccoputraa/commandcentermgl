@@ -37,17 +37,33 @@
         </div>
     </div>
 
-    <div class="dashboard-filter-bar">
+    <form class="dashboard-filter-bar" method="GET" action="{{ route('layanan') }}">
+        <input type="hidden" name="dept" value="kepegawaian">
         <div class="filter-dropdowns">
-            <select><option>Unit Kerja</option></select>
-            <select><option>Golongan</option></select>
-            <select><option>Status</option></select>
+            <select name="unit_kerja">
+                <option value="">Semua Unit Kerja</option>
+                @foreach($unitKerjaOptions as $opt)
+                    <option value="{{ $opt }}" {{ request('unit_kerja') == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                @endforeach
+            </select>
+            <select name="golongan">
+                <option value="">Semua Golongan</option>
+                @foreach($golonganOptions as $opt)
+                    <option value="{{ $opt }}" {{ request('golongan') == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                @endforeach
+            </select>
+            <select name="status">
+                <option value="">Semua Status</option>
+                @foreach($statusOptions as $opt)
+                    <option value="{{ $opt }}" {{ request('status') == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                @endforeach
+            </select>
         </div>
         <div class="filter-search" style="flex:1; min-width:220px;">
-            <input type="text" placeholder="Cari indikator" />
+            <input type="text" name="search" placeholder="Cari indikator" value="{{ request('search') }}" />
         </div>
-        <button class="btn btn-outline">Terapkan Filter</button>
-    </div>
+        <button type="submit" class="btn btn-outline">Terapkan Filter</button>
+    </form>
 
     <div class="dashboard-layout-sidebar">
         <div class="dashboard-main-col">

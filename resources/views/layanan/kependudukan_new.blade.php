@@ -278,6 +278,75 @@ const pieOpts = (labels, series, colors) => ({
     dataLabels: { enabled: false }
 });
 
+const barOpts = (labels, series, colors) => {
+    const isFew = labels && labels.length <= 3;
+    const sData = series && series.length > 0 ? series.map(Number) : [0];
+    const maxVal = Math.max(...sData, 0);
+    let calculatedMax = Math.ceil(maxVal / 2500) * 2500;
+    if (calculatedMax === 0) calculatedMax = 2500;
+    
+    // Add extra padding to ensure the text fits inside the transparent area
+    if (calculatedMax - maxVal < 1000) calculatedMax += 2500;
+    
+    const ticks = calculatedMax / 2500;
+    const dummyData = sData.map(val => calculatedMax - val);
+
+    return {
+        chart: { 
+            type: 'bar', 
+            height: 420, 
+            stacked: true, 
+            toolbar: { show: false } 
+        },
+        grid: { padding: { right: 20, left: 10 } },
+        plotOptions: {
+            bar: {
+                horizontal: true,
+                borderRadius: 4,
+                dataLabels: { position: 'top' },
+                barHeight: isFew ? '40px' : '70%'
+            }
+        },
+        dataLabels: {
+            enabled: true,
+            formatter: function(val, opts) {
+                if (opts.seriesIndex === 1) {
+                    const actualVal = opts.w.config.series[0].data[opts.dataPointIndex];
+                    return Number(actualVal).toLocaleString('id-ID');
+                }
+                return '';
+            },
+            offsetX: 0,
+            style: { fontSize: '12px', colors: ['#1e293b'], fontWeight: 800 },
+        },
+        series: [
+            { name: 'Total Penduduk', data: sData },
+            { name: 'Dummy', data: dummyData }
+        ],
+        xaxis: { 
+            categories: labels && labels.length > 0 ? labels : ['Kosong'],
+            labels: { formatter: function (val) { return Number(val).toLocaleString('id-ID'); } },
+            min: 0,
+            max: calculatedMax,
+            tickAmount: ticks,
+            forceNiceScale: false
+        },
+        colors: [colors[0] || '#2563eb', 'rgba(0,0,0,0)'],
+        legend: { show: false },
+        tooltip: {
+            custom: function({series, seriesIndex, dataPointIndex, w}) {
+                const val = w.globals.initialSeries[0].data[dataPointIndex];
+                const label = w.globals.labels[dataPointIndex];
+                return '<div style="padding: 10px 14px; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">' + 
+                       '<strong style="color: #1e293b; font-size: 13px;">' + label + '</strong><br/>' + 
+                       '<span style="color: #64748b; font-size: 12px;">Total Penduduk: </span>' + 
+                       '<span style="color: #2563eb; font-weight: 700; font-size: 13px;">' + Number(val).toLocaleString('id-ID') + ' Jiwa</span>' + 
+                       '</div>';
+            }
+        }
+    };
+};
+
 // Data Umum -> PIE / DONUT CHARTS
 new ApexCharts(document.querySelector('#chartAgama'), pieOpts(
     {!! json_encode($chartAgamaLabels) !!},
@@ -297,10 +366,10 @@ new ApexCharts(document.querySelector('#chartKecamatan'), pieOpts(
     ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4']
 )).render();
 
-new ApexCharts(document.querySelector('#chartKelurahan'), pieOpts(
+new ApexCharts(document.querySelector('#chartKelurahan'), barOpts(
     {!! json_encode($chartKelurahanLabels) !!},
     {!! json_encode($chartKelurahanData) !!},
-    ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#f97316', '#84cc16', '#e11d48']
+    ['#2563eb']
 )).render();
 
 // ── Peta ─────────────────────────────────────────────────────────────────────

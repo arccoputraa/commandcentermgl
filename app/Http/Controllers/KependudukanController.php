@@ -30,19 +30,51 @@ class KependudukanController extends Controller
         $agamaRaw = KependudukanAgama::where('status', 'Aktif')->selectRaw('agama, sum(penduduk) as total')->groupBy('agama')->get();
         $agama = $agamaRaw->map(function($i) { return ['label' => $i->agama, 'total' => $i->total]; })->toArray();
 
+        $masterWilayah = [
+            'Magelang Selatan' => ['Jurangombo Selatan', 'Jurangombo Utara', 'Magersari', 'Rejowinangun Selatan', 'Tidar Selatan', 'Tidar Utara'],
+            'Magelang Tengah' => ['Cacaban', 'Gelangan', 'Kemirirejo', 'Magelang', 'Panjang', 'Rejowinangun Utara'],
+            'Magelang Utara' => ['Kedungsari', 'Kramat Selatan', 'Kramat Utara', 'Potrobangsan', 'Wates']
+        ];
+        
+        $kecamatanLabels = array_keys($masterWilayah);
+        $kecamatanTotals = array_fill_keys($kecamatanLabels, 0);
+
         // Kecamatan chart
         $kecRaw = KependudukanPenduduk::where('status', 'Aktif')->selectRaw('kecamatan, sum(penduduk) as total')->groupBy('kecamatan')->get();
-        $kecamatan = $kecRaw->map(function($i) { return ['label' => $i->kecamatan, 'total' => $i->total]; })->toArray();
+        foreach ($kecRaw as $i) {
+            if (isset($kecamatanTotals[$i->kecamatan])) {
+                $kecamatanTotals[$i->kecamatan] = (int) $i->total;
+            }
+        }
+        $kecamatan = [];
+        foreach ($kecamatanTotals as $label => $total) {
+            $kecamatan[] = ['label' => $label, 'total' => $total];
+        }
+
+        $kelurahanLabels = [];
+        foreach ($masterWilayah as $kels) {
+            $kelurahanLabels = array_merge($kelurahanLabels, $kels);
+        }
+        $kelurahanTotals = array_fill_keys($kelurahanLabels, 0);
 
         // Kelurahan donut chart (menggantikan Pertumbuhan)
         $kelurahanChartRaw = KependudukanPenduduk::where('status', 'Aktif')
             ->selectRaw('kelurahan, sum(penduduk) as total')
             ->groupBy('kelurahan')
-            ->orderBy('total', 'desc')
             ->get();
-        $kelurahanChart = $kelurahanChartRaw->map(function($i) {
-            return ['label' => $i->kelurahan, 'total' => (int) $i->total];
-        })->toArray();
+            
+        foreach ($kelurahanChartRaw as $i) {
+            if (isset($kelurahanTotals[$i->kelurahan])) {
+                $kelurahanTotals[$i->kelurahan] = (int) $i->total;
+            }
+        }
+        
+        arsort($kelurahanTotals); // Sort descending
+        
+        $kelurahanChart = [];
+        foreach ($kelurahanTotals as $label => $total) {
+            $kelurahanChart[] = ['label' => $label, 'total' => $total];
+        }
 
         // Kelurahan table
         $kelurahan = KependudukanPenduduk::orderBy('id', 'desc')->limit(10)->get();
