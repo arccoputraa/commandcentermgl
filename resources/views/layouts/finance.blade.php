@@ -41,6 +41,12 @@
             <a href="{{ route('finance.tax.index') }}" class="menu-item {{ request()->routeIs('finance.tax.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-receipt"></i> Data Pajak Daerah
             </a>
+            <a href="{{ route('finance.subbidang.index') }}" class="menu-item {{ request()->routeIs('finance.subbidang.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-building-columns"></i> Sub Bidang / Unit Keuangan
+            </a>
+            <a href="{{ route('finance.information.index') }}" class="menu-item {{ request()->routeIs('finance.information.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-download"></i> Informasi Terbaru
+            </a>
             <a href="{{ route('profile.index') }}" class="menu-item {{ request()->routeIs('profile.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-user-circle"></i> Profil
             </a>

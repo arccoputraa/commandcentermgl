@@ -4,361 +4,362 @@
 
 @section('content')
 <style>
-    /* Custom CSS for Finance Dashboard to replace Tailwind */
     .finance-header {
         margin-bottom: 24px;
         font-family: 'Inter', sans-serif;
     }
     .finance-header h2 {
-        font-size: 22px;
+        font-size: 26px;
         font-weight: 700;
-        color: #1e293b;
-        margin: 0 0 4px 0;
+        color: #0F172A;
+        margin: 0 0 6px 0;
     }
     .finance-header p {
-        font-size: 13px;
-        color: #64748b;
+        font-size: 14px;
+        color: #64748B;
         margin: 0;
     }
 
-    .toolbar-container {
+    .finance-filter-bar {
         display: flex;
-        align-items: center;
         gap: 12px;
-        margin-bottom: 24px;
-        background: #ffffff;
-        padding: 8px;
-        border-radius: 12px;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        font-family: 'Inter', sans-serif;
-    }
-    .search-input-wrapper {
-        flex-grow: 1;
-        position: relative;
-        display: flex;
         align-items: center;
+        background: #FFFFFF;
+        border: 1px solid #E2E8F0;
+        border-radius: 14px;
+        padding: 12px 16px;
+        margin-bottom: 24px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.03);
     }
-    .search-input-wrapper i {
-        position: absolute;
-        left: 16px;
-        color: #94a3b8;
-    }
-    .search-input-wrapper input {
-        width: 100%;
-        padding: 10px 16px 10px 44px;
-        border-radius: 8px;
-        background: transparent;
-        border: none;
-        outline: none;
-        font-size: 14px;
+    .finance-filter-bar select {
+        flex: 1;
+        padding: 10px 14px;
+        background: #F8FAFC;
+        border: 1px solid #E2E8F0;
+        border-radius: 10px;
+        font-size: 13px;
         color: #334155;
+        outline: none;
+        transition: border-color 0.2s;
     }
-    .toolbar-divider {
-        width: 1px;
-        height: 32px;
-        background: #e2e8f0;
+    .finance-filter-bar select:focus {
+        border-color: #155DFC;
     }
-    .btn-filter {
-        background: #2563eb;
-        color: #ffffff;
-        padding: 10px 20px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 500;
+    .btn-apply-filter {
+        background: #155DFC;
+        color: #FFFFFF;
+        padding: 10px 24px;
+        border-radius: 10px;
+        font-size: 13.5px;
+        font-weight: 600;
         border: none;
         cursor: pointer;
         transition: background 0.2s;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-right: 4px;
+        white-space: nowrap;
     }
-    .btn-filter:hover {
-        background: #1d4ed8;
+    .btn-apply-filter:hover {
+        background: #1048c7;
     }
 
-    .metrics-grid {
+    .metrics-grid-8 {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 16px;
-        margin-bottom: 16px;
-        font-family: 'Inter', sans-serif;
-    }
-    .metric-card {
-        background: #ffffff;
-        border-radius: 12px;
-        padding: 24px;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-    .metric-card.alt-bg {
-        background: #f8fafc;
-        box-shadow: none;
-    }
-    .metric-label {
-        font-size: 13.5px;
-        color: #64748b;
-        margin-bottom: 8px;
-        font-weight: 500;
-    }
-    .metric-value {
-        font-size: 24px;
-        font-weight: 700;
-        color: #0f172a;
-    }
-    .metric-value.highlight {
-        color: #2563eb;
-    }
-    
-    .charts-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
         margin-bottom: 24px;
         font-family: 'Inter', sans-serif;
     }
-    .chart-card {
-        background: #ffffff;
-        border-radius: 12px;
-        padding: 24px;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    .metric-card-box {
+        background: #FFFFFF;
+        border-radius: 14px;
+        padding: 20px 22px;
+        border: 1px solid #E2E8F0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
     }
-    .chart-header {
+    .metric-card-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #64748B;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin: 0 0 8px 0;
+    }
+    .metric-card-num {
+        font-size: 22px;
+        font-weight: 800;
+        color: #0F172A;
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    .charts-grid-admin {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-bottom: 24px;
+        font-family: 'Inter', sans-serif;
+    }
+    .chart-card-box {
+        background: #FFFFFF;
+        border-radius: 14px;
+        padding: 22px 24px;
+        border: 1px solid #E2E8F0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+    .chart-header-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 24px;
+        margin-bottom: 20px;
     }
-    .chart-header h3 {
+    .chart-header-title {
+        font-size: 13px;
         font-weight: 700;
-        color: #1e293b;
-        font-size: 15px;
+        color: #0F172A;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
         margin: 0;
     }
-    .chart-header button {
-        background: transparent;
-        border: none;
-        color: #94a3b8;
-        cursor: pointer;
-        font-size: 16px;
-        padding: 0;
+    .chart-legend-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 11px;
+        color: #64748B;
     }
-    .chart-header button:hover {
-        color: #64748b;
+    .chart-legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
     }
-    .chart-container {
-        position: relative;
-        height: 250px;
-        width: 100%;
+    .chart-legend-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+    }
+
+    @media (max-width: 1024px) {
+        .metrics-grid-8 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .charts-grid-admin {
+            grid-template-columns: 1fr;
+        }
+    }
+    @media (max-width: 640px) {
+        .metrics-grid-8 {
+            grid-template-columns: 1fr;
+        }
+        .finance-filter-bar {
+            flex-direction: column;
+            align-items: stretch;
+        }
     }
 </style>
-
-@php
-    function formatLargeNumberDash($number) {
-        if ($number >= 1000000000) {
-            return 'Rp ' . str_replace('.0', '', number_format($number / 1000000000, 1, ',', '.')) . ' M';
-        } elseif ($number >= 1000000) {
-            return 'Rp ' . str_replace('.0', '', number_format($number / 1000000, 1, ',', '.')) . ' Juta';
-        }
-        return 'Rp ' . number_format($number, 0, ',', '.');
-    }
-@endphp
 
 <!-- Header -->
 <div class="finance-header">
     <h2>Dashboard Keuangan</h2>
-    <p>Ringkasan informasi keuangan, pendapatan daerah, dan realisasi anggaran.</p>
+    <p>Pantau anggaran, realisasi, pendapatan daerah, dan pajak daerah Kota Magelang.</p>
 </div>
 
-<!-- Search and Filter Bar -->
-<div class="toolbar-container">
-    <div class="search-input-wrapper">
-        <i class="fa-solid fa-search"></i>
-        <input type="text" placeholder="Cari data keuangan...">
-    </div>
-    <div class="toolbar-divider"></div>
-    <button class="btn-filter">
-        Terapkan Filter
-    </button>
+<!-- Filter Bar -->
+<div class="finance-filter-bar">
+    <select>
+        <option value="">Tahun Anggaran (2026)</option>
+        <option value="2026">2026</option>
+        <option value="2025">2025</option>
+    </select>
+    <select>
+        <option value="">Pilih Sub Bidang / Unit</option>
+        <option value="sekretariat">Sekretariat</option>
+        <option value="anggaran">Bidang Anggaran</option>
+        <option value="akuntansi">Bidang Akuntansi</option>
+        <option value="aset">Bidang Aset</option>
+        <option value="pajak">Bidang Pajak</option>
+    </select>
+    <select>
+        <option value="">Pilih Kategori / Periode</option>
+        <option value="semua">Semua Periode</option>
+        <option value="q1">Kuartal 1</option>
+        <option value="q2">Kuartal 2</option>
+        <option value="semester1">Semester 1</option>
+        <option value="juli">Juli 2026</option>
+    </select>
+    <button class="btn-apply-filter">Terapkan Filter</button>
 </div>
 
-<!-- Metrics Grid Row 1 -->
-<div class="metrics-grid">
-    <div class="metric-card">
-        <p class="metric-label">Total Pendapatan (Target)</p>
-        <p class="metric-value">{{ formatLargeNumberDash($targetPAD) }}</p>
+<!-- 8 Metric Cards (2 rows x 4 cols) -->
+<div class="metrics-grid-8">
+    <!-- Row 1 -->
+    <div class="metric-card-box">
+        <p class="metric-card-label">TOTAL ANGGARAN</p>
+        <p class="metric-card-num">Rp{{ number_format($totalAnggaran / 1000000000, 1, ',', '.') }} M</p>
     </div>
-    <div class="metric-card">
-        <p class="metric-label">Total Belanja</p>
-        <p class="metric-value">{{ formatLargeNumberDash($totalAnggaran) }}</p>
+    <div class="metric-card-box">
+        <p class="metric-card-label">TOTAL REALISASI</p>
+        <p class="metric-card-num">Rp{{ number_format($totalRealisasi / 1000000000, 1, ',', '.') }} M</p>
     </div>
-    <div class="metric-card">
-        <p class="metric-label">Sisa Anggaran</p>
-        <p class="metric-value">{{ formatLargeNumberDash($sisaAnggaran) }}</p>
+    <div class="metric-card-box">
+        <p class="metric-card-label">PERSENTASE REALISASI</p>
+        <p class="metric-card-num">{{ number_format($persentaseRealisasi, 1, ',', '.') }}%</p>
     </div>
-    <div class="metric-card alt-bg">
-        <p class="metric-label">Realisasi Belanja</p>
-        <p class="metric-value">{{ formatLargeNumberDash($totalRealisasiBelanja) }}</p>
+    <div class="metric-card-box">
+        <p class="metric-card-label">TARGET PAD</p>
+        <p class="metric-card-num">Rp{{ number_format($targetPAD / 1000000000, 1, ',', '.') }} M</p>
+    </div>
+
+    <!-- Row 2 -->
+    <div class="metric-card-box">
+        <p class="metric-card-label">REALISASI PAD</p>
+        <p class="metric-card-num">Rp{{ number_format($realisasiPAD / 1000000000, 1, ',', '.') }} M</p>
+    </div>
+    <div class="metric-card-box">
+        <p class="metric-card-label">PERSENTASE PAD</p>
+        <p class="metric-card-num">{{ number_format($persentasePAD, 1, ',', '.') }}%</p>
+    </div>
+    <div class="metric-card-box">
+        <p class="metric-card-label">PENDAPATAN PAJAK DAERAH</p>
+        <p class="metric-card-num">Rp{{ number_format($pajakDaerah / 1000000000, 1, ',', '.') }} M</p>
+    </div>
+    <div class="metric-card-box">
+        <p class="metric-card-label">UPDATE TERAKHIR</p>
+        <p class="metric-card-num" style="font-size: 20px;">{{ $updateTerakhir ?? '03 Juli 2026' }}</p>
     </div>
 </div>
 
-<!-- Metrics Grid Row 2 -->
-<div class="metrics-grid" style="margin-bottom: 24px;">
-    <div class="metric-card">
-        <p class="metric-label">Realisasi Pendapatan</p>
-        <p class="metric-value">{{ formatLargeNumberDash($realisasiPAD) }}</p>
-    </div>
-    <div class="metric-card">
-        <p class="metric-label">Persentase Realisasi PAD</p>
-        <p class="metric-value highlight">{{ $persentaseRealisasiPAD }}%</p>
-    </div>
-    <div class="metric-card">
-        <p class="metric-label">Pendapatan Pajak Daerah</p>
-        <p class="metric-value">{{ formatLargeNumberDash($pajakDaerah) }}</p>
-    </div>
-    <div class="metric-card alt-bg" style="display: flex; flex-direction: column; justify-content: center;">
-        <p class="metric-label">Terakhir Diperbarui</p>
-        <p class="metric-value" style="display: flex; align-items: center; gap: 8px; font-size: 20px;">
-            <i class="fa-regular fa-calendar" style="color: #94a3b8;"></i>
-            {{ date('d M Y') }}
-        </p>
-    </div>
-</div>
-
-<!-- Charts Row -->
-<div class="charts-grid">
-    <!-- Chart 1 -->
-    <div class="chart-card">
-        <div class="chart-header">
-            <h3>Realisasi Belanja</h3>
-            <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
+<!-- Charts Grid -->
+<div class="charts-grid-admin">
+    <!-- Chart 1: ANGGARAN VS REALISASI -->
+    <div class="chart-card-box">
+        <div class="chart-header-row">
+            <h3 class="chart-header-title">ANGGARAN VS REALISASI</h3>
+            <div class="chart-legend-row">
+                <span class="chart-legend-item">
+                    <span class="chart-legend-dot" style="background: #155DFC;"></span> Anggaran
+                </span>
+                <span class="chart-legend-item">
+                    <span class="chart-legend-dot" style="background: #00BC7D;"></span> Realisasi
+                </span>
+            </div>
         </div>
-        <div class="chart-container">
-            <canvas id="realisasiBelanjaChart"></canvas>
+        <div style="position: relative; height: 260px; width: 100%;">
+            <canvas id="adminAnggaranVsRealisasi"></canvas>
         </div>
     </div>
 
-    <!-- Chart 2 -->
-    <div class="chart-card">
-        <div class="chart-header">
-            <h3>Pendapatan Asli Daerah (PAD)</h3>
-            <button><i class="fa-solid fa-ellipsis-vertical"></i></button>
+    <!-- Chart 2: TREN REALISASI ANGGARAN -->
+    <div class="chart-card-box">
+        <div class="chart-header-row">
+            <h3 class="chart-header-title">TREN REALISASI ANGGARAN</h3>
+            <div class="chart-legend-row">
+                <span class="chart-legend-item">
+                    <span class="chart-legend-dot" style="background: #00BC7D;"></span> Realisasi
+                </span>
+            </div>
         </div>
-        <div class="chart-container">
-            <canvas id="pendapatanPADChart"></canvas>
+        <div style="position: relative; height: 260px; width: 100%;">
+            <canvas id="adminTrendRealisasi"></canvas>
         </div>
     </div>
 </div>
 @endsection
 
-@stack('scripts')
+@push('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Check if Chart is defined (might take a moment to load from CDN)
-        if (typeof Chart === 'undefined') {
-            console.error('Chart.js is not loaded!');
-            return;
-        }
-        
-        // Chart configurations
-        Chart.defaults.font.family = 'Inter, sans-serif';
-        Chart.defaults.color = '#94a3b8';
-        Chart.defaults.scale.grid.color = '#f1f5f9';
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof Chart === 'undefined') {
+        console.warn('Chart.js is not loaded');
+        return;
+    }
 
-        // Realisasi Belanja Chart (Horizontal Bar)
-        const ctxBelanja = document.getElementById('realisasiBelanjaChart');
-        if (ctxBelanja) {
-            new Chart(ctxBelanja.getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: {!! json_encode($labelBelanja) !!},
-                    datasets: [{
-                        label: 'Realisasi (Rp)',
-                        data: {!! json_encode($dataBelanja) !!},
-                        backgroundColor: '#3b82f6',
-                        borderRadius: 4,
-                        barPercentage: 0.5,
-                        categoryPercentage: 0.8
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#1e293b',
-                            padding: 12,
-                            titleFont: { size: 13, weight: 'normal' },
-                            bodyFont: { size: 14, weight: 'bold' },
-                            displayColors: false
-                        }
-                    },
-                    scales: {
-                        x: {
-                            beginAtZero: true,
-                            grid: { display: true, borderDash: [4, 4], drawBorder: false },
-                            border: { display: false },
-                            ticks: { display: false }
-                        },
-                        y: {
-                            grid: { display: false, drawBorder: false },
-                            border: { display: false },
-                            ticks: { color: '#475569', font: { size: 12 } }
-                        }
-                    }
-                }
-            });
-        }
+    Chart.defaults.font.family = 'Inter, sans-serif';
+    Chart.defaults.color = '#64748B';
 
-        // Pendapatan PAD Chart (Horizontal Bar)
-        const ctxPAD = document.getElementById('pendapatanPADChart');
-        if (ctxPAD) {
-            new Chart(ctxPAD.getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: {!! json_encode($labelPad) !!},
-                    datasets: [{
-                        label: 'Pendapatan (Rp)',
-                        data: {!! json_encode($dataPad) !!},
-                        backgroundColor: '#10b981',
-                        borderRadius: 4,
-                        barPercentage: 0.5,
-                        categoryPercentage: 0.8
-                    }]
+    const baseHorizontalOptions = {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                backgroundColor: '#1E293B',
+                padding: 10,
+                cornerRadius: 8
+            }
+        },
+        scales: {
+            x: {
+                beginAtZero: true,
+                grid: {
+                    borderDash: [4, 4],
+                    color: '#F1F5F9'
                 },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#1e293b',
-                            padding: 12,
-                            titleFont: { size: 13, weight: 'normal' },
-                            bodyFont: { size: 14, weight: 'bold' },
-                            displayColors: false
-                        }
-                    },
-                    scales: {
-                        x: {
-                            beginAtZero: true,
-                            grid: { display: true, borderDash: [4, 4], drawBorder: false },
-                            border: { display: false },
-                            ticks: { display: false }
-                        },
-                        y: {
-                            grid: { display: false, drawBorder: false },
-                            border: { display: false },
-                            ticks: { color: '#475569', font: { size: 12 } }
-                        }
-                    }
+                ticks: {
+                    font: { size: 11 }
                 }
-            });
+            },
+            y: {
+                grid: { display: false },
+                ticks: {
+                    font: { size: 12, weight: '500' },
+                    color: '#334155'
+                }
+            }
         }
-    });
+    };
+
+    // 1. Chart Anggaran vs Realisasi (Horizontal Clustered Bar)
+    const ctxAnggaran = document.getElementById('adminAnggaranVsRealisasi');
+    if (ctxAnggaran) {
+        new Chart(ctxAnggaran.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: {!! json_encode($chartAnggaran['labels'] ?? ['Sekretariat', 'Anggaran', 'Akuntansi', 'Aset', 'Pajak']) !!},
+                datasets: [
+                    {
+                        label: 'Anggaran (M)',
+                        data: {!! json_encode($chartAnggaran['anggaran'] ?? [5.2, 4.8, 3.6, 2.8, 6.0]) !!},
+                        backgroundColor: '#155DFC',
+                        borderRadius: 6,
+                        barThickness: 8,
+                        categoryPercentage: 0.8,
+                        barPercentage: 0.9
+                    },
+                    {
+                        label: 'Realisasi (M)',
+                        data: {!! json_encode($chartAnggaran['realisasi'] ?? [4.4, 4.1, 3.4, 2.1, 5.5]) !!},
+                        backgroundColor: '#00BC7D',
+                        borderRadius: 6,
+                        barThickness: 8,
+                        categoryPercentage: 0.8,
+                        barPercentage: 0.9
+                    }
+                ]
+            },
+            options: baseHorizontalOptions
+        });
+    }
+
+    // 2. Chart Tren Realisasi Anggaran (Horizontal Bar Bulanan)
+    const ctxTrend = document.getElementById('adminTrendRealisasi');
+    if (ctxTrend) {
+        new Chart(ctxTrend.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: {!! json_encode($chartTrend['labels'] ?? ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun']) !!},
+                datasets: [
+                    {
+                        label: 'Realisasi (M)',
+                        data: {!! json_encode($chartTrend['data'] ?? [3.2, 5.8, 8.1, 11.6, 15.2, 18.9]) !!},
+                        backgroundColor: '#00BC7D',
+                        borderRadius: 6,
+                        barThickness: 10
+                    }
+                ]
+            },
+            options: baseHorizontalOptions
+        });
+    }
+});
 </script>
+@endpush

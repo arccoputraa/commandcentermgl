@@ -31,10 +31,10 @@
                 <i class="fa-solid fa-users"></i> Daftar Pengguna
             </a>
             <a href="{{ route('admin.roles.index') }}" class="menu-item {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-shield-halved"></i> Hak Akses
+                <i class="fa-solid fa-shield-halved"></i> Hak Akses Pengguna
             </a>
             <a href="{{ route('admin.divisions.index') }}" class="menu-item {{ request()->routeIs('admin.divisions.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-building"></i> Daftar Divisi
+                <i class="fa-solid fa-building"></i> Daftar Divisi/Sektor
             </a>
             <a href="#" class="menu-item">
                 <i class="fa-solid fa-video"></i> CCTV

@@ -13,14 +13,24 @@ class SigController extends Controller
     public function dashboard()
     {
         $stats = [
-            'total_layer' => LayerSig::count(),
-            'layer_aktif' => LayerSig::where('status_aktif', true)->count(),
-            'total_data' => DataSpasial::count(),
+            'total_layer'   => LayerSig::count(),
+            'layer_aktif'   => LayerSig::where('status_aktif', true)->count(),
+            'total_data'    => DataSpasial::count(),
+            'total_dokumen' => DokumenSig::count(),
         ];
-        
+
+        // Stats per layer/kategori untuk tampilan cards
+        $statsPerLayer = LayerSig::where('status_aktif', true)
+            ->withCount('dataSpasial')
+            ->orderBy('nama_layer')
+            ->get();
+
         $dokumen = DokumenSig::orderBy('tanggal_rilis', 'desc')->limit(5)->get();
 
-        return view('sig.dashboard', compact('stats', 'dokumen'));
+        // Data spasial terbaru
+        $dataSpasialTerbaru = DataSpasial::with('layer')->orderBy('updated_at', 'desc')->limit(6)->get();
+
+        return view('sig.dashboard', compact('stats', 'dokumen', 'statsPerLayer', 'dataSpasialTerbaru'));
     }
 
     // Layer SIG CRUD

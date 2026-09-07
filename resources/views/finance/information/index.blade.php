@@ -394,8 +394,10 @@
                     <input type="text" name="format" id="format" class="form-control" required placeholder="Contoh: PDF, 2.4MB">
                 </div>
                 <div class="form-group full-width">
-                    <label class="form-label">Upload File / Dokumen</label>
-                    <input type="text" name="dokumen" id="dokumen" class="form-control" placeholder="URL dokumen / path (dummy)">
+                    <label class="form-label">Pilih File / Dokumen (PDF, Excel, Word)</label>
+                    <input type="file" name="dokumen_file" id="dokumen_file" class="form-control" accept=".pdf,.xlsx,.xls,.doc,.docx">
+                    <input type="hidden" name="dokumen" id="dokumen">
+                    <small style="color: #64748b; font-size: 11px; margin-top: 4px; display: block;">Format yang didukung: PDF, Excel, Word (Maks. 10MB)</small>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Status Publikasi</label>

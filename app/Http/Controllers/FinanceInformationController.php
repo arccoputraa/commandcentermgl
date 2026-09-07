@@ -28,10 +28,21 @@ class FinanceInformationController extends Controller
             'kategori' => 'required|string',
             'format' => 'required|string',
             'status_publikasi' => 'required|string',
-            'keterangan' => 'nullable|string'
+            'keterangan' => 'nullable|string',
+            'dokumen_file' => 'nullable|file|mimes:pdf,xlsx,xls,doc,docx|max:10240',
+            'dokumen' => 'nullable|string'
         ]);
 
-        FinanceInformation::create($request->all());
+        $data = $request->except(['dokumen_file']);
+
+        if ($request->hasFile('dokumen_file')) {
+            $path = $request->file('dokumen_file')->store('dokumen', 'public');
+            $data['dokumen'] = $path;
+        } elseif (empty($data['dokumen'])) {
+            $data['dokumen'] = '/sample-document.pdf';
+        }
+
+        FinanceInformation::create($data);
 
         return redirect()->route('finance.information.index')->with('success', 'Informasi terbaru berhasil ditambahkan.');
     }
@@ -49,11 +60,20 @@ class FinanceInformationController extends Controller
             'kategori' => 'required|string',
             'format' => 'required|string',
             'status_publikasi' => 'required|string',
-            'keterangan' => 'nullable|string'
+            'keterangan' => 'nullable|string',
+            'dokumen_file' => 'nullable|file|mimes:pdf,xlsx,xls,doc,docx|max:10240',
+            'dokumen' => 'nullable|string'
         ]);
 
         $information = FinanceInformation::findOrFail($id);
-        $information->update($request->all());
+        $data = $request->except(['dokumen_file']);
+
+        if ($request->hasFile('dokumen_file')) {
+            $path = $request->file('dokumen_file')->store('dokumen', 'public');
+            $data['dokumen'] = $path;
+        }
+
+        $information->update($data);
 
         return redirect()->route('finance.information.index')->with('success', 'Informasi terbaru berhasil diperbarui.');
     }

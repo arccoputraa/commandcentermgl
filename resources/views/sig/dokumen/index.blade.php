@@ -48,7 +48,14 @@
                     <td style="font-weight: 600;">{{ $item->judul }}</td>
                     <td>{{ $item->status_tag }}</td>
                     <td>{{ optional($item->tanggal_rilis)->format('d M Y') ?? '-' }}</td>
-                    <td><a href="{{ Storage::url($item->file_path) }}" target="_blank" style="color: #2563EB; text-decoration: none;"><i class="fa-solid fa-file-pdf"></i> Lihat File</a></td>
+                    <td>
+                        @php
+                            $fileUrl = ($item->file_path && Storage::disk('public')->exists($item->file_path)) 
+                                ? Storage::url($item->file_path) 
+                                : asset('sample-document.pdf');
+                        @endphp
+                        <a href="{{ $fileUrl }}" target="_blank" style="color: #2563EB; text-decoration: none; font-weight: 600;"><i class="fa-solid fa-file-pdf"></i> Lihat File</a>
+                    </td>
                     <td>
                         <div class="action-btns">
                             <button class="btn-icon btn-edit" onclick="openModal('edit', {{ $item }})"><i class="fa-solid fa-pen-to-square"></i></button>

@@ -205,7 +205,15 @@
                 <div class="detail-label">File / Dokumen</div>
                 <div class="detail-value">
                     @if($information->dokumen)
-                        <a href="#" class="file-link">
+                        @php
+                            $docPath = $information->dokumen;
+                            if (str_starts_with($docPath, 'http://') || str_starts_with($docPath, 'https://') || str_starts_with($docPath, '/')) {
+                                $targetUrl = $docPath;
+                            } else {
+                                $targetUrl = asset('storage/' . $docPath);
+                            }
+                        @endphp
+                        <a href="{{ $targetUrl }}" target="_blank" class="file-link">
                             <i class="fa-solid fa-file-pdf"></i> Lihat Dokumen
                         </a>
                     @else

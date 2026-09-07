@@ -53,6 +53,60 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::delete('/roles/{role}', [\App\Http\Controllers\RoleController::class, 'destroy'])->name('admin.roles.destroy');
 });
 
+// Admin Perizinan Routes (protected)
+Route::middleware(['auth', 'role:admin'])
+    ->prefix('admin/perizinan')
+    ->group(function () {
+        Route::get('/', [\App\Http\Controllers\AdminPerizinanController::class, 'dashboard'])
+            ->name('admin.perizinan.dashboard');
+
+        // Data Perizinan CRUD
+        Route::get('/data', [\App\Http\Controllers\AdminPerizinanController::class, 'dataIndex'])
+            ->name('admin.perizinan.data.index');
+        Route::get('/data/create', [\App\Http\Controllers\AdminPerizinanController::class, 'dataCreate'])
+            ->name('admin.perizinan.data.create');
+        Route::post('/data', [\App\Http\Controllers\AdminPerizinanController::class, 'dataStore'])
+            ->name('admin.perizinan.data.store');
+        Route::get('/data/{data}/edit', [\App\Http\Controllers\AdminPerizinanController::class, 'dataEdit'])
+            ->name('admin.perizinan.data.edit');
+        Route::put('/data/{data}', [\App\Http\Controllers\AdminPerizinanController::class, 'dataUpdate'])
+            ->name('admin.perizinan.data.update');
+        Route::delete('/data/{data}', [\App\Http\Controllers\AdminPerizinanController::class, 'dataDestroy'])
+            ->name('admin.perizinan.data.destroy');
+
+        // Jenis Izin & SLA CRUD
+        Route::get('/jenis', [\App\Http\Controllers\AdminPerizinanController::class, 'jenisIndex'])
+            ->name('admin.perizinan.jenis.index');
+        Route::get('/jenis/create', [\App\Http\Controllers\AdminPerizinanController::class, 'jenisCreate'])
+            ->name('admin.perizinan.jenis.create');
+        Route::post('/jenis', [\App\Http\Controllers\AdminPerizinanController::class, 'jenisStore'])
+            ->name('admin.perizinan.jenis.store');
+        Route::get('/jenis/{jenis}/edit', [\App\Http\Controllers\AdminPerizinanController::class, 'jenisEdit'])
+            ->name('admin.perizinan.jenis.edit');
+        Route::put('/jenis/{jenis}', [\App\Http\Controllers\AdminPerizinanController::class, 'jenisUpdate'])
+            ->name('admin.perizinan.jenis.update');
+        Route::delete('/jenis/{jenis}', [\App\Http\Controllers\AdminPerizinanController::class, 'jenisDestroy'])
+            ->name('admin.perizinan.jenis.destroy');
+
+        // Publikasi Masyarakat CRUD
+        Route::get('/publikasi', [\App\Http\Controllers\AdminPerizinanController::class, 'publikasiIndex'])
+            ->name('admin.perizinan.publikasi.index');
+        Route::get('/publikasi/create', [\App\Http\Controllers\AdminPerizinanController::class, 'publikasiCreate'])
+            ->name('admin.perizinan.publikasi.create');
+        Route::post('/publikasi', [\App\Http\Controllers\AdminPerizinanController::class, 'publikasiStore'])
+            ->name('admin.perizinan.publikasi.store');
+        Route::get('/publikasi/{publikasi}/edit', [\App\Http\Controllers\AdminPerizinanController::class, 'publikasiEdit'])
+            ->name('admin.perizinan.publikasi.edit');
+        Route::put('/publikasi/{publikasi}', [\App\Http\Controllers\AdminPerizinanController::class, 'publikasiUpdate'])
+            ->name('admin.perizinan.publikasi.update');
+        Route::delete('/publikasi/{publikasi}', [\App\Http\Controllers\AdminPerizinanController::class, 'publikasiDestroy'])
+            ->name('admin.perizinan.publikasi.destroy');
+
+        // Profile page
+        Route::get('/profile', [\App\Http\Controllers\AdminPerizinanController::class, 'profile'])
+            ->name('admin.perizinan.profile');
+    });
+
 // Perizinan Routes (protected)
 Route::middleware(['auth', 'division:perizinan'])->prefix('perizinan')->group(function () {
     Route::get('/', [\App\Http\Controllers\PerizinanController::class, 'dashboard'])->name('perizinan.dashboard');

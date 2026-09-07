@@ -9,20 +9,39 @@ class KesehatanController extends Controller
 {
     public function dashboard()
     {
-        // Kasus aktif dinamis berdasarkan database tabel kesehatan_penyakit
-        $kasusAktif = \App\Models\KesehatanPenyakit::where('status', 'Aktif')->sum('jumlah') ?? 324;
-        
-        // Data program dan lainnya masih menggunakan dummy karena tabelnya belum tersedia
-        $totalProgram = \App\Models\KesehatanInformasi::count() ?? 48;
-        $pasienTerpantau = \App\Models\KesehatanPenyakit::sum('jumlah') ?? 12450;
-        $imunisasi = 85210;
-        $vaksinasi = 120400;
-        $pencegahanStunting = 1240;
-        $kartuSehat = 32150;
+        $totalProgram        = \App\Models\KesehatanInformasi::count();
+        $pasienTerpantau     = \App\Models\KesehatanPenyakit::sum('jumlah');
+        $kasusAktif          = \App\Models\KesehatanPenyakit::where('status', 'Aktif')->sum('jumlah') ?: 324;
+        $vaksinasi           = 85210;
+        $pencegahanStunting  = 1240;
+        $kartuSehat          = 32150;
+
+        // Tren Pasien Per Bulan
+        $bulanList = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+        $trenBulanan = array_fill(0, 12, 0);
+        $penyakitBulanan = \App\Models\KesehatanPenyakit::selectRaw('bulan, SUM(jumlah) as total')
+            ->groupBy('bulan')->get();
+        foreach ($penyakitBulanan as $row) {
+            $idx = array_search($row->bulan, $bulanList);
+            if ($idx !== false) {
+                $trenBulanan[$idx] = (int) $row->total;
+            }
+        }
+
+        // Kasus per wilayah (untuk donut chart)
+        $kasusWilayah = \App\Models\KesehatanPenyakit::selectRaw('wilayah, SUM(jumlah) as total')
+            ->groupBy('wilayah')->orderByDesc('total')->limit(4)->get();
+
+        // Top 5 penyakit
+        $topPenyakit = \App\Models\KesehatanPenyakit::orderBy('jumlah', 'desc')->limit(5)->get();
+
+        // Informasi terbaru
+        $informasi = \App\Models\KesehatanInformasi::orderBy('created_at', 'desc')->limit(5)->get();
 
         return view('kesehatan.dashboard', compact(
-            'totalProgram', 'pasienTerpantau', 'kasusAktif', 'imunisasi', 
-            'vaksinasi', 'pencegahanStunting', 'kartuSehat'
+            'totalProgram', 'pasienTerpantau', 'kasusAktif',
+            'vaksinasi', 'pencegahanStunting', 'kartuSehat',
+            'bulanList', 'trenBulanan', 'kasusWilayah', 'topPenyakit', 'informasi'
         ));
     }
 
