@@ -18,21 +18,31 @@ class LayananPublikController extends Controller
         return Cache::remember($cacheKey, 300, function () use ($dept, $request) {
             
             if ($dept === 'perizinan') {
-                $dataPerizinan = \App\Models\PerizinanData::with('jenisIzin')->orderBy('created_at', 'desc')->limit(10)->get();
+                $qData = \App\Models\PerizinanData::query();
+                $tahunOptions = \App\Models\PerizinanData::selectRaw("CAST(strftime('%Y', tanggal) AS INTEGER) as tahun")->distinct()->pluck('tahun')->filter()->toArray();
+                $jenisOptions = \App\Models\PerizinanData::distinct()->pluck('jenis_permohonan')->filter()->toArray();
+                $statusOptions = \App\Models\PerizinanData::distinct()->pluck('status')->filter()->toArray();
+                
+                $filters = $request->only(['tahun', 'jenis_izin', 'status']);
+                if (!empty($filters['tahun'])) $qData->whereYear('tanggal', $filters['tahun']);
+                if (!empty($filters['jenis_izin'])) $qData->where('jenis_permohonan', $filters['jenis_izin']);
+                if (!empty($filters['status'])) $qData->where('status', $filters['status']);
+
+                $dataPerizinan = (clone $qData)->with('jenisIzin')->orderBy('created_at', 'desc')->limit(10)->get();
                 $publikasi = \App\Models\PerizinanPublikasi::where('status', 'Aktif')->orderBy('created_at', 'desc')->get();
                 
                 $stats = [
-                    'total' => \App\Models\PerizinanData::count(),
-                    'disetujui' => \App\Models\PerizinanData::where('status', 'Disetujui')->count(),
-                    'proses' => \App\Models\PerizinanData::where('status', 'Proses')->count(),
-                    'ditolak' => \App\Models\PerizinanData::where('status', 'Ditolak')->count(),
-                    'baru' => \App\Models\PerizinanData::where('jenis_permohonan', 'Baru')->count(),
-                    'perpanjangan' => \App\Models\PerizinanData::where('jenis_permohonan', 'Perpanjangan')->count(),
-                    'lainnya' => \App\Models\PerizinanData::whereNotIn('jenis_permohonan', ['Baru', 'Perpanjangan'])->count(),
+                    'total' => (clone $qData)->count(),
+                    'disetujui' => (clone $qData)->where('status', 'Disetujui')->count(),
+                    'proses' => (clone $qData)->where('status', 'Proses')->count(),
+                    'ditolak' => (clone $qData)->where('status', 'Ditolak')->count(),
+                    'baru' => (clone $qData)->where('jenis_permohonan', 'Baru')->count(),
+                    'perpanjangan' => (clone $qData)->where('jenis_permohonan', 'Perpanjangan')->count(),
+                    'lainnya' => (clone $qData)->whereNotIn('jenis_permohonan', ['Baru', 'Perpanjangan'])->count(),
                 ];
                 
-                $currentYear = date('Y');
-                $monthlyData = \App\Models\PerizinanData::selectRaw("CAST(strftime('%m', tanggal) AS INTEGER) as month, status, count(*) as total")
+                $currentYear = !empty($filters['tahun']) ? $filters['tahun'] : date('Y');
+                $monthlyData = (clone $qData)->selectRaw("CAST(strftime('%m', tanggal) AS INTEGER) as month, status, count(*) as total")
                                     ->whereYear('tanggal', $currentYear)
                                     ->groupBy('month', 'status')
                                     ->get();
@@ -52,32 +62,44 @@ class LayananPublikController extends Controller
                     }
                 }
                 
-                if (view()->exists('layanan.perizinan')) return view('layanan.perizinan', compact('dataPerizinan', 'publikasi', 'dept', 'stats', 'chartData'))->render();
+                if (view()->exists('layanan.perizinan')) return view('layanan.perizinan', compact('dataPerizinan', 'publikasi', 'dept', 'stats', 'chartData', 'tahunOptions', 'jenisOptions', 'statusOptions', 'filters'))->render();
             }
             
             if ($dept === 'kepegawaian') {
+                $qPegawai = \App\Models\PegawaiData::query();
+                $qMutasi = \App\Models\PegawaiMutasi::query();
+                
+                $unitKerjaOptions = \App\Models\PegawaiData::distinct()->pluck('unit_kerja')->filter()->toArray();
+                $golonganOptions = \App\Models\PegawaiData::distinct()->pluck('golongan')->filter()->toArray();
+                $statusOptions = \App\Models\PegawaiData::distinct()->pluck('jenis_pegawai')->filter()->toArray();
+                
+                $filters = $request->only(['unit_kerja', 'golongan', 'status']);
+                if (!empty($filters['unit_kerja'])) $qPegawai->where('unit_kerja', $filters['unit_kerja']);
+                if (!empty($filters['golongan'])) $qPegawai->where('golongan', $filters['golongan']);
+                if (!empty($filters['status'])) $qPegawai->where('jenis_pegawai', $filters['status']);
+
                 $stats = [
-                    'total' => \App\Models\PegawaiData::count(),
-                    'pns' => \App\Models\PegawaiData::where('jenis_pegawai', 'PNS')->count(),
-                    'pppk' => \App\Models\PegawaiData::where('jenis_pegawai', 'PPPK')->count(),
-                    'non_asn' => \App\Models\PegawaiData::where('jenis_pegawai', 'Non-ASN')->count(),
+                    'total' => (clone $qPegawai)->count(),
+                    'pns' => (clone $qPegawai)->where('jenis_pegawai', 'PNS')->count(),
+                    'pppk' => (clone $qPegawai)->where('jenis_pegawai', 'PPPK')->count(),
+                    'non_asn' => (clone $qPegawai)->where('jenis_pegawai', 'Non-ASN')->count(),
                 ];
                 
-                $unitKerjaRaw = \App\Models\PegawaiData::selectRaw('unit_kerja, count(*) as total')->groupBy('unit_kerja')->get();
+                $unitKerjaRaw = (clone $qPegawai)->selectRaw('unit_kerja, count(*) as total')->groupBy('unit_kerja')->get();
                 $chartUnitKerja = ['labels' => [], 'data' => []];
                 foreach($unitKerjaRaw as $u) {
                     $chartUnitKerja['labels'][] = $u->unit_kerja ?? 'Lainnya';
                     $chartUnitKerja['data'][] = $u->total;
                 }
 
-                $genderRaw = \App\Models\PegawaiData::selectRaw('jenis_kelamin, count(*) as total')->groupBy('jenis_kelamin')->get();
+                $genderRaw = (clone $qPegawai)->selectRaw('jenis_kelamin, count(*) as total')->groupBy('jenis_kelamin')->get();
                 $chartGender = ['Laki-laki' => 0, 'Perempuan' => 0];
                 foreach($genderRaw as $g) {
                     if ($g->jenis_kelamin == 'Laki-laki' || $g->jenis_kelamin == 'L') $chartGender['Laki-laki'] += $g->total;
                     else $chartGender['Perempuan'] += $g->total;
                 }
 
-                $golonganRaw = \App\Models\PegawaiData::selectRaw('golongan, count(*) as total')->groupBy('golongan')->get();
+                $golonganRaw = (clone $qPegawai)->selectRaw('golongan, count(*) as total')->groupBy('golongan')->get();
                 $chartGolongan = ['labels' => [], 'data' => []];
                 foreach($golonganRaw as $g) {
                     if ($g->golongan) {
@@ -95,15 +117,32 @@ class LayananPublikController extends Controller
                 $informasiTerbaru = \App\Models\PegawaiInformasi::where('status_publikasi', 'Rilis')->orderBy('created_at', 'desc')->limit(3)->get();
                 $tabelRingkas = \App\Models\PegawaiMutasi::orderBy('tanggal_efektif', 'desc')->limit(5)->get();
 
-                if (view()->exists('layanan.kepegawaian')) return view('layanan.kepegawaian', compact('stats', 'chartUnitKerja', 'chartGender', 'chartGolongan', 'chartMutasi', 'informasiTerbaru', 'tabelRingkas', 'dept'))->render();
+                if (view()->exists('layanan.kepegawaian')) return view('layanan.kepegawaian', compact('stats', 'chartUnitKerja', 'chartGender', 'chartGolongan', 'chartMutasi', 'informasiTerbaru', 'tabelRingkas', 'dept', 'unitKerjaOptions', 'golonganOptions', 'statusOptions', 'filters'))->render();
             }
 
             if ($dept === 'keuangan') {
-                $totalAnggaran = \App\Models\FinanceBudget::sum('total_anggaran') ?: 22400000000;
-                $totalRealisasi = \App\Models\FinanceBudget::sum('total_realisasi') ?: 18900000000;
+                $qBudget = \App\Models\FinanceBudget::query();
+                $qPad = \App\Models\FinancePad::query();
+                $qTax = \App\Models\FinanceTax::query();
+                
+                $tahunOptions = \App\Models\FinanceBudget::distinct()->pluck('tahun')->filter()->toArray();
+                $sektorOptions = \App\Models\FinanceBudget::distinct()->pluck('sub_bidang')->filter()->toArray();
+                
+                $filters = $request->only(['tahun', 'sektor']);
+                if (!empty($filters['tahun'])) {
+                    $qBudget->where('tahun', $filters['tahun']);
+                    $qPad->where('tahun', $filters['tahun']);
+                }
+                if (!empty($filters['sektor'])) {
+                    $qBudget->where('sub_bidang', $filters['sektor']);
+                    $qPad->where('sub_bidang', $filters['sektor']);
+                }
+                
+                $totalAnggaran = (clone $qBudget)->sum('total_anggaran') ?: 22400000000;
+                $totalRealisasi = (clone $qBudget)->sum('total_realisasi') ?: 18900000000;
                 $persentaseRealisasi = $totalAnggaran > 0 ? round(($totalRealisasi / $totalAnggaran) * 100, 1) : 84.3;
-                $totalPad = \App\Models\FinancePad::sum('realisasi_pad') ?: 2300000000;
-                $totalPajak = \App\Models\FinanceTax::sum('jumlah_pendapatan') ?: 1600000000;
+                $totalPad = (clone $qPad)->sum('realisasi_pad') ?: 2300000000;
+                $totalPajak = (clone $qTax)->sum('jumlah_pendapatan') ?: 1600000000;
 
                 $stats = [
                     'total_anggaran' => $totalAnggaran,
@@ -115,7 +154,7 @@ class LayananPublikController extends Controller
                 ];
 
                 // 1. Grafik Anggaran vs Realisasi (Horizontal Bar)
-                $budgets = \App\Models\FinanceBudget::selectRaw('sub_bidang, SUM(total_anggaran) as total_anggaran, SUM(total_realisasi) as total_realisasi')
+                $budgets = (clone $qBudget)->selectRaw('sub_bidang, SUM(total_anggaran) as total_anggaran, SUM(total_realisasi) as total_realisasi')
                     ->groupBy('sub_bidang')
                     ->get();
 
@@ -140,7 +179,7 @@ class LayananPublikController extends Controller
                 ];
 
                 // 3. Grafik Pendapatan Asli Daerah (PAD per Sektor)
-                $pads = \App\Models\FinancePad::selectRaw('sumber_pendapatan, SUM(target_pad) as total_target, SUM(realisasi_pad) as total_realisasi')
+                $pads = (clone $qPad)->selectRaw('sumber_pendapatan, SUM(target_pad) as total_target, SUM(realisasi_pad) as total_realisasi')
                     ->groupBy('sumber_pendapatan')
                     ->get();
 
@@ -165,7 +204,7 @@ class LayananPublikController extends Controller
                 }
 
                 // 4. Grafik Pendapatan Pajak Daerah (Horizontal Clustered Bar: Target vs Realisasi)
-                $taxes = \App\Models\FinanceTax::selectRaw('jenis_pajak, SUM(jumlah_pendapatan) as total_pendapatan')
+                $taxes = (clone $qTax)->selectRaw('jenis_pajak, SUM(jumlah_pendapatan) as total_pendapatan')
                     ->groupBy('jenis_pajak')
                     ->get();
 
@@ -221,22 +260,35 @@ class LayananPublikController extends Controller
                 $informasiTerbaru = \App\Models\FinanceInformation::where('status_publikasi', 'Rilis')->orderBy('created_at', 'desc')->limit(5)->get();
 
                 if (view()->exists('layanan.keuangan')) {
-                    return view('layanan.keuangan', compact('stats', 'chartAnggaran', 'chartTrend', 'chartPAD', 'chartPajak', 'tabelKeuangan', 'informasiTerbaru', 'dept'))->render();
+                    return view('layanan.keuangan', compact('stats', 'chartAnggaran', 'chartTrend', 'chartPAD', 'chartPajak', 'tabelKeuangan', 'informasiTerbaru', 'dept', 'tahunOptions', 'sektorOptions', 'filters'))->render();
                 }
             }
 
             if ($dept === 'pembangunan') {
+                $qProject = \App\Models\PembangunanProject::query();
+                
+                $kecamatanOptions = \App\Models\PembangunanProject::distinct()->pluck('kecamatan')->filter()->toArray();
+                $kategoriOptions = \App\Models\PembangunanProject::distinct()->pluck('category')->filter()->toArray();
+                $statusOptions = \App\Models\PembangunanProject::distinct()->pluck('status')->filter()->toArray();
+                $tahunOptions = \App\Models\PembangunanProject::selectRaw("CAST(strftime('%Y', created_at) AS INTEGER) as tahun")->distinct()->pluck('tahun')->filter()->toArray();
+
+                $filters = $request->only(['kecamatan', 'kategori', 'status', 'tahun']);
+                if (!empty($filters['kecamatan'])) $qProject->where('kecamatan', $filters['kecamatan']);
+                if (!empty($filters['kategori'])) $qProject->where('category', $filters['kategori']);
+                if (!empty($filters['status'])) $qProject->where('status', $filters['status']);
+                if (!empty($filters['tahun'])) $qProject->whereYear('created_at', $filters['tahun']);
+
                 $stats = [
-                    'total' => \App\Models\PembangunanProject::count(),
-                    'selesai' => \App\Models\PembangunanProject::where('status', 'Selesai')->count(),
-                    'berjalan' => \App\Models\PembangunanProject::where('status', 'Berjalan')->count(),
-                    'anggaran' => \App\Models\PembangunanProject::sum('total_budget')
+                    'total' => (clone $qProject)->count(),
+                    'selesai' => (clone $qProject)->where('status', 'Selesai')->count(),
+                    'berjalan' => (clone $qProject)->where('status', 'Berjalan')->count(),
+                    'anggaran' => (clone $qProject)->sum('total_budget')
                 ];
                 
-                $projects = \App\Models\PembangunanProject::orderBy('created_at', 'desc')->limit(6)->get();
+                $projects = (clone $qProject)->orderBy('created_at', 'desc')->limit(6)->get();
                 
                 // Optimized spatial query: only fetch specific columns
-                $mapData = \App\Models\PembangunanProject::select('name', 'latitude', 'longitude', 'status', 'progress_percentage')
+                $mapData = (clone $qProject)->select('name', 'latitude', 'longitude', 'status', 'progress_percentage')
                             ->whereNotNull('latitude')->whereNotNull('longitude')
                             ->get()->map(function($p) {
                     return [
@@ -250,7 +302,7 @@ class LayananPublikController extends Controller
 
                 $dokumentasi = \App\Models\PembangunanDocument::with('project')->where('type', 'Image')->orderBy('upload_date', 'desc')->limit(4)->get();
 
-                if (view()->exists('layanan.pembangunan')) return view('layanan.pembangunan', compact('stats', 'projects', 'mapData', 'dokumentasi', 'dept'))->render();
+                if (view()->exists('layanan.pembangunan')) return view('layanan.pembangunan', compact('stats', 'projects', 'mapData', 'dokumentasi', 'dept', 'kecamatanOptions', 'kategoriOptions', 'statusOptions', 'tahunOptions', 'filters'))->render();
             }
 
             if ($dept === 'kesehatan') {
@@ -286,11 +338,22 @@ class LayananPublikController extends Controller
             }
 
             if ($dept === 'perhubungan') {
+                $qKir = \App\Models\UjiKir::query();
+                
+                $jenisOptions = \App\Models\UjiKir::distinct()->pluck('jenis_kendaraan')->filter()->toArray();
+                $statusOptions = \App\Models\UjiKir::distinct()->pluck('status_uji')->filter()->toArray();
+                $bulanOptions = \App\Models\UjiKir::selectRaw("CAST(strftime('%m', tanggal_uji) AS INTEGER) as bulan")->distinct()->pluck('bulan')->filter()->toArray();
+
+                $filters = $request->only(['jenis_kendaraan', 'status_uji', 'bulan']);
+                if (!empty($filters['jenis_kendaraan'])) $qKir->where('jenis_kendaraan', $filters['jenis_kendaraan']);
+                if (!empty($filters['status_uji'])) $qKir->where('status_uji', $filters['status_uji']);
+                if (!empty($filters['bulan'])) $qKir->whereRaw("CAST(strftime('%m', tanggal_uji) AS INTEGER) = ?", [$filters['bulan']]);
+
                 $stats = [
-                    'total' => \App\Models\UjiKir::count(),
-                    'lulus' => \App\Models\UjiKir::where('status_uji', 'Lulus Uji')->count(),
-                    'tidak_lulus' => \App\Models\UjiKir::where('status_uji', 'Tidak Lulus')->count(),
-                    'uji_ulang' => \App\Models\UjiKir::where('status_uji', 'Perlu Uji Ulang')->count(),
+                    'total' => (clone $qKir)->count(),
+                    'lulus' => (clone $qKir)->where('status_uji', 'Lulus Uji')->count(),
+                    'tidak_lulus' => (clone $qKir)->where('status_uji', 'Tidak Lulus')->count(),
+                    'uji_ulang' => (clone $qKir)->where('status_uji', 'Perlu Uji Ulang')->count(),
                 ];
                 
                 $statsPerhubungan = [
@@ -300,7 +363,7 @@ class LayananPublikController extends Controller
                     ['label' => 'Perlu Uji Ulang', 'value' => number_format($stats['uji_ulang']) . ' Unit'],
                 ];
 
-                $tabelKIRRaw = \App\Models\UjiKir::orderBy('tanggal_uji', 'desc')->limit(5)->get();
+                $tabelKIRRaw = (clone $qKir)->orderBy('tanggal_uji', 'desc')->limit(5)->get();
                 $tabelKIR = $tabelKIRRaw->map(function($row) {
                     return [
                         'bulan_tahun' => Carbon::parse($row->tanggal_uji)->format('M Y'),
@@ -325,11 +388,29 @@ class LayananPublikController extends Controller
                     ];
                 });
                 
-                if (view()->exists('layanan.perhubungan')) return view('layanan.perhubungan', compact('statsPerhubungan', 'tabelKIR', 'infoTerbaru', 'dept'))->render();
+                if (view()->exists('layanan.perhubungan')) return view('layanan.perhubungan', compact('statsPerhubungan', 'tabelKIR', 'infoTerbaru', 'dept', 'jenisOptions', 'statusOptions', 'bulanOptions', 'filters'))->render();
             }
 
             if ($dept === 'sig') {
-                $layersRaw = \App\Models\LayerSig::where('status_aktif', true)->get();
+                $qSpasial = \App\Models\DataSpasial::query();
+                $qLayer = \App\Models\LayerSig::query();
+                
+                $kecamatanOptions = \App\Models\DataSpasial::distinct()->pluck('wilayah')->filter()->toArray();
+                $kategoriOptions = \App\Models\DataSpasial::distinct()->pluck('kategori')->filter()->toArray();
+                $tahunOptions = \App\Models\DataSpasial::selectRaw("CAST(strftime('%Y', created_at) AS INTEGER) as tahun")->distinct()->pluck('tahun')->filter()->toArray();
+                $statusOptions = ['Aktif', 'Nonaktif'];
+                
+                $filters = $request->only(['kecamatan', 'kategori', 'tahun', 'status', 'search']);
+                if (!empty($filters['kecamatan'])) $qSpasial->where('wilayah', $filters['kecamatan']);
+                if (!empty($filters['kategori'])) $qSpasial->where('kategori', $filters['kategori']);
+                if (!empty($filters['tahun'])) $qSpasial->whereYear('created_at', $filters['tahun']);
+                if (!empty($filters['search'])) $qSpasial->where('nama_data', 'like', '%' . $filters['search'] . '%');
+                if (!empty($filters['status'])) {
+                    $isActive = $filters['status'] == 'Aktif' ? 1 : 0;
+                    $qLayer->where('status_aktif', $isActive);
+                }
+
+                $layersRaw = $qLayer->where('status_aktif', true)->get();
                 $defaultLayers = [
                     'Mata Air',
                     'Kemiskinan',
@@ -358,7 +439,7 @@ class LayananPublikController extends Controller
                     ['label' => 'CCTV', 'value' => 15],
                 ];
 
-                $tabelSIGRaw = \App\Models\DataSpasial::with('layer')->orderBy('created_at', 'desc')->limit(10)->get();
+                $tabelSIGRaw = (clone $qSpasial)->with('layer')->orderBy('created_at', 'desc')->limit(10)->get();
                 if ($tabelSIGRaw->isNotEmpty()) {
                     $tabelSIG = $tabelSIGRaw->map(function($row) {
                         return [
@@ -401,7 +482,7 @@ class LayananPublikController extends Controller
                     ]);
                 }
                 
-                if (view()->exists('layanan.sig')) return view('layanan.sig', compact('statsSIG', 'layerPublik', 'tabelSIG', 'infoTerbaruSIG', 'dept'))->render();
+                if (view()->exists('layanan.sig')) return view('layanan.sig', compact('statsSIG', 'layerPublik', 'tabelSIG', 'infoTerbaruSIG', 'dept', 'kecamatanOptions', 'kategoriOptions', 'tahunOptions', 'statusOptions', 'filters'))->render();
             }
 
             if ($dept === 'kependudukan') {

@@ -18,34 +18,38 @@
     </div>
 
     <!-- Filter Bar -->
-    <div style="display:flex; gap:12px; margin-bottom:24px; align-items:center; flex-wrap:wrap;">
-        <select style="border:1px solid #e2e8f0; border-radius:8px; padding:10px 16px; font-size:13px; color:#64748b; background:#fff; flex:1; min-width:130px;">
+    <form style="display:flex; gap:12px; margin-bottom:24px; align-items:center; flex-wrap:wrap;" method="GET" action="{{ route('layanan') }}">
+        <input type="hidden" name="dept" value="sig">
+        <select name="kecamatan" style="border:1px solid #e2e8f0; border-radius:8px; padding:10px 16px; font-size:13px; color:#64748b; background:#fff; flex:1; min-width:130px;">
             <option value="">Semua Kecamatan</option>
-            <option value="Magelang Utara">Magelang Utara</option>
-            <option value="Magelang Tengah">Magelang Tengah</option>
-            <option value="Magelang Selatan">Magelang Selatan</option>
+            @foreach($kecamatanOptions as $opt)
+                <option value="{{ $opt }}" {{ request('kecamatan') == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+            @endforeach
         </select>
-        <select style="border:1px solid #e2e8f0; border-radius:8px; padding:10px 16px; font-size:13px; color:#64748b; background:#fff; flex:1; min-width:130px;">
+        <select name="kategori" style="border:1px solid #e2e8f0; border-radius:8px; padding:10px 16px; font-size:13px; color:#64748b; background:#fff; flex:1; min-width:130px;">
             <option value="">Semua Kategori</option>
-            <option value="Sanitasi">Sanitasi</option>
-            <option value="Fasilitas">Fasilitas</option>
-            <option value="Pangan">Pangan</option>
+            @foreach($kategoriOptions as $opt)
+                <option value="{{ $opt }}" {{ request('kategori') == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+            @endforeach
         </select>
-        <select style="border:1px solid #e2e8f0; border-radius:8px; padding:10px 16px; font-size:13px; color:#64748b; background:#fff; flex:1; min-width:130px;">
-            <option value="">Tahun 2026</option>
-            <option value="2025">Tahun 2025</option>
-            <option value="2024">Tahun 2024</option>
+        <select name="tahun" style="border:1px solid #e2e8f0; border-radius:8px; padding:10px 16px; font-size:13px; color:#64748b; background:#fff; flex:1; min-width:130px;">
+            <option value="">Semua Tahun</option>
+            @foreach($tahunOptions as $opt)
+                <option value="{{ $opt }}" {{ request('tahun') == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+            @endforeach
         </select>
-        <select style="border:1px solid #e2e8f0; border-radius:8px; padding:10px 16px; font-size:13px; color:#64748b; background:#fff; flex:1; min-width:130px;">
+        <select name="status" style="border:1px solid #e2e8f0; border-radius:8px; padding:10px 16px; font-size:13px; color:#64748b; background:#fff; flex:1; min-width:130px;">
             <option value="">Status Layer</option>
-            <option value="Aktif">Aktif</option>
+            @foreach($statusOptions as $opt)
+                <option value="{{ $opt }}" {{ request('status') == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+            @endforeach
         </select>
         <div style="position:relative; flex:2; min-width:200px;">
-            <input type="text" placeholder="Search Indikator..." style="width:100%; border:1px solid #e2e8f0; border-radius:8px; padding:10px 16px 10px 38px; font-size:13px; color:#334155; background:#fff;">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search Indikator..." style="width:100%; border:1px solid #e2e8f0; border-radius:8px; padding:10px 16px 10px 38px; font-size:13px; color:#334155; background:#fff;">
             <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#94a3b8; font-size:14px;"></i>
         </div>
-        <button style="background:#2563eb; color:#fff; border:none; border-radius:8px; padding:10px 24px; font-weight:600; font-size:13px; cursor:pointer; transition:background .2s;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">Terapkan Filter</button>
-    </div>
+        <button type="submit" style="background:#2563eb; color:#fff; border:none; border-radius:8px; padding:10px 24px; font-weight:600; font-size:13px; cursor:pointer; transition:background .2s;" onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">Terapkan Filter</button>
+    </form>
 
     <!-- Middle Section: Layer Publik & Peta Utama -->
     <div style="display:grid; grid-template-columns:300px 1fr; gap:24px; margin-bottom:24px; align-items:stretch;">

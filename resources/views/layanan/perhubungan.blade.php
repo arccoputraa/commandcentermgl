@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Perhubungan - Command Center Kota Magelang')
 
@@ -70,7 +70,7 @@
                                 <p class="pub-info-title">{{ $info['judul'] }}</p>
                                 <span class="status-badge {{ $info['status'] === 'Draft' ? 'warning' : 'success' }}">{{ $info['status'] }}</span>
                             </div>
-                            <p class="pub-info-meta">{{ $info['kategori'] }} � {{ $info['tanggal'] }}</p>
+                            <p class="pub-info-meta">{{ $info['kategori'] }} · {{ $info['tanggal'] }}</p>
                             <a href="/sample-document.pdf" target="_blank" class="action-link">Lihat PDF</a>
                         </div>
                     @endforeach
@@ -148,4 +148,5 @@ new ApexCharts(document.querySelector('#chartKIRJenis'), barOpts(['JN-001','JN-0
 new ApexCharts(document.querySelector('#chartLayananUnit'), barOpts(['UPT-KIR-01','POS-TIM-01','POS-BRG-01'], [6820,124,120], '#06b6d4')).render();
 </script>
 @endsection
+
 

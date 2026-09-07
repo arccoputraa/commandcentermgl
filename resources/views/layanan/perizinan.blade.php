@@ -38,17 +38,32 @@
     </div>
 
     <!-- Filter -->
-    <div class="dashboard-filter-bar">
+    <form class="dashboard-filter-bar" method="GET" action="{{ route('layanan') }}">
+        <input type="hidden" name="dept" value="perizinan">
         <div class="filter-dropdowns">
-            <select><option>Pilih Tahun</option></select>
-            <select><option>Pilih Jenis Izin</option></select>
-            <select><option>Pilih Status</option></select>
+            <select name="tahun">
+                <option value="">Pilih Tahun</option>
+                @foreach($tahunOptions as $opt)
+                    <option value="{{ $opt }}" {{ request('tahun') == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                @endforeach
+            </select>
+            <select name="jenis_izin">
+                <option value="">Pilih Jenis Izin</option>
+                @foreach($jenisOptions as $opt)
+                    <option value="{{ $opt }}" {{ request('jenis_izin') == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                @endforeach
+            </select>
+            <select name="status">
+                <option value="">Pilih Status</option>
+                @foreach($statusOptions as $opt)
+                    <option value="{{ $opt }}" {{ request('status') == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                @endforeach
+            </select>
         </div>
         <div class="filter-search">
-            <input type="text" placeholder="Cari dokumen..." />
-            <button class="btn btn-primary">Terapkan Filter</button>
+            <button type="submit" class="btn btn-primary">Terapkan Filter</button>
         </div>
-    </div>
+    </form>
 
     <!-- Main Content Layout -->
     <div class="dashboard-layout-sidebar">

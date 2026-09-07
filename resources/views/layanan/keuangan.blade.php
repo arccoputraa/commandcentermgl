@@ -70,27 +70,27 @@
     </div>
 
     <!-- Filter Bar -->
-    <div class="dashboard-filter-bar" style="margin-top: 24px;">
+    <form class="dashboard-filter-bar" style="margin-top: 24px;" method="GET" action="{{ route('layanan') }}">
+        <input type="hidden" name="dept" value="keuangan">
         <div class="filter-dropdowns" style="flex: 1; display: flex; gap: 12px; align-items: center;">
-            <select style="min-width: 160px;">
-                <option value="">Tahun Anggaran (2026)</option>
-                <option value="2026">2026</option>
-                <option value="2025">2025</option>
+            <select name="tahun" style="min-width: 160px;">
+                <option value="">Tahun Anggaran</option>
+                @foreach($tahunOptions as $opt)
+                    <option value="{{ $opt }}" {{ request('tahun') == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                @endforeach
             </select>
-            <select style="min-width: 160px;">
+            <select name="sektor" style="min-width: 160px;">
                 <option value="">Pilih Sub Bidang / Unit</option>
-                <option value="sekretariat">Sekretariat</option>
-                <option value="anggaran">Bidang Anggaran</option>
-                <option value="akuntansi">Bidang Akuntansi</option>
-                <option value="aset">Bidang Aset</option>
-                <option value="pajak">Bidang Pajak</option>
+                @foreach($sektorOptions as $opt)
+                    <option value="{{ $opt }}" {{ request('sektor') == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                @endforeach
             </select>
             <div class="filter-search" style="flex: 1; min-width: 180px;">
-                <input type="text" placeholder="Search" style="width: 100%;" />
+                <input type="text" name="search" placeholder="Search" value="{{ request('search') }}" style="width: 100%; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 16px; font-size: 14px;" />
             </div>
         </div>
-        <button class="btn btn-primary" style="background: #155DFC; color: #fff; border-radius: 12px; padding: 12px 24px; font-weight: 600; border: none; cursor: pointer;">Terapkan Filter</button>
-    </div>
+        <button type="submit" class="btn btn-primary" style="background: #155DFC; color: #fff; border-radius: 12px; padding: 12px 24px; font-weight: 600; border: none; cursor: pointer;">Terapkan Filter</button>
+    </form>
 
     <!-- 4 Charts Grid (2x2) -->
     <div class="dashboard-charts-grid" style="grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 24px;">

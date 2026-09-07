@@ -92,7 +92,12 @@ class DatabaseSeeder extends Seeder
         
         $kategoriPembangunan = ['Jalan', 'Drainase', 'Gedung', 'Fasilitas Umum', 'Taman'];
         $statusPembangunan = ['Selesai', 'Berjalan', 'Tertunda'];
-        $kecamatan = ['Magelang Selatan', 'Magelang Tengah', 'Magelang Utara'];
+        $masterWilayah = [
+            'Magelang Selatan' => ['Jurangombo Selatan', 'Jurangombo Utara', 'Magersari', 'Rejowinangun Selatan', 'Tidar Selatan', 'Tidar Utara'],
+            'Magelang Tengah' => ['Cacaban', 'Gelangan', 'Kemirirejo', 'Magelang', 'Panjang', 'Rejowinangun Utara'],
+            'Magelang Utara' => ['Kedungsari', 'Kramat Selatan', 'Kramat Utara', 'Potrobangsan', 'Wates']
+        ];
+        $kecamatan = array_keys($masterWilayah);
 
         for ($i = 0; $i < 30; $i++) {
             $total_budget = $faker->numberBetween(5, 50) * 100000000; // 500M - 5Miliar
@@ -112,13 +117,14 @@ class DatabaseSeeder extends Seeder
             // Magelang Coords: Lat: -7.50 to -7.45, Lng: 110.20 to 110.24
             $lat = $faker->randomFloat(6, -7.50, -7.45);
             $lng = $faker->randomFloat(6, 110.20, 110.24);
+            $randKec = $faker->randomElement($kecamatan);
 
             $project_id = DB::table('pembangunan_projects')->insertGetId([
                 'project_code' => 'PRJ-' . Carbon::now()->format('Y') . '-' . str_pad($i + 1, 4, '0', STR_PAD_LEFT),
                 'name' => 'Pembangunan ' . $faker->randomElement($kategoriPembangunan) . ' ' . $faker->streetName,
                 'category' => $faker->randomElement($kategoriPembangunan),
-                'kecamatan' => $faker->randomElement($kecamatan),
-                'kelurahan' => $faker->citySuffix,
+                'kecamatan' => $randKec,
+                'kelurahan' => $faker->randomElement($masterWilayah[$randKec]),
                 'total_budget' => $total_budget,
                 'realized_budget' => $realized_budget,
                 'progress_percentage' => $progress_percentage,
@@ -278,12 +284,11 @@ class DatabaseSeeder extends Seeder
         DB::table('kependudukan_mutasis')->delete();
 
         $agamas = ['Islam', 'Kristen', 'Katolik', 'Hindu', 'Buddha'];
-        foreach ($kecamatan as $kec) {
-            for ($j=0; $j<8; $j++) {
+        foreach ($masterWilayah as $kec => $kelurahanList) {
+            foreach ($kelurahanList as $kel) {
                 $laki = $faker->numberBetween(1000, 5000);
                 $perempuan = $faker->numberBetween(1000, 5000);
                 $total = $laki + $perempuan;
-                $kel = $faker->citySuffix;
 
                 DB::table('kependudukan_penduduks')->insert([
                     'tahun' => 2026,

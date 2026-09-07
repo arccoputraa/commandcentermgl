@@ -36,18 +36,39 @@ if(isset($stats)) {
         @endforeach
     </div>
 
-    <div class="flex flex-col md:flex-row gap-4 items-center bg-white p-4 rounded-xl border border-slate-200 mt-6">
+    <form class="flex flex-col md:flex-row gap-4 items-center bg-white p-4 rounded-xl border border-slate-200 mt-6" method="GET" action="{{ route('layanan') }}">
+        <input type="hidden" name="dept" value="pembangunan">
         <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto">
-            <select><option>Kecamatan</option></select>
-            <select><option>Kategori</option></select>
-            <select><option>Status</option></select>
-            <select><option>Tahun</option></select>
+            <select name="kecamatan">
+                <option value="">Semua Kecamatan</option>
+                @foreach($kecamatanOptions as $opt)
+                    <option value="{{ $opt }}" {{ request('kecamatan') == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                @endforeach
+            </select>
+            <select name="kategori">
+                <option value="">Semua Kategori</option>
+                @foreach($kategoriOptions as $opt)
+                    <option value="{{ $opt }}" {{ request('kategori') == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                @endforeach
+            </select>
+            <select name="status">
+                <option value="">Semua Status</option>
+                @foreach($statusOptions as $opt)
+                    <option value="{{ $opt }}" {{ request('status') == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                @endforeach
+            </select>
+            <select name="tahun">
+                <option value="">Semua Tahun</option>
+                @foreach($tahunOptions as $opt)
+                    <option value="{{ $opt }}" {{ request('tahun') == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                @endforeach
+            </select>
         </div>
         <div class="w-full md:flex-1">
-            <input type="text" placeholder="Search proyek" />
+            <input type="text" name="search" placeholder="Search proyek" value="{{ request('search') }}" />
         </div>
-        <button class="btn btn-primary">Terapkan Filter</button>
-    </div>
+        <button type="submit" class="btn btn-primary">Terapkan Filter</button>
+    </form>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mt-6">
         <div class="dashboard-chart-card">
