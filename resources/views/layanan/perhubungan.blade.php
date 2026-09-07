@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', 'Perhubungan - Command Center Kota Magelang')
 
@@ -23,17 +23,33 @@
         @endforeach
     </div>
 
-    <div class="flex flex-col md:flex-row gap-4 items-center bg-white p-4 rounded-xl border border-slate-200 mt-6">
+    <form action="{{ route('layanan') }}" method="GET" class="flex flex-col md:flex-row gap-4 items-center bg-white p-4 rounded-xl border border-slate-200 mt-6">
+        <input type="hidden" name="dept" value="perhubungan">
         <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto">
-            <select><option>Jenis Kendaraan</option></select>
-            <select><option>Status Uji</option></select>
-            <select><option>Bulan</option></select>
+            <select name="jenis_kendaraan" class="searchable-dropdown min-w-[200px]">
+                <option value="">Jenis Kendaraan</option>
+                @foreach($jenisOptions ?? [] as $opt)
+                    <option value="{{ $opt }}" {{ request('jenis_kendaraan') == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                @endforeach
+            </select>
+            <select name="status_uji" class="searchable-dropdown min-w-[200px]">
+                <option value="">Status Uji</option>
+                @foreach($statusOptions ?? [] as $opt)
+                    <option value="{{ $opt }}" {{ request('status_uji') == $opt ? 'selected' : '' }}>{{ $opt }}</option>
+                @endforeach
+            </select>
+            <select name="bulan" class="searchable-dropdown min-w-[150px]">
+                <option value="">Bulan</option>
+                @foreach($bulanOptions ?? [] as $opt)
+                    <option value="{{ $opt }}" {{ request('bulan') == $opt ? 'selected' : '' }}>{{ date("F", mktime(0, 0, 0, $opt, 10)) }}</option>
+                @endforeach
+            </select>
         </div>
         <div class="w-full md:flex-1">
-            <input type="text" placeholder="Search kendaraan / indikator" />
+            <input type="text" name="search" value="{{ request('search') }}" class="w-full border border-slate-200 rounded p-2" placeholder="Search kendaraan / indikator" />
         </div>
-        <button class="btn btn-primary">Terapkan Filter</button>
-    </div>
+        <button type="submit" class="btn btn-primary">Terapkan Filter</button>
+    </form>
 
     <div class="flex flex-col lg:flex-row gap-6 mt-6">
         <div class="w-full lg:w-2/3">
@@ -71,7 +87,7 @@
                                 <span class="status-badge {{ $info['status'] === 'Draft' ? 'warning' : 'success' }}">{{ $info['status'] }}</span>
                             </div>
                             <p class="pub-info-meta">{{ $info['kategori'] }} · {{ $info['tanggal'] }}</p>
-                            <a href="/sample-document.pdf" target="_blank" class="action-link">Lihat PDF</a>
+                            <a href="{{ Storage::url($info['file_path']) }}" target="_blank" class="action-link">Lihat PDF</a>
                         </div>
                     @endforeach
                 </div>

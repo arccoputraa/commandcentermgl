@@ -63,7 +63,7 @@
 </header>
 
 <main>
-  <section class="page-hero page-hero-image">
+  <section class="page-hero page-hero-image" style="--container-image: url('{{ asset('images/container.png') }}');">
     <div class="wrap">
       <div class="breadcrumb"><a href="{{ route('home') }}">Beranda</a> / CCTV Publik</div>
       <h1>Monitoring CCTV Publik</h1>

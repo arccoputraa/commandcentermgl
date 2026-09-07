@@ -65,7 +65,7 @@
 
 <main>
   <!-- Hero with photo background -->
-  <section class="hero hero-sm">
+  <section class="hero hero-sm" style="--container-image: url('{{ asset('images/container.png') }}');">
     <div class="wrap">
       <h1>Tentang Command Center Kota Magelang</h1>
       <p>Command Center Kota Magelang merupakan platform terintegrasi yang menghubungkan data dan layanan seluruh perangkat daerah untuk mendukung pemantauan, analisis, dan pelayanan publik yang lebih baik.</p>

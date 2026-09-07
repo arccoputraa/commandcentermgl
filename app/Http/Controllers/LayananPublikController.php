@@ -418,7 +418,8 @@ class LayananPublikController extends Controller
                         'kategori' => $info->status_tag,
                         'tanggal' => Carbon::parse($info->tanggal_rilis)->format('d M Y'),
                         'status' => 'Rilis',
-                        'badge' => 'bg-emerald-100 text-emerald-700'
+                        'badge' => 'bg-emerald-100 text-emerald-700',
+                        'file_path' => $info->file_path
                     ];
                 });
                 
