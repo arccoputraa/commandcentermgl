@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\FinanceInformation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class FinanceInformationController extends Controller
 {
@@ -69,6 +70,9 @@ class FinanceInformationController extends Controller
         $data = $request->except(['dokumen_file']);
 
         if ($request->hasFile('dokumen_file')) {
+            if ($information->dokumen && !str_starts_with($information->dokumen, 'http') && !str_starts_with($information->dokumen, '/')) {
+                Storage::disk('public')->delete($information->dokumen);
+            }
             $path = $request->file('dokumen_file')->store('dokumen', 'public');
             $data['dokumen'] = $path;
         }
@@ -81,6 +85,9 @@ class FinanceInformationController extends Controller
     public function destroy($id)
     {
         $information = FinanceInformation::findOrFail($id);
+        if ($information->dokumen && !str_starts_with($information->dokumen, 'http') && !str_starts_with($information->dokumen, '/')) {
+            Storage::disk('public')->delete($information->dokumen);
+        }
         $information->delete();
 
         return redirect()->route('finance.information.index')->with('success', 'Informasi terbaru berhasil dihapus.');

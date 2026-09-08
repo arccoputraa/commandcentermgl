@@ -331,6 +331,7 @@
                 <th>JUDUL PUBLIKASI</th>
                 <th>KATEGORI</th>
                 <th>FORMAT</th>
+                <th>DOKUMEN</th>
                 <th>TANGGAL UPLOAD</th>
                 <th>STATUS PUBLIKASI</th>
                 <th>AKSI</th>
@@ -346,6 +347,20 @@
                     <td style="font-weight: 500; color: #1e293b;">{{ Str::limit($info->judul, 40) }}</td>
                     <td>{{ $info->kategori }}</td>
                     <td>{{ $info->format }}</td>
+                    <td>
+                        @if($info->dokumen)
+                            @php
+                                $docUrl = str_starts_with($info->dokumen, 'http') || str_starts_with($info->dokumen, '/') 
+                                    ? $info->dokumen 
+                                    : Storage::url($info->dokumen);
+                            @endphp
+                            <a href="{{ $docUrl }}" target="_blank" style="color: #2563eb; text-decoration: none; font-weight: 500; font-size: 13px; display: inline-flex; align-items: center; gap: 4px;">
+                                <i class="fa-solid fa-file-pdf"></i> Lihat File
+                            </a>
+                        @else
+                            <span style="color: #94a3b8; font-size: 12px;">-</span>
+                        @endif
+                    </td>
                     <td>{{ $info->created_at->format('d M Y') }}</td>
                     <td>
                         <span class="badge-status {{ $badgeClass }}">
@@ -362,7 +377,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" style="text-align: center; color: #94a3b8; padding: 32px;">Belum ada informasi publikasi.</td>
+                    <td colspan="8" style="text-align: center; color: #94a3b8; padding: 32px;">Belum ada informasi publikasi.</td>
                 </tr>
             @endforelse
         </tbody>
