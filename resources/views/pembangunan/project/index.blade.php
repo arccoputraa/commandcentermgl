@@ -37,7 +37,7 @@
                 @forelse($projects as $p)
                 <tr>
                     <td style="font-weight: 600;">{{ $p->project_code }}</td>
-                    <td>{{ $p->name }}</td>
+                    <td><div style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ $p->name }}">{{ $p->name }}</div></td>
                     <td>{{ $p->category }}</td>
                     <td>{{ $p->kecamatan }}</td>
                     <td>

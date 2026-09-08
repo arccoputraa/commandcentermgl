@@ -46,13 +46,21 @@ class PembangunanController extends Controller
         // 3. Chart Data
         // a. Progres Proyek per Bulan (Count by created_at month for this year)
         $currentYear = date('Y');
-        $monthlyProjectsRaw = PembangunanProject::selectRaw("CAST(strftime('%m', created_at) AS INTEGER) as month, count(*) as total")
+        
+        // Fetch specific columns for this year to avoid DB specific raw month extraction
+        $projectsThisYear = PembangunanProject::select('created_at')
             ->whereYear('created_at', $currentYear)
-            ->groupBy('month')
             ->get();
+            
+        $monthlyProjectsRaw = $projectsThisYear->groupBy(function($date) {
+            return \Carbon\Carbon::parse($date->created_at)->format('n');
+        })->map(function($row) {
+            return $row->count();
+        });
+
         $chartBulan = array_fill(1, 12, 0);
-        foreach($monthlyProjectsRaw as $m) {
-            $chartBulan[$m->month] = $m->total;
+        foreach($monthlyProjectsRaw as $month => $total) {
+            $chartBulan[$month] = $total;
         }
 
         // b. Status Proyek

@@ -91,6 +91,7 @@
         <option value="Tertunda" {{ request('status') == 'Tertunda' ? 'selected' : '' }}>Tertunda</option>
     </select>
     <button type="submit" class="btn-primary-custom">Terapkan Filter</button>
+    <a href="{{ route('pembangunan.dashboard') }}" style="display: inline-flex; align-items: center; justify-content: center; background: #F1F5F9; color: #64748B; padding: 10px 16px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 14px; transition: background 0.2s;" onmouseover="this.style.background='#E2E8F0'" onmouseout="this.style.background='#F1F5F9'">Reset</a>
 </form>
 
 <!-- KPI Cards -->

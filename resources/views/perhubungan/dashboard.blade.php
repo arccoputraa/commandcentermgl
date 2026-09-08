@@ -60,7 +60,7 @@
                         </div>
                         <div class="activity-content">
                             <p style="color: var(--admin-text-main);"><span style="font-weight: 600;">{{ $doc->judul }}</span></p>
-                            <small style="color: #9ca3af; margin-top: 4px; display: block;">Rilis: {{ optional($doc->tanggal_rilis)->format('d M Y') ?? '-' }} - Tag: {{ $doc->status_tag }}</small>
+                            <small style="color: #9ca3af; margin-top: 4px; display: block;">Rilis: {{ $doc->tanggal_rilis ? \Carbon\Carbon::parse($doc->tanggal_rilis)->format('d M Y') : '-' }} - Tag: {{ $doc->status_tag }}</small>
                         </div>
                     </div>
                     @endforeach
