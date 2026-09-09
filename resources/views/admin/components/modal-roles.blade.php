@@ -78,7 +78,8 @@
                     <label class="form-label" style="color: #314158; font-weight: 600;">Role</label>
                     <select name="role" id="editRoleRole" class="form-control">
                         <option value="user">User</option>
-                        <option value="admin">Admin</option>
+                        <option value="division_admin">Admin Divisi</option>
+                        <option value="admin">Super Admin</option>
                     </select>
                 </div>
             </div>

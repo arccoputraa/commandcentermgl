@@ -213,7 +213,7 @@
         <h1 class="divisions-title">Daftar Divisi/Sektor</h1>
         <p class="divisions-subtitle">Kelola departemen yang tergabung dalam Command Center.</p>
     </div>
-    <button class="btn-add-division" onclick="openDivisionModal('create')">
+    <button class="btn btn-primary" onclick="openDivisionModal('create')">
         <i class="fa-solid fa-plus"></i> Tambah Divisi
     </button>
 </div>

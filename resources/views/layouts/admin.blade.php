@@ -12,6 +12,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     @vite(['resources/css/admin.css', 'resources/js/app.js'])
+    <style>
+        .group:hover .group-hover\:block {
+            display: flex !important;
+        }
+    </style>
 </head>
 <body>
 
@@ -63,7 +68,32 @@
                 </button>
                 <h2 class="topbar-title">Command Center</h2>
             </div>
-            <div class="topbar-profile">
+            <div class="topbar-profile" style="display: flex; gap: 20px; align-items: center;">
+                <div class="relative group" style="position: relative; display: inline-block;">
+                    <button class="bg-gray-100 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200" style="background: #f1f5f9; padding: 8px 12px; border-radius: 6px; border: none; cursor: pointer;">
+                        <i class="fa-solid fa-building mr-1"></i> Pindah Divisi <i class="fa-solid fa-chevron-down ml-1" style="font-size: 10px;"></i>
+                    </button>
+                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg hidden group-hover:block z-50" style="position: absolute; right: 0; margin-top: 5px; width: 200px; background: white; border-radius: 6px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); display: none; z-index: 50; flex-direction: column;">
+                        @php
+                            $divisions = \App\Models\Division::all();
+                            $routeMap = [
+                                'keuangan' => 'finance',
+                            ];
+                        @endphp
+                        @foreach($divisions as $div)
+                            @php
+                                $divName = strtolower($div->name);
+                                $routeName = isset($routeMap[$divName]) ? $routeMap[$divName] : $divName;
+                            @endphp
+                            @if(in_array($divName, ['pembangunan', 'perizinan', 'kesehatan', 'keuangan', 'kepegawaian', 'kependudukan', 'sig', 'perhubungan']))
+                                <a href="{{ route($routeName.'.dashboard') }}" style="display: block; padding: 10px 15px; color: #333; text-decoration: none; font-size: 14px; border-bottom: 1px solid #eee;">
+                                    {{ $div->name }}
+                                </a>
+                            @endif
+                        @endforeach
+                    </div>
+                </div>
+
                 <div class="profile-info">
                     <h4>{{ Auth::user()->name ?? 'Admin Utama' }}</h4>
                     <p>{{ Auth::user()->role ?? 'Administrator' }}</p>

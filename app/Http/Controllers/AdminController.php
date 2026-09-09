@@ -50,7 +50,7 @@ class AdminController extends Controller
             'password' => 'required|string|min:8|confirmed',
             'nip' => 'nullable|string|max:50',
             'division_id' => 'nullable|exists:divisions,id',
-            'role' => 'required|in:admin,user',
+            'role' => 'required|in:admin,division_admin,user',
             'status' => 'required|in:aktif,nonaktif',
         ]);
 
@@ -86,7 +86,7 @@ class AdminController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'nip' => 'nullable|string|max:50',
             'division_id' => 'nullable|exists:divisions,id',
-            'role' => 'required|in:admin,user',
+            'role' => 'required|in:admin,division_admin,user',
             'status' => 'required|in:aktif,nonaktif',
         ]);
 

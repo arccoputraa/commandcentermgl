@@ -78,7 +78,8 @@
                     <label class="form-label" for="role">Role</label>
                     <select id="role" name="role" class="form-control" required>
                         <option value="user" {{ old('role') == 'user' ? 'selected' : '' }}>User</option>
-                        <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
+                        <option value="division_admin" {{ old('role') == 'division_admin' ? 'selected' : '' }}>Admin Divisi</option>
+                        <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Super Admin</option>
                     </select>
                     @error('role')
                         <span class="text-danger">{{ $message }}</span>

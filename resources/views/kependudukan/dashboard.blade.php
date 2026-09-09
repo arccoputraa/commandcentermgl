@@ -190,10 +190,55 @@
 
         // Data Kelurahan
         const kelurahanChartData = {!! json_encode($kelurahanChart ?? []) !!};
-        new ApexCharts(document.querySelector('#chartKelurahan'), barOpts(
+        const pieKelurahanOpts = (labels, series) => ({
+            chart: { type: 'donut', height: 350 },
+            labels: labels && labels.length > 0 ? labels : ['Data Kosong'],
+            series: series && series.length > 0 ? series.map(Number) : [1],
+            theme: {
+                palette: 'palette1'
+            },
+            legend: { 
+                position: 'right', 
+                fontSize: '11px',
+                height: 330,
+                width: 180,
+                markers: { radius: 12 },
+                formatter: function(seriesName, opts) {
+                    return seriesName + " (" + opts.w.globals.series[opts.seriesIndex].toLocaleString('id-ID') + ")";
+                }
+            },
+            plotOptions: {
+                pie: {
+                    donut: {
+                        size: '55%',
+                        labels: {
+                            show: true,
+                            total: {
+                                show: true,
+                                label: 'Total',
+                                fontSize: '13px',
+                                fontWeight: 600,
+                                formatter: function (w) {
+                                    return w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('id-ID');
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            dataLabels: { enabled: false },
+            tooltip: {
+                y: {
+                    formatter: function(val) {
+                        return val.toLocaleString('id-ID') + " jiwa";
+                    }
+                }
+            }
+        });
+
+        new ApexCharts(document.querySelector('#chartKelurahan'), pieKelurahanOpts(
             kelurahanChartData.map(d => d.label),
-            kelurahanChartData.map(d => d.total),
-            ['#2563eb']
+            kelurahanChartData.map(d => d.total)
         )).render();
     });
 </script>

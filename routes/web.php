@@ -352,6 +352,16 @@ Route::middleware(['auth', 'division:sig'])->prefix('admin/sig')->group(function
     Route::delete('/dokumen/{id}', [\App\Http\Controllers\SigController::class, 'dokumenDestroy'])->name('sig.dokumen.destroy');
 });
 
+// Division User Management Routes (protected)
+Route::middleware(['auth', 'role:admin,division_admin'])->prefix('{division_slug}/users')->group(function () {
+    Route::get('/', [\App\Http\Controllers\DivisionUserController::class, 'index'])->name('division.users.index');
+    Route::get('/create', [\App\Http\Controllers\DivisionUserController::class, 'create'])->name('division.users.create');
+    Route::post('/', [\App\Http\Controllers\DivisionUserController::class, 'store'])->name('division.users.store');
+    Route::get('/{user}/edit', [\App\Http\Controllers\DivisionUserController::class, 'edit'])->name('division.users.edit');
+    Route::put('/{user}', [\App\Http\Controllers\DivisionUserController::class, 'update'])->name('division.users.update');
+    Route::delete('/{user}', [\App\Http\Controllers\DivisionUserController::class, 'destroy'])->name('division.users.destroy');
+});
+
 Route::get('/{page}', function (Request $request, string $page) {
     $viewName = preg_replace('/\.(blade\.php|html)$/', '', $page);
 

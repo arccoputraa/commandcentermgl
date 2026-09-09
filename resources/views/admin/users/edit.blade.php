@@ -171,7 +171,8 @@
                 <label for="role">Role</label>
                 <select id="role" name="role" required>
                     <option value="user" {{ old('role', $user->role) == 'user' ? 'selected' : '' }}>User Divisi</option>
-                    <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>Administrator</option>
+                    <option value="division_admin" {{ old('role', $user->role) == 'division_admin' ? 'selected' : '' }}>Admin Divisi</option>
+                    <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>Super Admin</option>
                 </select>
                 @error('role')<span class="error-text">{{ $message }}</span>@enderror
             </div>

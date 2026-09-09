@@ -14,18 +14,32 @@ class CheckRole
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, string $role): Response
+    public function handle(Request $request, Closure $next, string ...$roles): Response
     {
         if (!Auth::check()) {
             return redirect()->route('login');
         }
 
-        if (Auth::user()->role !== $role) {
+        $user = Auth::user();
+
+        // Normalize roles array in case Laravel passes them as a single comma-separated string
+        $normalizedRoles = [];
+        foreach ($roles as $role) {
+            if (strpos($role, ',') !== false) {
+                $normalizedRoles = array_merge($normalizedRoles, explode(',', $role));
+            } else {
+                $normalizedRoles[] = $role;
+            }
+        }
+
+        if (!in_array($user->role, $normalizedRoles)) {
             // Jika user tidak punya akses, redirect dengan pesan error
-            // Redirect ke dashboard perizinan jika dia dari divisi perizinan
-            $user = Auth::user();
-            if ($user->division && strtolower($user->division->name) === 'perizinan') {
-                return redirect()->route('perizinan.dashboard')->withErrors(['Hak Akses' => 'Anda tidak memiliki akses ke halaman Admin.']);
+            // Redirect ke dashboard masing-masing jika dia punya divisi
+            if ($user->division) {
+                $userDiv = strtolower($user->division->name);
+                if (in_array($userDiv, ['pembangunan', 'perizinan', 'kesehatan', 'keuangan', 'kepegawaian', 'kependudukan', 'sig', 'perhubungan'])) {
+                    return redirect()->route("{$userDiv}.dashboard")->withErrors(['Hak Akses' => 'Anda tidak memiliki akses ke halaman tersebut.']);
+                }
             }
             
             return redirect()->route('home')->withErrors(['Hak Akses' => 'Anda tidak memiliki hak akses ke halaman tersebut.']);

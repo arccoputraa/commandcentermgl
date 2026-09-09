@@ -36,6 +36,12 @@
             <a href="{{ route('sig.dokumen.index') }}" class="menu-item {{ request()->routeIs('sig.dokumen.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-file-pdf"></i> Dokumen SIG
             </a>
+            
+            @if(Auth::user()->isSuperAdmin() || Auth::user()->isDivisionAdmin())
+            <a href="{{ route('division.users.index', 'sig') }}" class="menu-item {{ request()->routeIs('division.users.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-users-gear"></i> Manajemen User
+            </a>
+            @endif
             <a href="{{ route('profile.index') }}" class="menu-item {{ request()->routeIs('profile.index') ? 'active' : '' }}">
                 <i class="fa-solid fa-user-circle"></i> Profil
             </a>
@@ -58,7 +64,11 @@
                 <h2 class="topbar-title">Command Center</h2>
             </div>
             <div class="topbar-profile">
-                <div class="profile-info">
+                
+            @if(Auth::user()->isSuperAdmin())
+            <a href="{{ route('admin.dashboard') }}" style="margin-right: 15px; background: #f1f5f9; padding: 6px 12px; border-radius: 6px; font-size: 13px; color: #333; text-decoration: none;"><i class="fa-solid fa-arrow-left"></i> Global Admin</a>
+            @endif
+            <div class="profile-info">
                     <h4>{{ Auth::user()->name ?? 'User SIG' }}</h4>
                     <p>Divisi SIG</p>
                 </div>

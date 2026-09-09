@@ -35,4 +35,19 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Division::class);
     }
+
+    public function isSuperAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isDivisionAdmin()
+    {
+        return $this->role === 'division_admin';
+    }
+
+    public function isDivisionStaff()
+    {
+        return $this->role === 'user';
+    }
 }

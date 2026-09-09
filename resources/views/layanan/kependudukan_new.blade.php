@@ -366,10 +366,56 @@ new ApexCharts(document.querySelector('#chartKecamatan'), pieOpts(
     ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4']
 )).render();
 
-new ApexCharts(document.querySelector('#chartKelurahan'), barOpts(
+const pieKelurahanOpts = (labels, series) => ({
+    chart: { type: 'donut', height: 350 },
+    labels: labels && labels.length > 0 ? labels : ['Data Kosong'],
+    series: series && series.length > 0 ? series.map(Number) : [1],
+    theme: {
+        palette: 'palette1'
+    },
+    legend: { 
+        position: 'right', 
+        fontSize: '11px',
+        height: 330,
+        width: 180,
+        markers: { radius: 12 },
+        formatter: function(seriesName, opts) {
+            return seriesName + " (" + opts.w.globals.series[opts.seriesIndex].toLocaleString('id-ID') + ")";
+        }
+    },
+    plotOptions: {
+        pie: {
+            donut: {
+                size: '55%',
+                labels: {
+                    show: true,
+                    total: {
+                        show: true,
+                        label: 'Total',
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        color: '#64748b',
+                        formatter: function (w) {
+                            return w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('id-ID');
+                        }
+                    }
+                }
+            }
+        }
+    },
+    dataLabels: { enabled: false },
+    tooltip: {
+        y: {
+            formatter: function(val) {
+                return val.toLocaleString('id-ID') + " jiwa";
+            }
+        }
+    }
+});
+
+new ApexCharts(document.querySelector('#chartKelurahan'), pieKelurahanOpts(
     {!! json_encode($chartKelurahanLabels) !!},
-    {!! json_encode($chartKelurahanData) !!},
-    ['#2563eb']
+    {!! json_encode($chartKelurahanData) !!}
 )).render();
 
 // ── Peta ─────────────────────────────────────────────────────────────────────

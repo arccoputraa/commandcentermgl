@@ -36,6 +36,12 @@
             <a href="{{ route('perizinan.publikasi.index') }}" class="menu-item {{ request()->routeIs('perizinan.publikasi.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-bullhorn"></i> Publikasi Masyarakat
             </a>
+            
+            @if(Auth::user()->isSuperAdmin() || Auth::user()->isDivisionAdmin())
+            <a href="{{ route('division.users.index', 'perizinan') }}" class="menu-item {{ request()->routeIs('division.users.*') ? 'active' : '' }}">
+                <i class="fa-solid fa-users-gear"></i> Manajemen User
+            </a>
+            @endif
             <a href="{{ route('profile.index') }}" class="menu-item {{ request()->routeIs('profile.index') ? 'active' : '' }}">
                 <i class="fa-solid fa-user-circle"></i> Profil
             </a>
@@ -58,7 +64,11 @@
                 <h2 class="topbar-title">Command Center</h2>
             </div>
             <div class="topbar-profile">
-                <div class="profile-info">
+                
+            @if(Auth::user()->isSuperAdmin())
+            <a href="{{ route('admin.dashboard') }}" style="margin-right: 15px; background: #f1f5f9; padding: 6px 12px; border-radius: 6px; font-size: 13px; color: #333; text-decoration: none;"><i class="fa-solid fa-arrow-left"></i> Global Admin</a>
+            @endif
+            <div class="profile-info">
                     <h4>{{ Auth::user()->name ?? 'User Perizinan' }}</h4>
                     <p>{{ Auth::user()->division->name ?? 'Divisi Perizinan' }}</p>
                 </div>
