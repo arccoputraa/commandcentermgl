@@ -37,8 +37,11 @@ class AuthController extends Controller
                 'description' => 'Login ke dalam sistem admin.',
             ]);
 
-            $user = Auth::user();
-            
+            // If super admin, directly redirect to main admin dashboard
+            if ($user->role === 'admin') {
+                return redirect()->route('admin.dashboard');
+            }
+
             // Check roles first if explicitly set
             if ($user->role === 'admin_sig') {
                 return redirect()->route('sig.dashboard');

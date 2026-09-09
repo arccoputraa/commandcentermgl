@@ -69,11 +69,11 @@
                 <h2 class="topbar-title">Command Center</h2>
             </div>
             <div class="topbar-profile" style="display: flex; gap: 20px; align-items: center;">
-                <div class="relative group" style="position: relative; display: inline-block;">
-                    <button class="bg-gray-100 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200" style="background: #f1f5f9; padding: 8px 12px; border-radius: 6px; border: none; cursor: pointer;">
-                        <i class="fa-solid fa-building mr-1"></i> Pindah Divisi <i class="fa-solid fa-chevron-down ml-1" style="font-size: 10px;"></i>
+                <div style="position: relative; display: inline-block;">
+                    <button id="divisiBtn" onclick="toggleDivisiDropdown(event)" style="background: #f1f5f9; padding: 8px 14px; border-radius: 6px; border: 1px solid #e2e8f0; cursor: pointer; font-size: 13px; font-weight: 600; color: #374151; display: inline-flex; align-items: center; gap: 6px;">
+                        <i class="fa-solid fa-building" style="color: #3b82f6;"></i> Pindah Divisi <i class="fa-solid fa-chevron-down" style="font-size: 10px;"></i>
                     </button>
-                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg hidden group-hover:block z-50" style="position: absolute; right: 0; margin-top: 5px; width: 200px; background: white; border-radius: 6px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); display: none; z-index: 50; flex-direction: column;">
+                    <div id="divisiDropdown" style="display: none; position: absolute; right: 0; top: calc(100% + 6px); width: 200px; background: white; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); border: 1px solid #e5e7eb; z-index: 9999; overflow: hidden;">
                         @php
                             $divisions = \App\Models\Division::all();
                             $routeMap = [
@@ -86,8 +86,8 @@
                                 $routeName = isset($routeMap[$divName]) ? $routeMap[$divName] : $divName;
                             @endphp
                             @if(in_array($divName, ['pembangunan', 'perizinan', 'kesehatan', 'keuangan', 'kepegawaian', 'kependudukan', 'sig', 'perhubungan']))
-                                <a href="{{ route($routeName.'.dashboard') }}" style="display: block; padding: 10px 15px; color: #333; text-decoration: none; font-size: 14px; border-bottom: 1px solid #eee;">
-                                    {{ $div->name }}
+                                <a href="{{ route($routeName.'.dashboard') }}" style="display: flex; align-items: center; gap: 8px; padding: 10px 15px; color: #374151; text-decoration: none; font-size: 13px; border-bottom: 1px solid #f3f4f6; transition: background 0.15s;" onmouseover="this.style.background='#f0f9ff';" onmouseout="this.style.background='transparent';">
+                                    <i class="fa-solid fa-circle-dot" style="font-size: 8px; color: #3b82f6;"></i> {{ $div->name }}
                                 </a>
                             @endif
                         @endforeach
@@ -262,16 +262,35 @@
     </script>
 
     <script>
-        // Close sidebar when clicking outside on mobile
+        // ── Sidebar mobile toggle ──────────────────────────────────────────────
         document.addEventListener('click', function(e) {
             const sidebar = document.querySelector('.admin-sidebar');
-            const toggle = document.querySelector('.mobile-toggle');
-            if (window.innerWidth <= 991 && sidebar.classList.contains('open')) {
-                if (!sidebar.contains(e.target) && !toggle.contains(e.target)) {
+            const toggle  = document.querySelector('.mobile-toggle');
+            const dropdown = document.getElementById('divisiDropdown');
+            const dropBtn  = document.getElementById('divisiBtn');
+
+            // Tutup sidebar di mobile jika klik di luar
+            if (window.innerWidth <= 991 && sidebar && sidebar.classList.contains('open')) {
+                if (!sidebar.contains(e.target) && toggle && !toggle.contains(e.target)) {
                     sidebar.classList.remove('open');
                 }
             }
+
+            // Tutup dropdown pindah divisi jika klik di luar tombol/dropdown
+            if (dropdown && dropdown.style.display === 'block') {
+                if (dropBtn && !dropBtn.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.style.display = 'none';
+                }
+            }
         });
+
+        // ── Toggle dropdown Pindah Divisi ──────────────────────────────────────
+        function toggleDivisiDropdown(e) {
+            e.stopPropagation();
+            var dropdown = document.getElementById('divisiDropdown');
+            if (!dropdown) return;
+            dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
+        }
     </script>
 </body>
 </html>

@@ -32,6 +32,11 @@ class CheckRole
             }
         }
 
+        // Allow super admin if 'admin' is in allowed roles
+        if (in_array('admin', $normalizedRoles) && $user->isSuperAdmin()) {
+            return $next($request);
+        }
+
         if (!in_array($user->role, $normalizedRoles)) {
             // Jika user tidak punya akses, redirect dengan pesan error
             // Redirect ke dashboard masing-masing jika dia punya divisi

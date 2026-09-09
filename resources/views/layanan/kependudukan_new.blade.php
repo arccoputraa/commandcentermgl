@@ -206,16 +206,13 @@
 @endsection
  
 @section('extraScripts')
-<pre style="background:#f1f5f9; padding:16px; border-radius:8px; font-size:12px;">
-    {{ json_encode($kelurahanChart ?? 'KOSONG') }}
-</pre>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const pieOpts = (labels, series, colors) => ({
     chart: { type: 'donut', height: 260 },
-    labels: labels,
-    series: series.map(Number),
+    labels: labels && labels.length > 0 ? labels : ['Data Kosong'],
+    series: series && series.length > 0 ? series.map(Number) : [1],
     colors: colors,
     legend: { position: 'bottom', fontSize: '12px', markers: { radius: 12 } },
     plotOptions: {
@@ -240,47 +237,22 @@ const pieOpts = (labels, series, colors) => ({
     },
     dataLabels: { enabled: false }
 });
- 
-const barKelurahanOpts = (labels, values) => ({
-    chart: { type: 'bar', height: 380, toolbar: { show: false } },
-    plotOptions: {
-        bar: {
-            horizontal: true,
-            borderRadius: 4,
-            dataLabels: { position: 'right' }
-        }
-    },
-    dataLabels: {
-        enabled: true,
-        formatter: val => val.toLocaleString('id-ID'),
-        style: { fontSize: '11px', colors: ['#334155'] },
-        offsetX: 5
-    },
-    series: [{ name: 'Penduduk', data: values }],
-    xaxis: { categories: labels },
-    colors: ['#3b82f6'],
-    grid: { borderColor: '#f1f5f9' },
-    legend: { show: false }
-});
- 
-new ApexCharts(document.querySelector('#chartAgama'), pieOpts(['Islam','Kristen','Katolik','Hindu','Buddha','Konghucu'], [68240,11200,9800,1420,500,280], ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'])).render();
-new ApexCharts(document.querySelector('#chartGender'), pieOpts(['Laki-laki','Perempuan'], [62410,64430], ['#3b82f6', '#ec4899'])).render();
-new ApexCharts(document.querySelector('#chartKecamatan'), pieOpts(['Magelang Tengah','Magelang Selatan','Magelang Utara'], [43620,42160,40895], ['#3b82f6', '#10b981', '#f59e0b'])).render();
-new ApexCharts(document.querySelector('#chartKelurahan'), barKelurahanOpts(
-    ['Rejowinangun Utara','Kramat Selatan','Potrobangsan','Panjang','Magelang','Jurangombo Selatan','Rejowinangun Selatan','Wates','Kemirejo','Kramat Utara','Jurangombo Utara','Tidar Utara','Tidar Selatan','Magersari','Gelangan','Kedungsari','Cacaban'],
-    [8346, 7406, 7363, 6952, 6871, 6828, 6332, 6241, 5861, 5769, 5377, 5129, 4799, 4571, 4246, 4155, 3708]
+
+new ApexCharts(document.querySelector('#chartAgama'), pieOpts(
+    {!! json_encode($chartAgamaLabels ?? ['Islam', 'Kristen', 'Katolik', 'Hindu', 'Buddha', 'Konghucu']) !!},
+    {!! json_encode($chartAgamaData ?? [0, 0, 0, 0, 0, 0]) !!},
+    ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4']
 )).render();
-<<<<<<< HEAD
 
 new ApexCharts(document.querySelector('#chartGender'), pieOpts(
-    {!! json_encode($chartGenderLabels) !!},
-    {!! json_encode($chartGenderData) !!},
+    {!! json_encode($chartGenderLabels ?? ['Laki-laki', 'Perempuan']) !!},
+    {!! json_encode($chartGenderData ?? [0, 0]) !!},
     ['#3b82f6', '#ec4899']
 )).render();
 
 new ApexCharts(document.querySelector('#chartKecamatan'), pieOpts(
-    {!! json_encode($chartKecamatanLabels) !!},
-    {!! json_encode($chartKecamatanData) !!},
+    {!! json_encode($chartKecamatanLabels ?? []) !!},
+    {!! json_encode($chartKecamatanData ?? []) !!},
     ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4']
 )).render();
 
@@ -288,17 +260,15 @@ const pieKelurahanOpts = (labels, series) => ({
     chart: { type: 'donut', height: 350 },
     labels: labels && labels.length > 0 ? labels : ['Data Kosong'],
     series: series && series.length > 0 ? series.map(Number) : [1],
-    theme: {
-        palette: 'palette1'
-    },
-    legend: { 
-        position: 'right', 
+    theme: { palette: 'palette1' },
+    legend: {
+        position: 'right',
         fontSize: '11px',
         height: 330,
         width: 180,
         markers: { radius: 12 },
         formatter: function(seriesName, opts) {
-            return seriesName + " (" + opts.w.globals.series[opts.seriesIndex].toLocaleString('id-ID') + ")";
+            return seriesName + ' (' + opts.w.globals.series[opts.seriesIndex].toLocaleString('id-ID') + ')';
         }
     },
     plotOptions: {
@@ -325,21 +295,17 @@ const pieKelurahanOpts = (labels, series) => ({
     tooltip: {
         y: {
             formatter: function(val) {
-                return val.toLocaleString('id-ID') + " jiwa";
+                return val.toLocaleString('id-ID') + ' jiwa';
             }
         }
     }
 });
 
 new ApexCharts(document.querySelector('#chartKelurahan'), pieKelurahanOpts(
-    {!! json_encode($chartKelurahanLabels) !!},
-    {!! json_encode($chartKelurahanData) !!}
+    {!! json_encode($chartKelurahanLabels ?? []) !!},
+    {!! json_encode($chartKelurahanData ?? []) !!}
 )).render();
 
-// ── Peta ─────────────────────────────────────────────────────────────────────
-=======
- 
->>>>>>> 709a510 (Tambah FItur)
 const map3 = L.map('map3').setView([-7.4797, 110.2177], 13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(map3);
 </script>

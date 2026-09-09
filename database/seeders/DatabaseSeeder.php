@@ -67,7 +67,7 @@ class DatabaseSeeder extends Seeder
                     'name' => $data['name'],
                     'password' => Hash::make('password'),
                     'nip' => $data['nip'],
-                    'role' => 'admin',
+                    'role' => 'division_admin',
                     'status' => 'aktif',
                     'division_id' => $divisions[$data['div']]->id,
                 ]

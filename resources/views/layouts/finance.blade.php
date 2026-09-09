@@ -75,11 +75,12 @@
                 <h2 class="topbar-title">Command Center</h2>
             </div>
             <div class="topbar-profile">
-                
-            @if(Auth::user()->isSuperAdmin())
-            <a href="{{ route('admin.dashboard') }}" style="margin-right: 15px; background: #f1f5f9; padding: 6px 12px; border-radius: 6px; font-size: 13px; color: #333; text-decoration: none;"><i class="fa-solid fa-arrow-left"></i> Global Admin</a>
-            @endif
-            <div class="profile-info">
+                @if(Auth::check() && Auth::user()->isSuperAdmin())
+                <a href="{{ route('admin.dashboard') }}" style="margin-right: 15px; background: #f1f5f9; padding: 6px 12px; border-radius: 6px; font-size: 13px; color: #333; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-weight: 500;">
+                    <i class="fa-solid fa-arrow-left"></i> Global Admin
+                </a>
+                @endif
+                <div class="profile-info">
                     <h4>{{ Auth::user()->name ?? 'Divisi Keuangan' }}</h4>
                     <p>{{ Auth::user()->role ?? 'Administrator' }}</p>
                 </div>

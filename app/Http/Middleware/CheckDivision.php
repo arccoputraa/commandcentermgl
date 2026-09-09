@@ -21,7 +21,7 @@ class CheckDivision
         $user = Auth::user();
 
         // Admin can access everything
-        if ($user->role === 'admin') {
+        if ($user->isSuperAdmin()) {
             return $next($request);
         }
 

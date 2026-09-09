@@ -61,7 +61,7 @@ class AdminSeeder extends Seeder
                     'name' => $data['name'],
                     'password' => 'password',
                     'nip' => $data['nip'],
-                    'role' => 'admin',
+                    'role' => 'division_admin',
                     'status' => 'aktif',
                     'division_id' => $divisions[$data['div']]->id,
                 ]
