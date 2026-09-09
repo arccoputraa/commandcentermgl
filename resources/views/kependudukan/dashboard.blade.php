@@ -1,7 +1,7 @@
 @extends('layouts.kependudukan')
-
+ 
 @section('title', 'Dashboard Kependudukan')
-
+ 
 @section('content')
 <style>
     .kependudukan-header { margin-bottom:40px; font-family:'Inter', sans-serif; }
@@ -37,12 +37,12 @@
     @media (max-width:1100px) { .metrics-grid, .panel-grid, .content-grid, .filter-card { grid-template-columns:1fr 1fr; } }
     @media (max-width:760px) { .metrics-grid, .panel-grid, .content-grid, .filter-card { grid-template-columns:1fr; } }
 </style>
-
+ 
 <div class="kependudukan-header">
     <h2>Dashboard Kependudukan</h2>
     <p>Pantau ringkasan penduduk, agama, wilayah, kartu keluarga, dan mutasi penduduk.</p>
 </div>
-
+ 
 <form class="filter-card" action="#" method="GET">
     <select aria-label="Pilih Kecamatan"><option value="">Pilih Kecamatan</option></select>
     <select aria-label="Pilih Kelurahan"><option value="">Pilih Kelurahan</option></select>
@@ -50,7 +50,7 @@
     <select aria-label="Pilih Agama"><option value="">Pilih Agama</option></select>
     <button type="button">Terapkan Filter</button>
 </form>
-
+ 
 <div class="metrics-grid">
     <div class="metric-card">
         <div class="metric-content"><p class="metric-label">Total Penduduk</p><p class="metric-value">{{ number_format($stats['totalPenduduk'], 0, ',', '.') }} Jiwa</p></div>
@@ -77,13 +77,13 @@
         <div class="metric-content"><p class="metric-label">Kematian Tahun Ini</p><p class="metric-value">{{ number_format($stats['kematianTahunIni'], 0, ',', '.') }} Jiwa</p></div>
     </div>
 </div>
-
+ 
 <div class="panel-grid">
     <div class="panel-card">
         <h3 class="panel-title">Populasi Berdasarkan Agama</h3>
         <div id="chartAgama" style="min-height: 250px;"></div>
     </div>
-
+ 
     <div class="panel-card">
         <h3 class="panel-title">Populasi Berdasarkan Jenis Kelamin</h3>
         <div id="chartGender" style="min-height: 250px;"></div>
@@ -91,10 +91,9 @@
     
     <div class="panel-card" style="grid-column: 1 / -1;">
         <h3 class="panel-title">Populasi Berdasarkan Kelurahan</h3>
-        <div id="chartKelurahan" style="min-height: 400px;"></div>
-    </div>
+        <div id="chartKelurahan" style="min-height: 400px; width: 100%;"></div>
 </div>
-
+ 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -133,42 +132,61 @@
                 y: { formatter: function(val) { return val.toLocaleString('id-ID') + " jiwa"; } }
             }
         });
-
-        const barOpts = (labels, series, colors) => ({
-            chart: { type: 'bar', height: 400, toolbar: { show: false }, stacked: true },
-            series: [
-                { name: 'Populasi', data: series && series.length > 0 ? series.map(Number) : [0] },
-                { name: 'Dummy', data: series && series.length > 0 ? series.map(() => 0) : [0] }
-            ],
-            colors: ['#2563eb', 'transparent'],
-            plotOptions: {
-                bar: { horizontal: true, borderRadius: 4, dataLabels: { position: 'top' } }
-            },
-            dataLabels: {
-                enabled: true,
-                enabledOnSeries: [1],
-                offsetX: 40,
-                style: { fontSize: '12px', colors: ['#333'] },
-                formatter: function (val, opts) {
-                    let realVal = opts.w.config.series[0].data[opts.dataPointIndex];
-                    return realVal.toLocaleString('id-ID');
+ 
+        const barOpts = (labels, series) => {
+            const sData = series && series.length > 0 ? series.map(Number) : [0];
+            const maxVal = Math.max(...sData, 0);
+            let calculatedMax = Math.ceil(maxVal / 1000) * 1000 + 2000;
+ 
+            return {
+                chart: { type: 'bar', height: Math.max(400, labels.length * 28), toolbar: { show: false }, stacked: true },
+                plotOptions: {
+                    bar: {
+                        horizontal: true,
+                        borderRadius: 4,
+                        dataLabels: { position: 'top' },
+                        barHeight: '70%'
+                    }
+                },
+                dataLabels: {
+                    enabled: true,
+                    formatter: function(val, opts) {
+                        if (opts.seriesIndex === 1) {
+                            const actualVal = opts.w.config.series[0].data[opts.dataPointIndex];
+                            return Number(actualVal).toLocaleString('id-ID');
+                        }
+                        return '';
+                    },
+                    offsetX: 5,
+                    style: { fontSize: '11px', colors: ['#1e293b'], fontWeight: 700 }
+                },
+                series: [
+                    { name: 'Penduduk', data: sData },
+                    { name: 'Dummy', data: sData.map(v => Math.max(calculatedMax - v, 0)) }
+                ],
+                xaxis: {
+                    categories: labels && labels.length > 0 ? labels : ['Kosong'],
+                    labels: { formatter: val => Number(val).toLocaleString('id-ID') },
+                    min: 0,
+                    max: calculatedMax
+                },
+                colors: ['#3b82f6', 'rgba(0,0,0,0)'],
+                grid: { borderColor: '#f1f5f9', padding: { right: 30 } },
+                legend: { show: false },
+                tooltip: {
+                    custom: function({ w, dataPointIndex }) {
+                        const val = w.globals.initialSeries[0].data[dataPointIndex];
+                        const label = w.globals.labels[dataPointIndex];
+                        return '<div style="padding:10px 14px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;">' +
+                               '<strong style="color:#1e293b;font-size:13px;">' + label + '</strong><br/>' +
+                               '<span style="color:#64748b;font-size:12px;">Penduduk: </span>' +
+                               '<span style="color:#2563eb;font-weight:700;">' + Number(val).toLocaleString('id-ID') + ' Jiwa</span>' +
+                               '</div>';
+                    }
                 }
-            },
-            stroke: { width: 1, colors: ['#fff'] },
-            xaxis: {
-                categories: labels && labels.length > 0 ? labels : ['Kosong'],
-                labels: { formatter: function (val) { return val.toLocaleString('id-ID'); } }
-            },
-            yaxis: { title: { text: undefined } },
-            tooltip: {
-                y: { formatter: function (val, opts) {
-                    if (opts.seriesIndex === 1) return undefined;
-                    return val.toLocaleString('id-ID') + " jiwa";
-                }}
-            },
-            legend: { show: false }
-        });
-
+            };
+        };
+ 
         // Data Agama
         const agamaData = {!! json_encode($agama) !!};
         new ApexCharts(document.querySelector('#chartAgama'), pieOpts(
@@ -176,7 +194,7 @@
             agamaData.map(d => d.total),
             ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899']
         )).render();
-
+ 
         // Data Gender
         const genderData = {
             laki: {{ $stats['lakiLaki'] }},
@@ -187,7 +205,7 @@
             [genderData.laki, genderData.perempuan],
             ['#3b82f6', '#ec4899']
         )).render();
-
+ 
         // Data Kelurahan
         const kelurahanChartData = {!! json_encode($kelurahanChart ?? []) !!};
         const pieKelurahanOpts = (labels, series) => ({
@@ -242,7 +260,7 @@
         )).render();
     });
 </script>
-
+ 
 <div class="content-grid">
     <div class="panel-card">
         <h3 class="panel-title">Tabel Data Kependudukan</h3>
@@ -275,7 +293,7 @@
             </table>
         </div>
     </div>
-
+ 
     <div class="panel-card">
         <h3 class="panel-title">Informasi Terbaru</h3>
         <div class="info-list">
