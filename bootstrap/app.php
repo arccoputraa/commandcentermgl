@@ -26,7 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // 404 Route Fallback
         $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e, Request $request) {
             if (!$request->is('api/*')) {
-                return redirect()->route('home')->withErrors(['Sistem' => 'Halaman yang Anda cari tidak ditemukan.']);
+                return redirect()->route('home');
             }
         });
 

@@ -57,6 +57,7 @@ class DivisionUserController extends Controller
     public function create($division_slug)
     {
         $user = Auth::user();
+        if ($user->role === 'user') abort(403, 'Anda hanya dapat melihat data.');
         $division = $this->getDivision($division_slug);
 
         if ($user->role === 'division_admin' && $user->division_id !== $division->id) {
@@ -72,6 +73,7 @@ class DivisionUserController extends Controller
     public function store(Request $request, $division_slug)
     {
         $user = Auth::user();
+        if ($user->role === 'user') abort(403, 'Anda hanya dapat melihat data.');
         $division = $this->getDivision($division_slug);
 
         if ($user->role === 'division_admin' && $user->division_id !== $division->id) {
@@ -83,6 +85,7 @@ class DivisionUserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'nip' => ['nullable', 'string', 'max:50', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'role' => ['required', 'string', 'in:division_admin,user'],
             'status' => ['required', 'string', 'in:aktif,nonaktif'],
             'permissions' => ['nullable', 'array'],
         ]);
@@ -93,7 +96,7 @@ class DivisionUserController extends Controller
             'nip' => $request->nip,
             'password' => Hash::make($request->password),
             'division_id' => $division->id, // locked to this division
-            'role' => 'user', // only allowed to create regular user
+            'role' => $request->role,
             'status' => $request->status,
             'permissions' => $request->permissions ?? [],
         ]);
@@ -107,6 +110,7 @@ class DivisionUserController extends Controller
     public function edit($division_slug, User $user)
     {
         $currentUser = Auth::user();
+        if ($currentUser->role === 'user') abort(403, 'Anda hanya dapat melihat data.');
         $division = $this->getDivision($division_slug);
 
         if ($currentUser->role === 'division_admin' && $currentUser->division_id !== $division->id) {
@@ -127,6 +131,7 @@ class DivisionUserController extends Controller
     public function update(Request $request, $division_slug, User $user)
     {
         $currentUser = Auth::user();
+        if ($currentUser->role === 'user') abort(403, 'Anda hanya dapat melihat data.');
         $division = $this->getDivision($division_slug);
 
         if ($currentUser->role === 'division_admin' && $currentUser->division_id !== $division->id) {
@@ -141,6 +146,7 @@ class DivisionUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'nip' => ['nullable', 'string', 'max:50', Rule::unique('users')->ignore($user->id)],
+            'role' => ['required', 'string', 'in:division_admin,user'],
             'status' => ['required', 'string', 'in:aktif,nonaktif'],
             'permissions' => ['nullable', 'array'],
         ]);
@@ -149,6 +155,7 @@ class DivisionUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'nip' => $request->nip,
+            'role' => $request->role,
             'status' => $request->status,
             'permissions' => $request->permissions ?? [],
         ];
@@ -169,6 +176,7 @@ class DivisionUserController extends Controller
     public function destroy($division_slug, User $user)
     {
         $currentUser = Auth::user();
+        if ($currentUser->role === 'user') abort(403, 'Anda hanya dapat melihat data.');
         $division = $this->getDivision($division_slug);
 
         if ($currentUser->role === 'division_admin' && $currentUser->division_id !== $division->id) {

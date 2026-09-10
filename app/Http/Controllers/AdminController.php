@@ -14,6 +14,17 @@ class AdminController extends Controller
 {
     public function dashboard()
     {
+        // Log access back to Global Admin for Super Admins
+        $sessionKey = 'accessed_div_global';
+        if (!session()->has($sessionKey)) {
+            \App\Models\ActivityLog::create([
+                'user_id' => \Illuminate\Support\Facades\Auth::id(),
+                'action' => 'access',
+                'description' => "kembali ke Dashboard Global Admin."
+            ]);
+            session()->put($sessionKey, true);
+        }
+
         $totalUsers = User::count();
         $activeUsers = User::where('status', 'aktif')->count();
         $totalDivisions = Division::count();

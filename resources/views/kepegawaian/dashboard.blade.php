@@ -349,4 +349,7 @@
     </div>
 </div>
 
+
+@include('components.login-log-widget')
 @endsection
+

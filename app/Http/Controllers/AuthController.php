@@ -31,10 +31,15 @@ class AuthController extends Controller
             $request->session()->regenerate();
             
             // Log activity
+            $desc = 'login ke Dashboard Global Admin.';
+            if ($user->role === 'division_admin' && $user->division) {
+                $desc = 'login ke Dashboard ' . $user->division->name . '.';
+            }
+
             \App\Models\ActivityLog::create([
                 'user_id' => Auth::id(),
                 'action' => 'login',
-                'description' => 'Login ke dalam sistem admin.',
+                'description' => $desc,
             ]);
 
             // If super admin, directly redirect to main admin dashboard
@@ -91,10 +96,15 @@ class AuthController extends Controller
     {
         // Log activity before logout
         if (Auth::check()) {
+            $user = Auth::user();
+            $desc = 'logout dari Dashboard Global Admin.';
+            if ($user->role === 'division_admin' && $user->division) {
+                $desc = 'logout dari Dashboard ' . $user->division->name . '.';
+            }
             \App\Models\ActivityLog::create([
-                'user_id' => Auth::id(),
+                'user_id' => $user->id,
                 'action' => 'logout',
-                'description' => 'Logout dari sistem admin.',
+                'description' => $desc,
             ]);
         }
 

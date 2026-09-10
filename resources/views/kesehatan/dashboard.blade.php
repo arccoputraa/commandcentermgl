@@ -349,5 +349,8 @@
     </div>
     @endforeach
 </div>
+
+@include('components.login-log-widget')
 @endsection
+
 

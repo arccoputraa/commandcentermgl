@@ -69,6 +69,7 @@
                 <h2 class="topbar-title">Command Center</h2>
             </div>
             <div class="topbar-profile" style="display: flex; gap: 20px; align-items: center;">
+                @if(Auth::check() && Auth::user()->isSuperAdmin())
                 <div style="position: relative; display: inline-block;">
                     <button id="divisiBtn" onclick="toggleDivisiDropdown(event)" style="background: #f1f5f9; padding: 8px 14px; border-radius: 6px; border: 1px solid #e2e8f0; cursor: pointer; font-size: 13px; font-weight: 600; color: #374151; display: inline-flex; align-items: center; gap: 6px;">
                         <i class="fa-solid fa-building" style="color: #3b82f6;"></i> Pindah Divisi <i class="fa-solid fa-chevron-down" style="font-size: 10px;"></i>
@@ -85,7 +86,7 @@
                                 $divName = strtolower($div->name);
                                 $routeName = isset($routeMap[$divName]) ? $routeMap[$divName] : $divName;
                             @endphp
-                            @if(in_array($divName, ['pembangunan', 'perizinan', 'kesehatan', 'keuangan', 'kepegawaian', 'kependudukan', 'sig', 'perhubungan']))
+                            @if(\Illuminate\Support\Facades\Route::has($routeName.'.dashboard'))
                                 <a href="{{ route($routeName.'.dashboard') }}" style="display: flex; align-items: center; gap: 8px; padding: 10px 15px; color: #374151; text-decoration: none; font-size: 13px; border-bottom: 1px solid #f3f4f6; transition: background 0.15s;" onmouseover="this.style.background='#f0f9ff';" onmouseout="this.style.background='transparent';">
                                     <i class="fa-solid fa-circle-dot" style="font-size: 8px; color: #3b82f6;"></i> {{ $div->name }}
                                 </a>
@@ -93,6 +94,7 @@
                         @endforeach
                     </div>
                 </div>
+                @endif
 
                 <div class="profile-info">
                     <h4>{{ Auth::user()->name ?? 'Admin Utama' }}</h4>

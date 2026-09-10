@@ -22,6 +22,15 @@ class CheckDivision
 
         // Admin can access everything
         if ($user->isSuperAdmin()) {
+            $sessionKey = 'accessed_div_' . strtolower($divisionName);
+            if (!session()->has($sessionKey)) {
+                \App\Models\ActivityLog::create([
+                    'user_id' => $user->id,
+                    'action' => 'access',
+                    'description' => "melakukan login ke Divisi " . ucfirst($divisionName) . "."
+                ]);
+                session()->put($sessionKey, true);
+            }
             return $next($request);
         }
 
@@ -31,7 +40,7 @@ class CheckDivision
             if ($user->division) {
                 $userDiv = strtolower($user->division->name);
                 // Redirect them to their respective division dashboard if it exists
-                if (in_array($userDiv, ['pembangunan', 'perizinan', 'kesehatan', 'keuangan', 'kepegawaian', 'kependudukan', 'sig', 'perhubungan'])) {
+                if (\Illuminate\Support\Facades\Route::has("{$userDiv}.dashboard")) {
                     return redirect()->route("{$userDiv}.dashboard")->withErrors(['Hak Akses' => "Anda tidak memiliki akses ke halaman divisi {$divisionName}."]);
                 }
             }

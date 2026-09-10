@@ -5,7 +5,9 @@
 @section('content')
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
         <h1 class="page-title" style="margin-bottom: 0;">Manajemen User - {{ $division->name }}</h1>
+        @if(Auth::user()->role !== 'user')
         <a href="{{ route('division.users.create', $division_slug) }}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Tambah User</a>
+        @endif
     </div>
 
     @if(session('success'))
@@ -22,6 +24,7 @@
                     <th>Nama Lengkap</th>
                     <th>Email</th>
                     <th>NIP</th>
+                    <th>Role</th>
                     <th>Status</th>
                     <th>Aksi</th>
                 </tr>
@@ -30,9 +33,18 @@
                 @forelse($users as $index => $user)
                     <tr>
                         <td>{{ $index + 1 }}</td>
-                        <td style="font-weight: 500; color: #1e293b;">{{ $user->name }}</td>
+                        <td>
+                            <strong>{{ $user->name }}</strong>
+                        </td>
                         <td>{{ $user->email }}</td>
                         <td>{{ $user->nip ?? '-' }}</td>
+                        <td>
+                            @if($user->role === 'division_admin')
+                                <span class="badge" style="background:#fef08a; color:#854d0e;">Admin Divisi</span>
+                            @else
+                                <span class="badge" style="background:#e0f2fe; color:#0284c7;">User</span>
+                            @endif
+                        </td>
                         <td>
                             @if($user->status == 'aktif')
                                 <span class="badge-status" style="background: #ecfdf5; color: #059669; border-color: #a7f3d0;">Aktif</span>
@@ -41,6 +53,7 @@
                             @endif
                         </td>
                         <td>
+                            @if(Auth::user()->role !== 'user')
                             <div style="display: flex; gap: 8px;">
                                 <a href="{{ route('division.users.edit', [$division_slug, $user->id]) }}" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">
                                     <i class="fa-solid fa-pen"></i> Edit
@@ -53,6 +66,9 @@
                                     </button>
                                 </form>
                             </div>
+                            @else
+                                <span class="badge" style="background:#f1f5f9; color:#64748b;">Hanya Lihat</span>
+                            @endif
                         </td>
                     </tr>
                 @empty

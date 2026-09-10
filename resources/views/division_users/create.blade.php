@@ -52,6 +52,17 @@
                 </div>
 
                 <div class="form-group">
+                    <label class="form-label" for="role">Role Akun</label>
+                    <select id="role" name="role" class="form-control" required>
+                        <option value="user" {{ old('role') == 'user' ? 'selected' : '' }}>User Biasa</option>
+                        <option value="division_admin" {{ old('role') == 'division_admin' ? 'selected' : '' }}>Admin Divisi</option>
+                    </select>
+                    @error('role')<span class="text-danger" style="color: #dc2626; font-size: 12px;">{{ $message }}</span>@enderror
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                <div class="form-group">
                     <label class="form-label" for="status">Status Akun</label>
                     <select id="status" name="status" class="form-control" required>
                         <option value="aktif" {{ old('status') == 'aktif' ? 'selected' : '' }}>Aktif</option>
@@ -65,7 +76,10 @@
                 <label class="form-label">Hak Akses (Permissions)</label>
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; background: #f8fafc; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0;">
                     @php
-                        $availablePermissions = ['lihat_data', 'tambah_data', 'edit_data', 'hapus_data', 'kelola_publikasi', 'kelola_cctv'];
+                        $availablePermissions = ['lihat_data', 'tambah_data', 'edit_data', 'hapus_data', 'kelola_publikasi'];
+                        if (strtolower($division->name) === 'sig') {
+                            $availablePermissions[] = 'kelola_cctv';
+                        }
                     @endphp
                     @foreach($availablePermissions as $perm)
                         <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #334155; cursor: pointer;">

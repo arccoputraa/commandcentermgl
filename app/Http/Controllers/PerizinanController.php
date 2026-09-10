@@ -19,7 +19,17 @@ class PerizinanController extends Controller
         $ditolak = PerizinanData::where('status', 'Ditolak')->count();
         $hariIni = PerizinanData::whereDate('tanggal', today())->count();
 
-        return view('perizinan.dashboard', compact('totalPerizinan', 'disetujui', 'proses', 'ditolak', 'hariIni'));
+        // Hitung Tren Pengajuan Izin (Bulanan) untuk Chart
+        $currentYear = date('Y');
+        $allThisYear = PerizinanData::whereYear('tanggal', $currentYear)->get();
+        $chartTren = array_fill(1, 12, 0);
+        foreach ($allThisYear as $d) {
+            $month = (int) date('m', strtotime($d->tanggal));
+            $chartTren[$month]++;
+        }
+        $maxTren = max($chartTren) ?: 1;
+
+        return view('perizinan.dashboard', compact('totalPerizinan', 'disetujui', 'proses', 'ditolak', 'hariIni', 'chartTren', 'maxTren'));
     }
 
     // --- DATA PERIZINAN CRUD ---

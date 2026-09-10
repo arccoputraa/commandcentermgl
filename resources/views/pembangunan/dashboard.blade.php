@@ -278,6 +278,8 @@
     @endforelse
 </div>
 
+
+@include('components.login-log-widget')
 @endsection
 
 @push('scripts')
@@ -362,3 +364,4 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 @endpush
+

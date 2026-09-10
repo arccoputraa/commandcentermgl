@@ -42,7 +42,7 @@ class CheckRole
             // Redirect ke dashboard masing-masing jika dia punya divisi
             if ($user->division) {
                 $userDiv = strtolower($user->division->name);
-                if (in_array($userDiv, ['pembangunan', 'perizinan', 'kesehatan', 'keuangan', 'kepegawaian', 'kependudukan', 'sig', 'perhubungan'])) {
+                if (\Illuminate\Support\Facades\Route::has("{$userDiv}.dashboard")) {
                     return redirect()->route("{$userDiv}.dashboard")->withErrors(['Hak Akses' => 'Anda tidak memiliki akses ke halaman tersebut.']);
                 }
             }

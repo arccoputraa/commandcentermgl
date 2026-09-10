@@ -197,15 +197,17 @@
 
 <div class="bottom-grid">
     <div class="chart-card">
-        <h3 class="card-title">Tren Pengajuan Izin</h3>
-        <div class="placeholder-chart">
-            <div class="bar" style="height: 30%"></div>
-            <div class="bar" style="height: 50%"></div>
-            <div class="bar" style="height: 40%"></div>
-            <div class="bar" style="height: 70%"></div>
-            <div class="bar" style="height: 60%"></div>
-            <div class="bar" style="height: 90%"></div>
-            <div class="bar" style="height: 80%"></div>
+        <h3 class="card-title">Tren Pengajuan Izin ({{ date('Y') }})</h3>
+        <div class="placeholder-chart" style="display: flex; align-items: flex-end; justify-content: space-around; padding: 20px 10px 0 10px;">
+            @foreach($chartTren as $month => $total)
+            @php $height = ($total / $maxTren) * 100; @endphp
+            <div style="display: flex; flex-direction: column; align-items: center; width: 6%; height: 100%;">
+                <div style="flex-grow: 1; display: flex; align-items: flex-end; width: 100%;">
+                    <div class="bar" style="height: {{ $height }}%; width: 100%; background: #2563EB; border-radius: 4px 4px 0 0;" title="{{ date('M', mktime(0, 0, 0, $month, 1)) }}: {{ $total }}"></div>
+                </div>
+                <span style="font-size: 10px; color: #64748B; margin-top: 8px;">{{ date('M', mktime(0, 0, 0, $month, 1)) }}</span>
+            </div>
+            @endforeach
         </div>
     </div>
     <div class="list-card">
@@ -226,4 +228,7 @@
         </div>
     </div>
 </div>
+
+@include('components.login-log-widget')
 @endsection
+
