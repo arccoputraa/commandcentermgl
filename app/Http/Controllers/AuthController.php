@@ -31,16 +31,16 @@ class AuthController extends Controller
             $request->session()->regenerate();
             
             // Log activity
-            $desc = 'login ke Dashboard Global Admin.';
+            $targetModule = 'Dashboard Global Admin';
             if ($user->role === 'division_admin' && $user->division) {
-                $desc = 'login ke Dashboard ' . $user->division->name . '.';
+                $targetModule = 'Dashboard ' . $user->division->name;
+            } elseif ($user->role === 'admin_sig') {
+                $targetModule = 'Dashboard SIG';
+            } elseif ($user->role === 'admin_perhubungan') {
+                $targetModule = 'Dashboard Perhubungan';
             }
-
-            \App\Models\ActivityLog::create([
-                'user_id' => Auth::id(),
-                'action' => 'login',
-                'description' => $desc,
-            ]);
+            
+            \App\Helpers\LogHelper::record_activity($user, 'login ke', $targetModule);
 
             // If super admin, directly redirect to main admin dashboard
             if ($user->role === 'admin') {
@@ -58,29 +58,16 @@ class AuthController extends Controller
             // Check divisions
             if ($user->division) {
                 $divName = strtolower($user->division->name);
-                if ($divName === 'sig') {
-                    return redirect()->route('sig.dashboard');
-                }
-                if ($divName === 'perhubungan') {
-                    return redirect()->route('perhubungan.dashboard');
-                }
-                if ($divName === 'perizinan') {
-                    return redirect()->route('perizinan.dashboard');
-                }
-                if ($divName === 'kesehatan') {
-                    return redirect()->route('kesehatan.dashboard');
-                }
-                if ($divName === 'keuangan') {
-                    return redirect()->route('finance.dashboard');
-                }
-                if ($divName === 'kepegawaian') {
-                    return redirect()->route('kepegawaian.dashboard');
-                }
-                if ($divName === 'pembangunan') {
-                    return redirect()->route('pembangunan.dashboard');
-                }
-                if ($divName === 'kependudukan') {
-                    return redirect()->route('kependudukan.dashboard');
+                
+                // Peta manual untuk divisi yang nama routenya berbeda dengan nama divisinya
+                $routeMap = [
+                    'keuangan' => 'finance'
+                ];
+                
+                $routePrefix = $routeMap[$divName] ?? $divName;
+                
+                if (\Illuminate\Support\Facades\Route::has("{$routePrefix}.dashboard")) {
+                    return redirect()->route("{$routePrefix}.dashboard");
                 }
             }
 
@@ -97,15 +84,15 @@ class AuthController extends Controller
         // Log activity before logout
         if (Auth::check()) {
             $user = Auth::user();
-            $desc = 'logout dari Dashboard Global Admin.';
+            $targetModule = 'Dashboard Global Admin';
             if ($user->role === 'division_admin' && $user->division) {
-                $desc = 'logout dari Dashboard ' . $user->division->name . '.';
+                $targetModule = 'Dashboard ' . $user->division->name;
+            } elseif ($user->role === 'admin_sig') {
+                $targetModule = 'Dashboard SIG';
+            } elseif ($user->role === 'admin_perhubungan') {
+                $targetModule = 'Dashboard Perhubungan';
             }
-            \App\Models\ActivityLog::create([
-                'user_id' => $user->id,
-                'action' => 'logout',
-                'description' => $desc,
-            ]);
+            \App\Helpers\LogHelper::record_activity($user, 'logout dari', $targetModule);
         }
 
         Auth::logout();

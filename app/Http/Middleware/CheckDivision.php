@@ -24,11 +24,7 @@ class CheckDivision
         if ($user->isSuperAdmin()) {
             $sessionKey = 'accessed_div_' . strtolower($divisionName);
             if (!session()->has($sessionKey)) {
-                \App\Models\ActivityLog::create([
-                    'user_id' => $user->id,
-                    'action' => 'access',
-                    'description' => "melakukan login ke Divisi " . ucfirst($divisionName) . "."
-                ]);
+                \App\Helpers\LogHelper::record_activity($user, 'login ke', 'Dashboard ' . ucfirst($divisionName));
                 session()->put($sessionKey, true);
             }
             return $next($request);

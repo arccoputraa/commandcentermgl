@@ -283,7 +283,17 @@
                             <span class="activity-name">Login Sistem</span>
                             <span class="activity-time">{{ $activity->created_at->format('h:i A') }}</span>
                         </div>
-                        <p class="activity-desc">{{ $activity->description ?? 'Berhasil login ke Dashboard' }}</p>
+                        @php
+                            $desc = $activity->description ?? 'Berhasil login ke Dashboard';
+                            if (preg_match('/^(Super Administrator|Admin [a-zA-Z\s]+)\s+(.+)$/i', $desc, $matches)) {
+                                $siapa = $matches[1];
+                                $kegiatan = $matches[2];
+                                $formattedText = '<span style="font-weight: 600;">' . e($siapa) . '</span> ' . e($kegiatan);
+                            } else {
+                                $formattedText = e($desc);
+                            }
+                        @endphp
+                        <p class="activity-desc">{!! $formattedText !!}</p>
                     </div>
                 </div>
             @empty

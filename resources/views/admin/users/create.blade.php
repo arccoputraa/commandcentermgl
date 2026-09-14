@@ -105,4 +105,23 @@
             </div>
         </form>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const roleSelect = document.getElementById('role');
+            const divisionSelect = document.getElementById('division_id');
+
+            function toggleDivisionRequirement() {
+                if (roleSelect.value === 'admin') {
+                    divisionSelect.removeAttribute('required');
+                } else {
+                    divisionSelect.setAttribute('required', 'required');
+                }
+            }
+
+            roleSelect.addEventListener('change', toggleDivisionRequirement);
+            // Run on page load
+            toggleDivisionRequirement();
+        });
+    </script>
 @endsection

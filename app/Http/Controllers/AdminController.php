@@ -17,11 +17,7 @@ class AdminController extends Controller
         // Log access back to Global Admin for Super Admins
         $sessionKey = 'accessed_div_global';
         if (!session()->has($sessionKey)) {
-            \App\Models\ActivityLog::create([
-                'user_id' => \Illuminate\Support\Facades\Auth::id(),
-                'action' => 'access',
-                'description' => "kembali ke Dashboard Global Admin."
-            ]);
+            \App\Helpers\LogHelper::record_activity(\Illuminate\Support\Facades\Auth::user(), 'kembali ke', 'Dashboard Global Admin');
             session()->put($sessionKey, true);
         }
 
@@ -41,9 +37,23 @@ class AdminController extends Controller
         ));
     }
 
-    public function users()
+    public function users(Request $request)
     {
-        $users = User::with('division')->paginate(10);
+        $query = User::with('division')
+            ->orderByRaw("CASE WHEN role = 'admin' THEN 1 WHEN role = 'division_admin' THEN 2 ELSE 3 END")
+            ->orderBy('name', 'asc');
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('nip', 'like', "%{$search}%");
+            });
+        }
+
+        $users = $query->paginate(10)->withQueryString();
+        
         return view('admin.users.index', compact('users'));
     }
 
@@ -60,9 +70,11 @@ class AdminController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'nip' => 'nullable|string|max:50',
-            'division_id' => 'nullable|exists:divisions,id',
+            'division_id' => 'required_unless:role,admin|nullable|exists:divisions,id',
             'role' => 'required|in:admin,division_admin,user',
             'status' => 'required|in:aktif,nonaktif',
+        ], [
+            'division_id.required_unless' => 'Divisi wajib dipilih jika role adalah Admin Divisi atau User.'
         ]);
 
         User::create([
@@ -95,20 +107,29 @@ class AdminController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8|confirmed',
             'nip' => 'nullable|string|max:50',
-            'division_id' => 'nullable|exists:divisions,id',
+            'division_id' => 'required_unless:role,admin|nullable|exists:divisions,id',
             'role' => 'required|in:admin,division_admin,user',
             'status' => 'required|in:aktif,nonaktif',
+        ], [
+            'division_id.required_unless' => 'Divisi wajib dipilih jika role adalah Admin Divisi atau User.'
         ]);
 
-        $user->update([
+        $updateData = [
             'name' => $request->name,
             'email' => $request->email,
             'nip' => $request->nip,
             'division_id' => $request->division_id,
             'role' => $request->role,
             'status' => $request->status,
-        ]);
+        ];
+        
+        if ($request->filled('password')) {
+            $updateData['password'] = Hash::make($request->password);
+        }
+
+        $user->update($updateData);
 
         return redirect()->route('admin.users.index')->with('success', 'Informasi pengguna berhasil diubah.');
     }

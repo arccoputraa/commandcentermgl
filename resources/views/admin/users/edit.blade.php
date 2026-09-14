@@ -186,10 +186,41 @@
             </div>
         </div>
 
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="password">Password Baru (Opsional)</label>
+                <input type="password" id="password" name="password" placeholder="Kosongkan jika tidak ingin mengubah password">
+                @error('password')<span class="error-text">{{ $message }}</span>@enderror
+            </div>
+            <div class="form-group">
+                <label for="password_confirmation">Konfirmasi Password Baru</label>
+                <input type="password" id="password_confirmation" name="password_confirmation" placeholder="Ulangi password baru jika diubah">
+            </div>
+        </div>
+
         <div class="form-actions">
             <button type="submit" class="btn-update">Update</button>
             <a href="{{ route('admin.users.index') }}" class="btn-cancel">Batal</a>
         </div>
     </form>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const roleSelect = document.getElementById('role');
+        const divisionSelect = document.getElementById('division_id');
+
+        function toggleDivisionRequirement() {
+            if (roleSelect.value === 'admin') {
+                divisionSelect.removeAttribute('required');
+            } else {
+                divisionSelect.setAttribute('required', 'required');
+            }
+        }
+
+        roleSelect.addEventListener('change', toggleDivisionRequirement);
+        // Run on page load
+        toggleDivisionRequirement();
+    });
+</script>
 @endsection

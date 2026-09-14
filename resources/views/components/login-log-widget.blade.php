@@ -26,7 +26,17 @@
                     <i class="fa-regular fa-user"></i>
                 </div>
                 <div class="activity-content">
-                    <p style="color: #374151; font-size: 14px; margin: 0;"><span style="font-weight: 600;">{{ $activity->user->name ?? 'Unknown' }}</span> {{ $activity->description }}</p>
+                    @php
+                        $desc = $activity->description;
+                        if (preg_match('/^(Super Administrator|Admin [a-zA-Z\s]+)\s+(.+)$/i', $desc, $matches)) {
+                            $siapa = $matches[1];
+                            $kegiatan = $matches[2];
+                            $formattedText = '<span style="font-weight: 600;">' . e($siapa) . '</span> ' . e($kegiatan);
+                        } else {
+                            $formattedText = '<span style="font-weight: 600;">' . e($activity->user->name ?? 'Unknown') . '</span> ' . e($desc);
+                        }
+                    @endphp
+                    <p style="color: #374151; font-size: 14px; margin: 0;">{!! $formattedText !!}</p>
                     <small style="color: #9ca3af; margin-top: 4px; display: block; font-size: 13px;">{{ $activity->created_at->diffForHumans() }}</small>
                 </div>
             </div>
