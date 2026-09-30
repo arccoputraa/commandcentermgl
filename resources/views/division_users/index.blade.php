@@ -1,4 +1,4 @@
-@extends('layouts.' . strtolower($division_slug))
+@extends('layouts.' . (strtolower($division_slug) === 'keuangan' ? 'finance' : strtolower($division_slug)))
 
 @section('title', 'Manajemen User Divisi ' . $division->name)
 
@@ -13,6 +13,11 @@
     @if(session('success'))
         <div style="padding: 16px; margin-bottom: 24px; border-radius: 8px; background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; font-size: 14px;">
             {{ session('success') }}
+        </div>
+    @endif
+    @if(session('error'))
+        <div role="alert" style="padding: 16px; margin-bottom: 24px; border-radius: 8px; background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; font-size: 14px;">
+            {{ session('error') }}
         </div>
     @endif
 
@@ -58,13 +63,15 @@
                                 <a href="{{ route('division.users.edit', [$division_slug, $user->id]) }}" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">
                                     <i class="fa-solid fa-pen"></i> Edit
                                 </a>
-                                <form action="{{ route('division.users.destroy', [$division_slug, $user->id]) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus user ini?');" style="margin: 0;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger" style="padding: 6px 12px; font-size: 12px; background: #fee2e2; color: #dc2626; border: 1px solid #fecaca;">
-                                        <i class="fa-solid fa-trash"></i> Hapus
-                                    </button>
-                                </form>
+                                @if($user->id !== Auth::id())
+                                    <form action="{{ route('division.users.destroy', [$division_slug, $user->id]) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus user ini?');" style="margin: 0;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger" style="padding: 6px 12px; font-size: 12px; background: #fee2e2; color: #dc2626; border: 1px solid #fecaca;">
+                                            <i class="fa-solid fa-trash"></i> Hapus
+                                        </button>
+                                    </form>
+                                @endif
                             </div>
                             @else
                                 <span class="badge" style="background:#f1f5f9; color:#64748b;">Hanya Lihat</span>
@@ -73,7 +80,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" style="text-align: center; color: #64748b; padding: 24px;">
+                        <td colspan="7" style="text-align: center; color: #64748b; padding: 24px;">
                             Belum ada data user untuk divisi ini.
                         </td>
                     </tr>

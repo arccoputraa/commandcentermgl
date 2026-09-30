@@ -101,7 +101,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($penduduk as $item)
+                @forelse($penduduk as $item)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $item['tahun'] }}</td>
@@ -121,10 +121,21 @@
                                 <a class="action-link edit" href="{{ route('kependudukan.data-penduduk.edit', $item['id']) }}" aria-label="Edit data">
                                     <i class="fa-regular fa-pen-to-square"></i>
                                 </a>
+                                <form action="{{ route('kependudukan.data-penduduk.destroy', $item['id']) }}" method="POST" onsubmit="return confirm('Hapus data penduduk ini?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="action-link delete" type="submit" aria-label="Hapus data">
+                                        <i class="fa-regular fa-trash-can"></i>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr>
+                        <td colspan="11" style="text-align:center; color:#708098;">Tidak ada data penduduk.</td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>

@@ -283,6 +283,24 @@ class DatabaseSeeder extends Seeder
         DB::table('kependudukan_wilayahs')->delete();
         DB::table('kependudukan_mutasis')->delete();
 
+        $bulanMutasi = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        foreach ($bulanMutasi as $bulan) {
+            $mutasiKecamatan = $faker->randomElement($kecamatan);
+            DB::table('kependudukan_mutasis')->insert([
+                'tahun' => Carbon::now()->year,
+                'bulan' => $bulan,
+                'kecamatan' => $mutasiKecamatan,
+                'kelurahan' => $faker->randomElement($masterWilayah[$mutasiKecamatan]),
+                'kelahiran' => $faker->numberBetween(5, 30),
+                'kematian' => $faker->numberBetween(1, 15),
+                'pindah_datang' => $faker->numberBetween(5, 35),
+                'pindah_keluar' => $faker->numberBetween(5, 30),
+                'status' => 'Aktif',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]);
+        }
+
         $agamas = ['Islam', 'Kristen', 'Katolik', 'Hindu', 'Buddha'];
         foreach ($masterWilayah as $kec => $kelurahanList) {
             foreach ($kelurahanList as $kel) {

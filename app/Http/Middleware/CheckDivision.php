@@ -22,10 +22,26 @@ class CheckDivision
 
         // Admin can access everything
         if ($user->isSuperAdmin()) {
-            $sessionKey = 'accessed_div_' . strtolower($divisionName);
-            if (!session()->has($sessionKey)) {
-                \App\Helpers\LogHelper::record_activity($user, 'login ke', 'Dashboard ' . ucfirst($divisionName));
-                session()->put($sessionKey, true);
+            $divisionKey = strtolower($divisionName);
+            
+            // Cek apakah baru saja beralih ke divisi ini
+            if (session()->get('current_active_dashboard') !== $divisionKey) {
+                $nameMap = [
+                    'finance' => 'Keuangan',
+                    'perizinan' => 'Perizinan',
+                    'kesehatan' => 'Kesehatan',
+                    'kepegawaian' => 'Kepegawaian',
+                    'kependudukan' => 'Kependudukan',
+                    'pembangunan' => 'Pembangunan',
+                    'perhubungan' => 'Perhubungan',
+                    'sig' => 'SIG',
+                ];
+                $actualName = $nameMap[$divisionKey] ?? ucfirst($divisionName);
+                
+                \App\Helpers\LogHelper::record_activity($user, 'access', 'beralih ke Dashboard ' . $actualName);
+                
+                // Simpan state divisi yang sedang aktif (hanya 1)
+                session()->put('current_active_dashboard', $divisionKey);
             }
             return $next($request);
         }

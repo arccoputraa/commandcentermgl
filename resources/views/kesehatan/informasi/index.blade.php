@@ -314,10 +314,10 @@
             <tr>
                 <td class="col-judul">{{ $item->judul }}</td>
                 <td>
-                    <div class="pdf-badge">
+                    <a class="pdf-badge" href="{{ asset('storage/kesehatan/informasi/' . $item->file_pdf) }}" target="_blank" rel="noopener">
                         <i class="fa-regular fa-file-pdf"></i>
                         {{ $item->file_pdf }}
-                    </div>
+                    </a>
                 </td>
                 <td class="col-update">
                     @php

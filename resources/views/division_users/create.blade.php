@@ -1,4 +1,4 @@
-@extends('layouts.' . strtolower($division_slug))
+@extends('layouts.' . (strtolower($division_slug) === 'keuangan' ? 'finance' : strtolower($division_slug)))
 
 @section('title', 'Tambah User Divisi ' . $division->name)
 

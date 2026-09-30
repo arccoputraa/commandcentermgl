@@ -30,7 +30,7 @@ class PegawaiInformasiController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'judul' => 'required|string',
             'kategori' => 'required|string',
             'format' => 'nullable|string',
@@ -39,7 +39,7 @@ class PegawaiInformasiController extends Controller
             'keterangan' => 'nullable|string'
         ]);
 
-        $data = $request->all();
+        $data = $validated;
 
         if ($request->hasFile('dokumen')) {
             $data['dokumen'] = $request->file('dokumen')->store('kepegawaian/informasi', 'public');
@@ -64,7 +64,7 @@ class PegawaiInformasiController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'judul' => 'required|string',
             'kategori' => 'required|string',
             'format' => 'nullable|string',
@@ -74,7 +74,7 @@ class PegawaiInformasiController extends Controller
         ]);
 
         $informasi = PegawaiInformasi::findOrFail($id);
-        $data = $request->all();
+        $data = $validated;
 
         if ($request->hasFile('dokumen')) {
             $data['dokumen'] = $request->file('dokumen')->store('kepegawaian/informasi', 'public');

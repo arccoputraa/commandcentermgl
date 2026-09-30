@@ -31,16 +31,7 @@ class AuthController extends Controller
             $request->session()->regenerate();
             
             // Log activity
-            $targetModule = 'Dashboard Global Admin';
-            if ($user->role === 'division_admin' && $user->division) {
-                $targetModule = 'Dashboard ' . $user->division->name;
-            } elseif ($user->role === 'admin_sig') {
-                $targetModule = 'Dashboard SIG';
-            } elseif ($user->role === 'admin_perhubungan') {
-                $targetModule = 'Dashboard Perhubungan';
-            }
-            
-            \App\Helpers\LogHelper::record_activity($user, 'login ke', $targetModule);
+            \App\Helpers\LogHelper::record_activity($user, 'login', 'berhasil login ke sistem');
 
             // If super admin, directly redirect to main admin dashboard
             if ($user->role === 'admin') {
@@ -84,18 +75,19 @@ class AuthController extends Controller
         // Log activity before logout
         if (Auth::check()) {
             $user = Auth::user();
-            $targetModule = 'Dashboard Global Admin';
-            if ($user->role === 'division_admin' && $user->division) {
-                $targetModule = 'Dashboard ' . $user->division->name;
-            } elseif ($user->role === 'admin_sig') {
-                $targetModule = 'Dashboard SIG';
-            } elseif ($user->role === 'admin_perhubungan') {
-                $targetModule = 'Dashboard Perhubungan';
+            
+            // Log eksplisit untuk Super Admin agar tidak terkait divisi terakhir yang dikunjungi
+            if ($user->role === 'admin') {
+                \App\Helpers\LogHelper::record_activity($user, 'logout', 'logout dari Dashboard Global Admin');
+            } else {
+                \App\Helpers\LogHelper::record_activity($user, 'logout', 'logout dari sistem');
             }
-            \App\Helpers\LogHelper::record_activity($user, 'logout dari', $targetModule);
         }
 
         Auth::logout();
+        
+        // Bersihkan seluruh data session (termasuk current_active_dashboard) secara eksplisit
+        $request->session()->flush();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

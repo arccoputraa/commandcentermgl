@@ -32,7 +32,7 @@ class PegawaiJabatanController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'nama_jabatan' => 'required|string',
             'kode_unit' => 'required|string',
             'jabatan_utama' => 'nullable|string',
@@ -41,7 +41,7 @@ class PegawaiJabatanController extends Controller
             'status' => 'required|string'
         ]);
 
-        PegawaiJabatan::create($request->all());
+        PegawaiJabatan::create($validated);
 
         return redirect()->route('kepegawaian.jabatan.index')->with('success', 'Data unit berhasil ditambahkan.');
     }
@@ -66,7 +66,7 @@ class PegawaiJabatanController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'nama_jabatan' => 'required|string',
             'kode_unit' => 'required|string',
             'jabatan_utama' => 'nullable|string',
@@ -76,7 +76,7 @@ class PegawaiJabatanController extends Controller
         ]);
 
         $jabatan = PegawaiJabatan::findOrFail($id);
-        $jabatan->update($request->all());
+        $jabatan->update($validated);
 
         return redirect()->route('kepegawaian.jabatan.index')->with('success', 'Data unit berhasil diperbarui.');
     }

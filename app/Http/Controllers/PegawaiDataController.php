@@ -31,7 +31,7 @@ class PegawaiDataController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'nip' => 'required|string|unique:pegawai_data',
             'nama' => 'required|string',
             'jenis_pegawai' => 'required|string',
@@ -43,7 +43,7 @@ class PegawaiDataController extends Controller
             'tanggal_bergabung' => 'nullable|date'
         ]);
 
-        PegawaiData::create($request->all());
+        PegawaiData::create($validated);
 
         return redirect()->route('kepegawaian.data.index')->with('success', 'Data pegawai berhasil ditambahkan.');
     }
@@ -62,7 +62,7 @@ class PegawaiDataController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'nip' => 'required|string|unique:pegawai_data,nip,'.$id,
             'nama' => 'required|string',
             'jenis_pegawai' => 'required|string',
@@ -75,7 +75,7 @@ class PegawaiDataController extends Controller
         ]);
 
         $pegawai = PegawaiData::findOrFail($id);
-        $pegawai->update($request->all());
+        $pegawai->update($validated);
 
         return redirect()->route('kepegawaian.data.index')->with('success', 'Data pegawai berhasil diperbarui.');
     }

@@ -74,9 +74,9 @@
                     <h3 class="chart-header">Populasi Berdasarkan Kecamatan</h3>
                     <div id="chartKecamatan" style="min-height: 250px;"></div>
                 </div>
-                <div class="dashboard-chart-card">
-                    <h3 class="chart-header">Indikator Pertumbuhan Penduduk (Kelahiran &amp; Kematian)</h3>
-                    <div id="chartPertumbuhan" style="min-height: 250px;"></div>
+                <div class="dashboard-chart-card" style="grid-column: 1 / -1;">
+                    <h3 class="chart-header">Populasi Berdasarkan Kelurahan</h3>
+                    <div id="chartKelurahan" style="min-height: 380px;"></div>
                 </div>
             </div>
         </div>
@@ -88,38 +88,20 @@
             <div class="summary-widget" style="margin-top: 24px;">
                 <h3 class="summary-widget-title">Informasi Terbaru</h3>
                 <div>
-                    <div class="pub-info-item">
-                        <div class="pub-info-header">
-                            <p class="pub-info-title">Rekap Data Kependudukan Semester I 2026</p>
-                            <span class="status-badge success">Rilis</span>
+                    @forelse($informasiTerbaru as $informasi)
+                        <div class="pub-info-item">
+                            <div class="pub-info-header">
+                                <p class="pub-info-title">{{ $informasi->judul }}</p>
+                                <span class="status-badge success">{{ $informasi->status }}</span>
+                            </div>
+                            <p class="pub-info-meta">{{ $informasi->kategori }} · {{ $informasi->tanggal ? \Illuminate\Support\Carbon::parse($informasi->tanggal)->format('d/m/Y') : '-' }}</p>
+                            @if($informasi->file)
+                                <a href="{{ route('kependudukan.informasi-terbaru.pdf', $informasi->id) }}" target="_blank" rel="noopener" class="action-link">Lihat PDF</a>
+                            @endif
                         </div>
-                        <p class="pub-info-meta">Rekap Penduduk · 03 Jul 2026</p>
-                        <a href="/sample-document.pdf" target="_blank" class="action-link">Lihat PDF</a>
-                    </div>
-                    <div class="pub-info-item">
-                        <div class="pub-info-header">
-                            <p class="pub-info-title">Statistik Pemeluk Agama 2026</p>
-                            <span class="status-badge success">Rilis</span>
-                        </div>
-                        <p class="pub-info-meta">Data Agama · 02 Jul 2026</p>
-                        <a href="/sample-document.pdf" target="_blank" class="action-link">Lihat PDF</a>
-                    </div>
-                    <div class="pub-info-item">
-                        <div class="pub-info-header">
-                            <p class="pub-info-title">Laporan Mutasi Penduduk Juni 2026</p>
-                            <span class="status-badge success">Rilis</span>
-                        </div>
-                        <p class="pub-info-meta">Mutasi Penduduk · 01 Jul 2026</p>
-                        <a href="/sample-document.pdf" target="_blank" class="action-link">Lihat PDF</a>
-                    </div>
-                    <div class="pub-info-item">
-                        <div class="pub-info-header">
-                            <p class="pub-info-title">Publikasi Penduduk Berdasarkan Wilayah</p>
-                            <span class="status-badge warning">Draft</span>
-                        </div>
-                        <p class="pub-info-meta">Statistik Wilayah · 30 Jun 2026</p>
-                        <a href="/sample-document.pdf" target="_blank" class="action-link">Lihat PDF</a>
-                    </div>
+                    @empty
+                        <p class="pub-info-meta">Belum ada informasi yang dirilis.</p>
+                    @endforelse
                 </div>
             </div>
         </div>
@@ -211,8 +193,8 @@
 <script>
 const pieOpts = (labels, series, colors) => ({
     chart: { type: 'donut', height: 260 },
-    labels: labels,
-    series: series.map(Number),
+    labels: labels && labels.length > 0 ? labels : ['Data Kosong'],
+    series: series && series.length > 0 ? series.map(Number) : [1],
     colors: colors,
     legend: { position: 'bottom', fontSize: '12px', markers: { radius: 12 } },
     plotOptions: {
@@ -238,33 +220,73 @@ const pieOpts = (labels, series, colors) => ({
     dataLabels: { enabled: false }
 });
 
-const barPertumbuhanOpts = (categories, kelahiran, kematian) => ({
-    chart: { type: 'bar', height: 260, toolbar: { show: false } },
+new ApexCharts(document.querySelector('#chartAgama'), pieOpts(
+    {!! json_encode($chartAgamaLabels ?? ['Islam', 'Kristen', 'Katolik', 'Hindu', 'Buddha', 'Konghucu']) !!},
+    {!! json_encode($chartAgamaData ?? [0, 0, 0, 0, 0, 0]) !!},
+    ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4']
+)).render();
+
+new ApexCharts(document.querySelector('#chartGender'), pieOpts(
+    {!! json_encode($chartGenderLabels ?? ['Laki-laki', 'Perempuan']) !!},
+    {!! json_encode($chartGenderData ?? [0, 0]) !!},
+    ['#3b82f6', '#ec4899']
+)).render();
+
+new ApexCharts(document.querySelector('#chartKecamatan'), pieOpts(
+    {!! json_encode($chartKecamatanLabels ?? []) !!},
+    {!! json_encode($chartKecamatanData ?? []) !!},
+    ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4']
+)).render();
+
+const pieKelurahanOpts = (labels, series) => ({
+    chart: { type: 'donut', height: 350 },
+    labels: labels && labels.length > 0 ? labels : ['Data Kosong'],
+    series: series && series.length > 0 ? series.map(Number) : [1],
+    theme: { palette: 'palette1' },
+    legend: {
+        position: 'right',
+        fontSize: '11px',
+        height: 330,
+        width: 180,
+        markers: { radius: 12 },
+        formatter: function(seriesName, opts) {
+            return seriesName + ' (' + opts.w.globals.series[opts.seriesIndex].toLocaleString('id-ID') + ')';
+        }
+    },
     plotOptions: {
-        bar: {
-            horizontal: false,
-            columnWidth: '45%',
-            borderRadius: 4
+        pie: {
+            donut: {
+                size: '55%',
+                labels: {
+                    show: true,
+                    total: {
+                        show: true,
+                        label: 'Total',
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        color: '#64748b',
+                        formatter: function (w) {
+                            return w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString('id-ID');
+                        }
+                    }
+                }
+            }
         }
     },
     dataLabels: { enabled: false },
-    stroke: { show: true, width: 2, colors: ['transparent'] },
-    series: [
-        { name: 'Kelahiran', data: kelahiran },
-        { name: 'Kematian', data: kematian }
-    ],
-    xaxis: { categories: categories },
-    yaxis: { title: { text: 'Jiwa', style: { fontSize: '12px', color: '#64748b' } } },
-    fill: { opacity: 1 },
-    colors: ['#10b981', '#ef4444'],
-    legend: { position: 'bottom', fontSize: '12px' },
-    grid: { borderColor: '#f1f5f9' }
+    tooltip: {
+        y: {
+            formatter: function(val) {
+                return val.toLocaleString('id-ID') + ' jiwa';
+            }
+        }
+    }
 });
 
-new ApexCharts(document.querySelector('#chartAgama'), pieOpts(['Islam','Kristen','Katolik','Hindu','Buddha','Konghucu'], [68240,11200,9800,1420,500,280], ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'])).render();
-new ApexCharts(document.querySelector('#chartGender'), pieOpts(['Laki-laki','Perempuan'], [62410,64430], ['#3b82f6', '#ec4899'])).render();
-new ApexCharts(document.querySelector('#chartKecamatan'), pieOpts(['Magelang Tengah','Magelang Selatan','Magelang Utara'], [43620,42160,40895], ['#3b82f6', '#10b981', '#f59e0b'])).render();
-new ApexCharts(document.querySelector('#chartPertumbuhan'), barPertumbuhanOpts(['2023', '2024', '2025', '2026'], [1250, 1340, 1420, 1180], [850, 890, 910, 760])).render();
+new ApexCharts(document.querySelector('#chartKelurahan'), pieKelurahanOpts(
+    {!! json_encode($chartKelurahanLabels ?? []) !!},
+    {!! json_encode($chartKelurahanData ?? []) !!}
+)).render();
 
 const map3 = L.map('map3').setView([-7.4797, 110.2177], 13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(map3);

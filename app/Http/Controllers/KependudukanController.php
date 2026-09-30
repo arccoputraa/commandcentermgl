@@ -88,8 +88,10 @@ class KependudukanController extends Controller
     {
         $query = KependudukanPenduduk::query();
         if ($request->q) {
-            $query->where('kecamatan', 'like', '%'.$request->q.'%')
-                  ->orWhere('kelurahan', 'like', '%'.$request->q.'%');
+            $query->where(function ($query) use ($request) {
+                $query->where('kecamatan', 'like', '%'.$request->q.'%')
+                    ->orWhere('kelurahan', 'like', '%'.$request->q.'%');
+            });
         }
         if ($request->kecamatan) {
             $query->where('kecamatan', $request->kecamatan);
@@ -120,7 +122,7 @@ class KependudukanController extends Controller
 
     public function dataPendudukStore(Request $request)
     {
-        KependudukanPenduduk::create($request->all());
+        KependudukanPenduduk::create($this->validatePenduduk($request));
         return redirect()->route('kependudukan.data-penduduk.index')->with('success', 'Data berhasil ditambahkan');
     }
 
@@ -133,7 +135,7 @@ class KependudukanController extends Controller
     public function dataPendudukUpdate(Request $request, int $id)
     {
         $item = KependudukanPenduduk::findOrFail($id);
-        $item->update($request->all());
+        $item->update($this->validatePenduduk($request));
         return redirect()->route('kependudukan.data-penduduk.index')->with('success', 'Data berhasil diupdate');
     }
     
@@ -147,7 +149,12 @@ class KependudukanController extends Controller
     public function dataAgamaIndex(Request $request)
     {
         $query = KependudukanAgama::query();
-        if ($request->q) $query->where('kecamatan', 'like', '%'.$request->q.'%')->orWhere('agama', 'like', '%'.$request->q.'%');
+        if ($request->q) {
+            $query->where(function ($query) use ($request) {
+                $query->where('kecamatan', 'like', '%'.$request->q.'%')
+                    ->orWhere('agama', 'like', '%'.$request->q.'%');
+            });
+        }
         if ($request->kecamatan) $query->where('kecamatan', $request->kecamatan);
         if ($request->tahun) $query->where('tahun', $request->tahun);
         if ($request->agama) $query->where('agama', $request->agama);
@@ -175,7 +182,7 @@ class KependudukanController extends Controller
 
     public function dataAgamaStore(Request $request)
     {
-        KependudukanAgama::create($request->all());
+        KependudukanAgama::create($this->validateAgama($request));
         return redirect()->route('kependudukan.data-agama.index')->with('success', 'Data berhasil ditambahkan');
     }
 
@@ -188,7 +195,7 @@ class KependudukanController extends Controller
     public function dataAgamaUpdate(Request $request, int $id)
     {
         $item = KependudukanAgama::findOrFail($id);
-        $item->update($request->all());
+        $item->update($this->validateAgama($request));
         return redirect()->route('kependudukan.data-agama.index')->with('success', 'Data berhasil diupdate');
     }
 
@@ -202,7 +209,12 @@ class KependudukanController extends Controller
     public function dataWilayahIndex(Request $request)
     {
         $query = KependudukanWilayah::query();
-        if ($request->q) $query->where('kecamatan', 'like', '%'.$request->q.'%')->orWhere('kelurahan', 'like', '%'.$request->q.'%');
+        if ($request->q) {
+            $query->where(function ($query) use ($request) {
+                $query->where('kecamatan', 'like', '%'.$request->q.'%')
+                    ->orWhere('kelurahan', 'like', '%'.$request->q.'%');
+            });
+        }
         if ($request->kecamatan) $query->where('kecamatan', $request->kecamatan);
         if ($request->status) $query->where('status', $request->status);
         
@@ -228,7 +240,7 @@ class KependudukanController extends Controller
 
     public function dataWilayahStore(Request $request)
     {
-        KependudukanWilayah::create($request->all());
+        KependudukanWilayah::create($this->validateWilayah($request));
         return redirect()->route('kependudukan.data-wilayah.index')->with('success', 'Data berhasil ditambahkan');
     }
 
@@ -241,7 +253,7 @@ class KependudukanController extends Controller
     public function dataWilayahUpdate(Request $request, int $id)
     {
         $item = KependudukanWilayah::findOrFail($id);
-        $item->update($request->all());
+        $item->update($this->validateWilayah($request));
         return redirect()->route('kependudukan.data-wilayah.index')->with('success', 'Data berhasil diupdate');
     }
 
@@ -255,7 +267,12 @@ class KependudukanController extends Controller
     public function dataKartuKeluargaIndex(Request $request)
     {
         $query = KependudukanKartuKeluarga::query();
-        if ($request->q) $query->where('kecamatan', 'like', '%'.$request->q.'%')->orWhere('kelurahan', 'like', '%'.$request->q.'%');
+        if ($request->q) {
+            $query->where(function ($query) use ($request) {
+                $query->where('kecamatan', 'like', '%'.$request->q.'%')
+                    ->orWhere('kelurahan', 'like', '%'.$request->q.'%');
+            });
+        }
         if ($request->kecamatan) $query->where('kecamatan', $request->kecamatan);
         if ($request->tahun) $query->where('tahun', $request->tahun);
         
@@ -281,7 +298,7 @@ class KependudukanController extends Controller
 
     public function dataKartuKeluargaStore(Request $request)
     {
-        KependudukanKartuKeluarga::create($request->all());
+        KependudukanKartuKeluarga::create($this->validateKartuKeluarga($request));
         return redirect()->route('kependudukan.data-kartu-keluarga.index')->with('success', 'Data berhasil ditambahkan');
     }
 
@@ -294,7 +311,7 @@ class KependudukanController extends Controller
     public function dataKartuKeluargaUpdate(Request $request, int $id)
     {
         $item = KependudukanKartuKeluarga::findOrFail($id);
-        $item->update($request->all());
+        $item->update($this->validateKartuKeluarga($request));
         return redirect()->route('kependudukan.data-kartu-keluarga.index')->with('success', 'Data berhasil diupdate');
     }
 
@@ -308,7 +325,12 @@ class KependudukanController extends Controller
     public function mutasiPendudukIndex(Request $request)
     {
         $query = KependudukanMutasi::query();
-        if ($request->q) $query->where('kecamatan', 'like', '%'.$request->q.'%')->orWhere('kelurahan', 'like', '%'.$request->q.'%');
+        if ($request->q) {
+            $query->where(function ($query) use ($request) {
+                $query->where('kecamatan', 'like', '%'.$request->q.'%')
+                    ->orWhere('kelurahan', 'like', '%'.$request->q.'%');
+            });
+        }
         if ($request->kecamatan) $query->where('kecamatan', $request->kecamatan);
         if ($request->tahun) $query->where('tahun', $request->tahun);
         if ($request->bulan) $query->where('bulan', $request->bulan);
@@ -336,7 +358,7 @@ class KependudukanController extends Controller
 
     public function mutasiPendudukStore(Request $request)
     {
-        KependudukanMutasi::create($request->all());
+        KependudukanMutasi::create($this->validateMutasi($request));
         return redirect()->route('kependudukan.mutasi-penduduk.index')->with('success', 'Data berhasil ditambahkan');
     }
 
@@ -349,7 +371,7 @@ class KependudukanController extends Controller
     public function mutasiPendudukUpdate(Request $request, int $id)
     {
         $item = KependudukanMutasi::findOrFail($id);
-        $item->update($request->all());
+        $item->update($this->validateMutasi($request));
         return redirect()->route('kependudukan.mutasi-penduduk.index')->with('success', 'Data berhasil diupdate');
     }
 
@@ -363,7 +385,12 @@ class KependudukanController extends Controller
     public function informasiTerbaruIndex(Request $request)
     {
         $query = KependudukanInformasi::query();
-        if ($request->q) $query->where('judul', 'like', '%'.$request->q.'%')->orWhere('kategori', 'like', '%'.$request->q.'%');
+        if ($request->q) {
+            $query->where(function ($query) use ($request) {
+                $query->where('judul', 'like', '%'.$request->q.'%')
+                    ->orWhere('kategori', 'like', '%'.$request->q.'%');
+            });
+        }
         if ($request->kategori) $query->where('kategori', $request->kategori);
         if ($request->status) $query->where('status', $request->status);
         
@@ -383,7 +410,7 @@ class KependudukanController extends Controller
 
     public function informasiTerbaruStore(Request $request)
     {
-        $data = $request->all();
+        $data = $this->validateInformasi($request);
         if ($request->hasFile('file')) {
             $data['file'] = $request->file('file')->store('kependudukan', 'public');
         }
@@ -399,8 +426,12 @@ class KependudukanController extends Controller
 
     public function informasiTerbaruPdf(int $id)
     {
-        // Mock PDF display
-        return redirect()->back();
+        $item = KependudukanInformasi::findOrFail($id);
+        abort_unless($item->file && Storage::disk('public')->exists($item->file), 404);
+
+        return response()->file(Storage::disk('public')->path($item->file), [
+            'Content-Type' => 'application/pdf',
+        ]);
     }
 
     public function informasiTerbaruEdit(int $id)
@@ -412,10 +443,12 @@ class KependudukanController extends Controller
     public function informasiTerbaruUpdate(Request $request, int $id)
     {
         $item = KependudukanInformasi::findOrFail($id);
-        $data = $request->all();
+        $data = $this->validateInformasi($request, true);
         if ($request->hasFile('file')) {
             if ($item->file) Storage::disk('public')->delete($item->file);
             $data['file'] = $request->file('file')->store('kependudukan', 'public');
+        } else {
+            unset($data['file']);
         }
         $item->update($data);
         return redirect()->route('kependudukan.informasi-terbaru.index')->with('success', 'Data berhasil diupdate');
@@ -427,5 +460,90 @@ class KependudukanController extends Controller
         if ($item->file) Storage::disk('public')->delete($item->file);
         $item->delete();
         return redirect()->route('kependudukan.informasi-terbaru.index')->with('success', 'Data berhasil dihapus');
+    }
+
+    private function validatePenduduk(Request $request): array
+    {
+        return $request->validate([
+            'tahun' => 'required|integer|min:1900|max:2100',
+            'kecamatan' => 'required|string|max:100',
+            'kelurahan' => 'required|string|max:100',
+            'penduduk' => 'required|integer|min:0',
+            'laki_laki' => 'required|integer|min:0',
+            'perempuan' => 'required|integer|min:0',
+            'wajib_ktp' => 'required|integer|min:0',
+            'usia_produktif' => 'required|integer|min:0',
+            'anak' => 'required|integer|min:0',
+            'lansia' => 'required|integer|min:0',
+            'kk' => 'required|integer|min:0',
+            'agama' => 'required|string|max:50',
+            'status' => 'required|in:Aktif,Nonaktif',
+        ]);
+    }
+
+    private function validateAgama(Request $request): array
+    {
+        return $request->validate([
+            'tahun' => 'required|integer|min:1900|max:2100',
+            'kecamatan' => 'required|string|max:100',
+            'kelurahan' => 'required|string|max:100',
+            'agama' => 'required|string|max:50',
+            'penduduk' => 'required|integer|min:0',
+            'persentase' => 'required|string|max:10',
+            'status' => 'required|in:Aktif,Nonaktif',
+        ]);
+    }
+
+    private function validateWilayah(Request $request): array
+    {
+        return $request->validate([
+            'kecamatan' => 'required|string|max:100',
+            'kelurahan' => 'required|string|max:100',
+            'kode' => 'required|string|max:50',
+            'penduduk' => 'required|integer|min:0',
+            'kk' => 'required|integer|min:0',
+            'laki_laki' => 'required|integer|min:0',
+            'perempuan' => 'required|integer|min:0',
+            'status' => 'required|in:Aktif,Nonaktif',
+        ]);
+    }
+
+    private function validateKartuKeluarga(Request $request): array
+    {
+        return $request->validate([
+            'tahun' => 'required|integer|min:1900|max:2100',
+            'kecamatan' => 'required|string|max:100',
+            'kelurahan' => 'required|string|max:100',
+            'kk' => 'required|integer|min:0',
+            'penduduk' => 'required|integer|min:0',
+            'rata_rata' => 'required|string|max:50',
+            'status' => 'required|in:Aktif,Nonaktif',
+        ]);
+    }
+
+    private function validateMutasi(Request $request): array
+    {
+        return $request->validate([
+            'tahun' => 'required|integer|min:1900|max:2100',
+            'bulan' => 'required|string|max:30',
+            'kecamatan' => 'required|string|max:100',
+            'kelurahan' => 'required|string|max:100',
+            'kelahiran' => 'required|integer|min:0',
+            'kematian' => 'required|integer|min:0',
+            'pindah_datang' => 'required|integer|min:0',
+            'pindah_keluar' => 'required|integer|min:0',
+            'status' => 'required|in:Aktif,Nonaktif',
+        ]);
+    }
+
+    private function validateInformasi(Request $request, bool $isUpdate = false): array
+    {
+        return $request->validate([
+            'judul' => 'required|string|max:255',
+            'kategori' => 'required|string|max:100',
+            'file' => ($isUpdate ? 'nullable' : 'required') . '|file|mimes:pdf|max:10240',
+            'tanggal' => 'required|date',
+            'status' => 'required|in:Rilis,Draft',
+        ]);
     }
 }

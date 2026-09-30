@@ -280,18 +280,24 @@
                     </div>
                     <div class="timeline-content">
                         <div class="activity-head">
-                            <span class="activity-name">Login Sistem</span>
-                            <span class="activity-time">{{ $activity->created_at->format('h:i A') }}</span>
+                            <span class="activity-name">
+                                @if($activity->action === 'login')
+                                    Sesi Masuk
+                                @elseif($activity->action === 'logout')
+                                    Sesi Keluar
+                                @elseif($activity->action === 'access')
+                                    Akses Modul
+                                @else
+                                    Aktivitas Sistem
+                                @endif
+                            </span>
+                            <span class="activity-time" style="white-space: nowrap;">{{ $activity->created_at->translatedFormat('d M Y, H:i') }} WIB</span>
                         </div>
                         @php
                             $desc = $activity->description ?? 'Berhasil login ke Dashboard';
-                            if (preg_match('/^(Super Administrator|Admin [a-zA-Z\s]+)\s+(.+)$/i', $desc, $matches)) {
-                                $siapa = $matches[1];
-                                $kegiatan = $matches[2];
-                                $formattedText = '<span style="font-weight: 600;">' . e($siapa) . '</span> ' . e($kegiatan);
-                            } else {
-                                $formattedText = e($desc);
-                            }
+                            // Bersihkan prefix role lama dari log terdahulu
+                            $desc = preg_replace('/^(Super Administrator|Admin [a-zA-Z\s]+)\s+/i', '', $desc);
+                            $formattedText = '<span style="font-weight: 600;">' . e($user->name) . '</span> ' . e($desc);
                         @endphp
                         <p class="activity-desc">{!! $formattedText !!}</p>
                     </div>

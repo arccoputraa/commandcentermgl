@@ -23,7 +23,7 @@ class FinanceSubBidangController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'nama_unit' => 'required|string',
             'kode_unit' => 'required|string',
             'status' => 'required|string',
@@ -31,7 +31,7 @@ class FinanceSubBidangController extends Controller
             'jumlah_staff' => 'nullable|integer'
         ]);
 
-        FinanceSubBidang::create($request->all());
+        FinanceSubBidang::create($validated);
 
         return redirect()->route('finance.subbidang.index')->with('success', 'Sub bidang berhasil ditambahkan.');
     }
@@ -44,7 +44,7 @@ class FinanceSubBidangController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'nama_unit' => 'required|string',
             'kode_unit' => 'required|string',
             'status' => 'required|string',
@@ -53,7 +53,7 @@ class FinanceSubBidangController extends Controller
         ]);
 
         $subbidang = FinanceSubBidang::findOrFail($id);
-        $subbidang->update($request->all());
+        $subbidang->update($validated);
 
         return redirect()->route('finance.subbidang.index')->with('success', 'Sub bidang berhasil diperbarui.');
     }

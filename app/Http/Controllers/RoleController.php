@@ -22,7 +22,7 @@ class RoleController extends Controller
         
         $request->validate([
             'division_id' => 'nullable|exists:divisions,id',
-            'role' => 'required|in:admin,user',
+            'role' => 'required|in:admin,division_admin,user',
             'permissions' => 'nullable|array',
         ]);
 

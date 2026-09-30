@@ -134,7 +134,7 @@ class PembangunanController extends Controller
 
     public function projectStore(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'project_code' => 'required|unique:pembangunan_projects',
             'name' => 'required|string|max:255',
             'category' => 'required|string',
@@ -146,7 +146,7 @@ class PembangunanController extends Controller
             'status' => 'required|string',
         ]);
 
-        PembangunanProject::create($request->all());
+        PembangunanProject::create($validated);
 
         return redirect()->route('pembangunan.project.index')->with('success', 'Proyek berhasil ditambahkan.');
     }
@@ -161,7 +161,7 @@ class PembangunanController extends Controller
     {
         $project = PembangunanProject::findOrFail($id);
 
-        $request->validate([
+        $validated = $request->validate([
             'project_code' => 'required|unique:pembangunan_projects,project_code,' . $project->id,
             'name' => 'required|string|max:255',
             'category' => 'required|string',
@@ -173,7 +173,7 @@ class PembangunanController extends Controller
             'status' => 'required|string',
         ]);
 
-        $project->update($request->all());
+        $project->update($validated);
 
         return redirect()->route('pembangunan.project.index')->with('success', 'Proyek berhasil diperbarui.');
     }

@@ -108,6 +108,25 @@
 
         <!-- Page Content -->
         <div class="admin-content">
+            @if(session('success'))
+                <div role="status" style="background:#ECFDF5; border:1px solid #A4F4CF; padding:12px 16px; border-radius:8px; margin-bottom:20px; color:#047857;">
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if(session('error'))
+                <div role="alert" style="background:#FEF2F2; border:1px solid #FECACA; padding:12px 16px; border-radius:8px; margin-bottom:20px; color:#B91C1C;">
+                    {{ session('error') }}
+                </div>
+            @endif
+            @if($errors->any())
+                <div role="alert" style="background:#FEF2F2; border:1px solid #FECACA; padding:12px 16px; border-radius:8px; margin-bottom:20px; color:#B91C1C;">
+                    <ul style="margin:0; padding-left:20px;">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             @yield('content')
         </div>
     </main>

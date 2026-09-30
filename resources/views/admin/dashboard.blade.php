@@ -59,7 +59,7 @@
                         </div>
                         <div class="activity-content">
                             <p style="color: var(--admin-text-main);"><span style="font-weight: 600;">{{ $activity->user->name ?? 'Sistem' }}</span> {{ $activity->description }}</p>
-                            <small style="color: #9ca3af; margin-top: 4px; display: block;">{{ $activity->created_at->diffForHumans() }}</small>
+                            <small style="color: #9ca3af; margin-top: 4px; display: block;">{{ $activity->created_at->translatedFormat('d M Y, H:i') }} WIB ({{ $activity->created_at->diffForHumans() }})</small>
                         </div>
                     </div>
                     @endforeach

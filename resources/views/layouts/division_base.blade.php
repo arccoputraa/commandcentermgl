@@ -48,7 +48,7 @@
             </div>
             <div class="topbar-profile">
                 @if(Auth::check() && Auth::user()->isSuperAdmin())
-                <a href="{{ route('admin.dashboard') }}" style="margin-right: 15px; background: #f1f5f9; padding: 6px 12px; border-radius: 6px; font-size: 13px; color: #333; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-weight: 500;">
+                <a href="{{ route('admin.switch-global') }}" style="margin-right: 15px; background: #f1f5f9; padding: 6px 12px; border-radius: 6px; font-size: 13px; color: #333; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-weight: 500;">
                     <i class="fa-solid fa-arrow-left"></i> Global Admin
                 </a>
                 @endif

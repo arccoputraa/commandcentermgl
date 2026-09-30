@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
 
 // Admin Routes (protected)
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+    Route::get('/switch-global', [\App\Http\Controllers\AdminController::class, 'switchToGlobal'])->name('admin.switch-global');
     Route::get('/', [\App\Http\Controllers\AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/users', [\App\Http\Controllers\AdminController::class, 'users'])->name('admin.users.index');
     Route::get('/users/create', [\App\Http\Controllers\AdminController::class, 'create'])->name('admin.users.create');
@@ -221,6 +222,7 @@ Route::middleware(['auth', 'division:kependudukan'])->prefix('kependudukan')->gr
     Route::get('/data-penduduk/{id}', [\App\Http\Controllers\KependudukanController::class, 'dataPendudukShow'])->name('kependudukan.data-penduduk.show');
     Route::get('/data-penduduk/{id}/edit', [\App\Http\Controllers\KependudukanController::class, 'dataPendudukEdit'])->name('kependudukan.data-penduduk.edit');
     Route::put('/data-penduduk/{id}', [\App\Http\Controllers\KependudukanController::class, 'dataPendudukUpdate'])->name('kependudukan.data-penduduk.update');
+    Route::delete('/data-penduduk/{id}', [\App\Http\Controllers\KependudukanController::class, 'dataPendudukDestroy'])->name('kependudukan.data-penduduk.destroy');
     Route::get('/data-agama', [\App\Http\Controllers\KependudukanController::class, 'dataAgamaIndex'])->name('kependudukan.data-agama.index');
     Route::get('/data-agama/create', [\App\Http\Controllers\KependudukanController::class, 'dataAgamaCreate'])->name('kependudukan.data-agama.create');
     Route::post('/data-agama', [\App\Http\Controllers\KependudukanController::class, 'dataAgamaStore'])->name('kependudukan.data-agama.store');

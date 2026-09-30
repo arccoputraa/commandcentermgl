@@ -19,7 +19,7 @@ class LayananPublikController extends Controller
             
             if ($dept === 'perizinan') {
                 $qData = \App\Models\PerizinanData::query();
-                $tahunOptions = \App\Models\PerizinanData::selectRaw("CAST(strftime('%Y', tanggal) AS INTEGER) as tahun")->distinct()->pluck('tahun')->filter()->toArray();
+                $tahunOptions = $this->distinctDateParts(\App\Models\PerizinanData::class, 'tanggal', 'year');
                 $jenisOptions = \App\Models\PerizinanData::distinct()->pluck('jenis_permohonan')->filter()->toArray();
                 $statusOptions = \App\Models\PerizinanData::distinct()->pluck('status')->filter()->toArray();
                 
@@ -42,10 +42,7 @@ class LayananPublikController extends Controller
                 ];
                 
                 $currentYear = !empty($filters['tahun']) ? $filters['tahun'] : date('Y');
-                $monthlyData = (clone $qData)->selectRaw("CAST(strftime('%m', tanggal) AS INTEGER) as month, status, count(*) as total")
-                                    ->whereYear('tanggal', $currentYear)
-                                    ->groupBy('month', 'status')
-                                    ->get();
+                $monthlyData = (clone $qData)->whereYear('tanggal', $currentYear)->get(['tanggal', 'status']);
                                     
                 $chartData = [
                     'total_bulanan' => array_fill(1, 12, 0),
@@ -54,11 +51,12 @@ class LayananPublikController extends Controller
                 ];
                 
                 foreach ($monthlyData as $row) {
-                    $chartData['total_bulanan'][$row->month] += $row->total;
+                    $month = Carbon::parse($row->tanggal)->month;
+                    $chartData['total_bulanan'][$month]++;
                     if ($row->status == 'Disetujui') {
-                        $chartData['disetujui_bulanan'][$row->month] += $row->total;
+                        $chartData['disetujui_bulanan'][$month]++;
                     } elseif ($row->status == 'Proses') {
-                        $chartData['proses_bulanan'][$row->month] += $row->total;
+                        $chartData['proses_bulanan'][$month]++;
                     }
                 }
                 
@@ -108,10 +106,10 @@ class LayananPublikController extends Controller
                     }
                 }
 
-                $mutasiRaw = \App\Models\PegawaiMutasi::selectRaw("CAST(strftime('%m', tanggal_efektif) AS INTEGER) as month, count(*) as total")->whereYear('tanggal_efektif', date('Y'))->groupBy('month')->get();
+                $mutasiRaw = \App\Models\PegawaiMutasi::whereYear('tanggal_efektif', date('Y'))->get(['tanggal_efektif']);
                 $chartMutasi = array_fill(1, 12, 0);
                 foreach($mutasiRaw as $m) {
-                    $chartMutasi[$m->month] = $m->total;
+                    $chartMutasi[Carbon::parse($m->tanggal_efektif)->month]++;
                 }
 
                 $informasiTerbaru = \App\Models\PegawaiInformasi::where('status_publikasi', 'Rilis')->orderBy('created_at', 'desc')->limit(3)->get();
@@ -270,7 +268,7 @@ class LayananPublikController extends Controller
                 $kecamatanOptions = \App\Models\PembangunanProject::distinct()->pluck('kecamatan')->filter()->toArray();
                 $kategoriOptions = \App\Models\PembangunanProject::distinct()->pluck('category')->filter()->toArray();
                 $statusOptions = \App\Models\PembangunanProject::distinct()->pluck('status')->filter()->toArray();
-                $tahunOptions = \App\Models\PembangunanProject::selectRaw("CAST(strftime('%Y', created_at) AS INTEGER) as tahun")->distinct()->pluck('tahun')->filter()->toArray();
+                $tahunOptions = $this->distinctDateParts(\App\Models\PembangunanProject::class, 'created_at', 'year');
 
                 $filters = $request->only(['kecamatan', 'kategori', 'status', 'tahun']);
                 if (!empty($filters['kecamatan'])) $qProject->where('kecamatan', $filters['kecamatan']);
@@ -376,12 +374,12 @@ class LayananPublikController extends Controller
                 
                 $jenisOptions = \App\Models\UjiKir::distinct()->pluck('jenis_kendaraan')->filter()->toArray();
                 $statusOptions = \App\Models\UjiKir::distinct()->pluck('status_uji')->filter()->toArray();
-                $bulanOptions = \App\Models\UjiKir::selectRaw("CAST(strftime('%m', tanggal_uji) AS INTEGER) as bulan")->distinct()->pluck('bulan')->filter()->toArray();
+                $bulanOptions = $this->distinctDateParts(\App\Models\UjiKir::class, 'tanggal_uji', 'month');
 
                 $filters = $request->only(['jenis_kendaraan', 'status_uji', 'bulan']);
                 if (!empty($filters['jenis_kendaraan'])) $qKir->where('jenis_kendaraan', $filters['jenis_kendaraan']);
                 if (!empty($filters['status_uji'])) $qKir->where('status_uji', $filters['status_uji']);
-                if (!empty($filters['bulan'])) $qKir->whereRaw("CAST(strftime('%m', tanggal_uji) AS INTEGER) = ?", [$filters['bulan']]);
+                if (!empty($filters['bulan'])) $qKir->whereMonth('tanggal_uji', $filters['bulan']);
 
                 $stats = [
                     'total' => (clone $qKir)->count(),
@@ -432,7 +430,7 @@ class LayananPublikController extends Controller
                 
                 $kecamatanOptions = \App\Models\DataSpasial::distinct()->pluck('wilayah')->filter()->toArray();
                 $kategoriOptions = \App\Models\DataSpasial::distinct()->pluck('kategori')->filter()->toArray();
-                $tahunOptions = \App\Models\DataSpasial::selectRaw("CAST(strftime('%Y', created_at) AS INTEGER) as tahun")->distinct()->pluck('tahun')->filter()->toArray();
+                $tahunOptions = $this->distinctDateParts(\App\Models\DataSpasial::class, 'created_at', 'year');
                 $statusOptions = ['Aktif', 'Nonaktif'];
                 
                 $filters = $request->only(['kecamatan', 'kategori', 'tahun', 'status', 'search']);
@@ -602,14 +600,18 @@ class LayananPublikController extends Controller
                     if($g->kelurahan) { $chartKelurahanLabels[] = $g->kelurahan; $chartKelurahanData[] = $g->total; }
                 }
                 
-                $informasiTerbaru = \App\Models\KependudukanInformasi::where('status', 'Rilis')->limit(4)->get();
+                $informasiTerbaru = \App\Models\KependudukanInformasi::where('status', 'Rilis')
+                    ->orderByDesc('tanggal')
+                    ->orderByDesc('id')
+                    ->limit(4)
+                    ->get();
                 
                 // Data table (limit for performance, instead of fetching millions of rows)
                 $filteredPenduduk = $queryPenduduk->limit(100)->get();
                 $dataPenduduk = $filteredPenduduk;
                 
-                if (view()->exists('layanan.kependudukan_new')) {
-                    return view('layanan.kependudukan_new', compact(
+                if (view()->exists('layanan.kependudukan')) {
+                    return view('layanan.kependudukan', compact(
                         'stats', 'filteredPenduduk', 'dataPenduduk', 'chartAgamaLabels', 'chartAgamaData',
                         'chartGenderLabels', 'chartGenderData', 'chartKecamatanLabels', 'chartKecamatanData',
                         'chartKelurahanLabels', 'chartKelurahanData', 'informasiTerbaru', 'kecamatanOptions',
@@ -622,5 +624,17 @@ class LayananPublikController extends Controller
             if ($dept && view()->exists("layanan.{$dept}")) return view("layanan.{$dept}")->render();
             return view('layanan', ['dept' => $dept])->render();
         });
+    }
+
+    private function distinctDateParts(string $model, string $column, string $part): array
+    {
+        $format = $part === 'year' ? 'Y' : 'n';
+
+        return $model::query()->whereNotNull($column)->pluck($column)
+            ->map(fn ($date) => (int) Carbon::parse($date)->format($format))
+            ->unique()
+            ->sort()
+            ->values()
+            ->all();
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\User;
 use App\Models\Division;
@@ -12,14 +13,19 @@ use App\Models\ActivityLog;
 
 class AdminController extends Controller
 {
+    public function switchToGlobal()
+    {
+        // Bersihkan state divisi di session
+        session()->forget('current_active_dashboard');
+        
+        \App\Helpers\LogHelper::record_activity(\Illuminate\Support\Facades\Auth::user(), 'access', 'kembali ke Dashboard Global Admin');
+        
+        return redirect()->route('admin.dashboard');
+    }
+
     public function dashboard()
     {
-        // Log access back to Global Admin for Super Admins
-        $sessionKey = 'accessed_div_global';
-        if (!session()->has($sessionKey)) {
-            \App\Helpers\LogHelper::record_activity(\Illuminate\Support\Facades\Auth::user(), 'kembali ke', 'Dashboard Global Admin');
-            session()->put($sessionKey, true);
-        }
+        // Note: Logging 'kembali ke Global Admin' dipindahkan ke endpoint switchToGlobal
 
         $totalUsers = User::count();
         $activeUsers = User::where('status', 'aktif')->count();
@@ -136,6 +142,10 @@ class AdminController extends Controller
 
     public function destroy(User $user)
     {
+        if ($user->id === Auth::id()) {
+            return redirect()->route('admin.users.index')->with('error', 'Akun yang sedang digunakan tidak dapat dihapus.');
+        }
+
         $user->delete();
         return redirect()->route('admin.users.index')->with('success', 'Hak akses berhasil dihapus dari sistem.');
     }

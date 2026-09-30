@@ -27,6 +27,23 @@ class DivisionUserController extends Controller
         return Division::where('name', $actualName)->firstOrFail();
     }
 
+    private function authorizeDivisionAccess(Division $division, bool $manage = false): void
+    {
+        $user = Auth::user();
+
+        if ($user->role === 'admin') {
+            return;
+        }
+
+        if (!in_array($user->role, ['division_admin', 'user'], true) || $user->division_id !== $division->id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        if ($manage && $user->role !== 'division_admin') {
+            abort(403, 'Anda hanya dapat melihat data.');
+        }
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -37,10 +54,7 @@ class DivisionUserController extends Controller
         // Find division
         $division = $this->getDivision($division_slug);
 
-        // Admin can view any division users. Division Admin can only view their own.
-        if ($user->role === 'division_admin' && $user->division_id !== $division->id) {
-            abort(403, 'Unauthorized action.');
-        }
+        $this->authorizeDivisionAccess($division);
 
         $users = User::where('division_id', $division->id)
                      ->where('id', '!=', 1) // don't show super admin
@@ -56,13 +70,7 @@ class DivisionUserController extends Controller
      */
     public function create($division_slug)
     {
-        $user = Auth::user();
-        if ($user->role === 'user') abort(403, 'Anda hanya dapat melihat data.');
-        $division = $this->getDivision($division_slug);
-
-        if ($user->role === 'division_admin' && $user->division_id !== $division->id) {
-            abort(403, 'Unauthorized action.');
-        }
+        $this->authorizeDivisionAccess($division = $this->getDivision($division_slug), true);
 
         return view('division_users.create', compact('division', 'division_slug'));
     }
@@ -72,13 +80,8 @@ class DivisionUserController extends Controller
      */
     public function store(Request $request, $division_slug)
     {
-        $user = Auth::user();
-        if ($user->role === 'user') abort(403, 'Anda hanya dapat melihat data.');
         $division = $this->getDivision($division_slug);
-
-        if ($user->role === 'division_admin' && $user->division_id !== $division->id) {
-            abort(403, 'Unauthorized action.');
-        }
+        $this->authorizeDivisionAccess($division, true);
 
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -109,13 +112,8 @@ class DivisionUserController extends Controller
      */
     public function edit($division_slug, User $user)
     {
-        $currentUser = Auth::user();
-        if ($currentUser->role === 'user') abort(403, 'Anda hanya dapat melihat data.');
         $division = $this->getDivision($division_slug);
-
-        if ($currentUser->role === 'division_admin' && $currentUser->division_id !== $division->id) {
-            abort(403, 'Unauthorized action.');
-        }
+        $this->authorizeDivisionAccess($division, true);
 
         // Ensure the user being edited belongs to this division
         if ($user->division_id !== $division->id) {
@@ -130,13 +128,8 @@ class DivisionUserController extends Controller
      */
     public function update(Request $request, $division_slug, User $user)
     {
-        $currentUser = Auth::user();
-        if ($currentUser->role === 'user') abort(403, 'Anda hanya dapat melihat data.');
         $division = $this->getDivision($division_slug);
-
-        if ($currentUser->role === 'division_admin' && $currentUser->division_id !== $division->id) {
-            abort(403, 'Unauthorized action.');
-        }
+        $this->authorizeDivisionAccess($division, true);
 
         if ($user->division_id !== $division->id) {
             abort(404);
@@ -185,6 +178,10 @@ class DivisionUserController extends Controller
 
         if ($user->division_id !== $division->id) {
             abort(404);
+        }
+
+        if ($user->id === Auth::id()) {
+            return redirect()->route('division.users.index', $division_slug)->with('error', 'Akun yang sedang digunakan tidak dapat dihapus.');
         }
 
         $user->delete();

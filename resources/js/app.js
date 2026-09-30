@@ -292,7 +292,7 @@ function renderDeptPage() {
   const nav = document.querySelector('[data-dept-nav]');
   if (nav) {
     nav.innerHTML = Object.keys(DEPARTMENTS).map(key => `
-      <a href="layanan.html?dept=${key}" class="${key === slug ? 'active' : ''}">${DEPARTMENTS[key].name}</a>
+      <a href="/layanan?dept=${key}" class="${key === slug ? 'active' : ''}">${DEPARTMENTS[key].name}</a>
     `).join('');
   }
 }
@@ -308,7 +308,7 @@ function renderServiceCards(targetSelector) {
       <div class="svc-icon">${ICONS[d.icon]}</div>
       <h3>${d.name}</h3>
       <p>${d.office}</p>
-      <a class="btn btn-outline" href="layanan.html?dept=${key}">Lihat Data Publik</a>
+      <a class="btn btn-outline" href="/layanan?dept=${key}">Lihat Data Publik</a>
     </article>`;
   }).join('');
 }

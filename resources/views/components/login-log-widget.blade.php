@@ -27,17 +27,12 @@
                 </div>
                 <div class="activity-content">
                     @php
-                        $desc = $activity->description;
-                        if (preg_match('/^(Super Administrator|Admin [a-zA-Z\s]+)\s+(.+)$/i', $desc, $matches)) {
-                            $siapa = $matches[1];
-                            $kegiatan = $matches[2];
-                            $formattedText = '<span style="font-weight: 600;">' . e($siapa) . '</span> ' . e($kegiatan);
-                        } else {
-                            $formattedText = '<span style="font-weight: 600;">' . e($activity->user->name ?? 'Unknown') . '</span> ' . e($desc);
-                        }
+                        // Bersihkan prefix role lama dari log terdahulu agar tidak tercetak dobel (Backward Compatibility)
+                        $desc = preg_replace('/^(Super Administrator|Admin [a-zA-Z\s]+)\s+/i', '', $activity->description);
+                        $formattedText = '<span style="font-weight: 600;">' . e($activity->user->name ?? 'Sistem') . '</span> ' . e($desc);
                     @endphp
                     <p style="color: #374151; font-size: 14px; margin: 0;">{!! $formattedText !!}</p>
-                    <small style="color: #9ca3af; margin-top: 4px; display: block; font-size: 13px;">{{ $activity->created_at->diffForHumans() }}</small>
+                    <small style="color: #9ca3af; margin-top: 4px; display: block; font-size: 13px;">{{ $activity->created_at->translatedFormat('d M Y, H:i') }} WIB ({{ $activity->created_at->diffForHumans() }})</small>
                 </div>
             </div>
             @endforeach

@@ -55,7 +55,9 @@
                         <td>
                             <a href="{{ route('admin.users.show', $user->id) }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-eye"></i></a>
                             <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-outline btn-sm"><i class="fa-solid fa-pen"></i></a>
-                            <button class="btn btn-outline btn-sm" style="color: var(--admin-danger); border-color: var(--admin-danger);" onclick="openUserModal('delete', '{{ addslashes($user->name) }}', {{ $user->id }})"><i class="fa-solid fa-trash"></i></button>
+                            @if($user->id !== Auth::id())
+                                <button class="btn btn-outline btn-sm" style="color: var(--admin-danger); border-color: var(--admin-danger);" onclick="openUserModal('delete', '{{ addslashes($user->name) }}', {{ $user->id }})"><i class="fa-solid fa-trash"></i></button>
+                            @endif
                         </td>
                     </tr>
                     @empty

@@ -25,7 +25,7 @@ class FinanceTaxController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'bulan' => 'required|string',
             'tahun' => 'required|integer',
             'jenis_pajak' => 'required|string',
@@ -35,7 +35,7 @@ class FinanceTaxController extends Controller
             'keterangan' => 'nullable|string'
         ]);
 
-        FinanceTax::create($request->all());
+        FinanceTax::create($validated);
 
         return redirect()->route('finance.tax.index')->with('success', 'Data pajak daerah berhasil ditambahkan.');
     }
@@ -48,7 +48,7 @@ class FinanceTaxController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'bulan' => 'required|string',
             'tahun' => 'required|integer',
             'jenis_pajak' => 'required|string',
@@ -59,7 +59,7 @@ class FinanceTaxController extends Controller
         ]);
 
         $tax = FinanceTax::findOrFail($id);
-        $tax->update($request->all());
+        $tax->update($validated);
 
         return redirect()->route('finance.tax.index')->with('success', 'Data pajak daerah berhasil diperbarui.');
     }
