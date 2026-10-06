@@ -61,7 +61,7 @@
 </header>
 
 <main>
-  <div class="login-hero" style="--container-image: url('{{ asset('images/container.png') }}');">
+  <div class="login-hero" style="--container-image: url('{{ asset('images/container.webp') }}');">
     <div class="login-card-split">
 
       <!-- Left: visual / branding panel -->

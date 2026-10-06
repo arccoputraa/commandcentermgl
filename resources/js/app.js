@@ -141,25 +141,25 @@ const DEPARTMENTS = {
 // ---------- CCTV dataset ----------
 // GANTI GAMBAR PER LOKASI DI SINI: Ubah property 'image' dengan path gambar yang sesuai untuk setiap CCTV
 const CCTV_POINTS = [
- { id: 'taman-badaan-barat', name: 'Taman Badaan Barat', area: 'Kecamatan Magelang Tengah', status: 'online', image: '/images/cctv_park.jpg' },
-  { id: 'taman-skateboard-magersari', name: 'Taman Skateboard Magersari', area: 'Kecamatan Magelang Selatan', status: 'online', image: '/images/tamanskateboard.png' },
-  { id: 'taman-depan-atria', name: 'Taman Depan Atria', area: 'Kecamatan Magelang Tengah', status: 'online', image: '/images/tamandepanatrian.png' },
-  { id: 'batas-utara', name: 'Batas Utara Kota Magelang', area: 'Kecamatan Magelang Utara', status: 'online', image: '/images/batasUtarakota_magelang.png' },
-  { id: 'kebun-bibit-senopati', name: 'Kebun Bibit Senopati', area: 'Kecamatan Magelang Utara', status: 'online', image: '/images/bibit_senopati.png' },
-  { id: 'pertigaan-sman1', name: 'Pertigaan SMA Negeri 1', area: 'Kecamatan Magelang Tengah', status: 'online', image: '/images/sman1kota.png' },
-  { id: 'alun-alun', name: 'Alun-Alun Kota Magelang', area: 'Kecamatan Magelang Tengah', status: 'online', image: '/images/alunalun_magelang.png' },
-  { id: 'pasar-rejowinangun', name: 'Pasar Rejowinangun', area: 'Kecamatan Magelang Selatan', status: 'online', image: '/images/pasar_rejowinangun.png' }
+  { id: 'taman-badaan-barat', name: 'Taman Badaan Barat', area: 'Kecamatan Magelang Tengah', status: 'online', image: '/images/cctv_park.webp' },
+  { id: 'taman-skateboard-magersari', name: 'Taman Skateboard Magersari', area: 'Kecamatan Magelang Selatan', status: 'online', image: '/images/tamanskateboard.webp' },
+  { id: 'taman-depan-atria', name: 'Taman Depan Atria', area: 'Kecamatan Magelang Tengah', status: 'online', image: '/images/tamandepanatrian.webp' },
+  { id: 'batas-utara', name: 'Batas Utara Kota Magelang', area: 'Kecamatan Magelang Utara', status: 'online', image: '/images/batasUtarakota_magelang.webp' },
+  { id: 'kebun-bibit-senopati', name: 'Kebun Bibit Senopati', area: 'Kecamatan Magelang Utara', status: 'online', image: '/images/bibit_senopati.webp' },
+  { id: 'pertigaan-sman1', name: 'Pertigaan SMA Negeri 1', area: 'Kecamatan Magelang Tengah', status: 'online', image: '/images/sman1kota.webp' },
+  { id: 'alun-alun', name: 'Alun-Alun Kota Magelang', area: 'Kecamatan Magelang Tengah', status: 'online', image: '/images/alunalun_magelang.webp' },
+  { id: 'pasar-rejowinangun', name: 'Pasar Rejowinangun', area: 'Kecamatan Magelang Selatan', status: 'online', image: '/images/pasar_rejowinangun.webp' }
 ];
 
 function cctvCardHTML(cam) {
   const isOnline = cam.status === 'online';
   // Gambar ditarik dari property 'image' pada data CCTV
-  const placeholderImage = cam.image || '/images/cctv_park.jpg';
+  const placeholderImage = cam.image || '/images/cctv_park.webp';
   
   return `
   <article class="cctv-card">
     <div class="cctv-thumb">
-      <img src="${placeholderImage}" alt="${cam.name}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0;" />
+      <img src="${placeholderImage}" alt="${cam.name}" loading="lazy" decoding="async" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0;" />
       <div class="feed" style="z-index:1; background: repeating-linear-gradient(0deg, rgba(0,0,0,.08) 0 2px, transparent 2px 4px);"></div>
       <button class="cctv-play-button" type="button" aria-label="Putar live ${cam.name}" onclick="window.showCctvLive('${cam.id}')">
         <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
