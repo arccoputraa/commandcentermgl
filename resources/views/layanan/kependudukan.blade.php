@@ -16,48 +16,78 @@
     <div class="dashboard-stats-grid" style="grid-template-columns: repeat(4, 1fr);">
         <div class="stat-card color-blue">
             <h3 class="stat-card-title">Total Penduduk</h3>
-            <p class="stat-card-value">126.840 Jiwa</p>
+            <p class="stat-card-value">{{ number_format((int) ($stats['totalPenduduk'] ?? 0), 0, ',', '.') }} Jiwa</p>
         </div>
         <div class="stat-card color-green">
             <h3 class="stat-card-title">Laki-laki</h3>
-            <p class="stat-card-value">62.410 Jiwa</p>
+            <p class="stat-card-value">{{ number_format((int) ($stats['lakiLaki'] ?? 0), 0, ',', '.') }} Jiwa</p>
         </div>
         <div class="stat-card color-purple">
             <h3 class="stat-card-title">Perempuan</h3>
-            <p class="stat-card-value">64.430 Jiwa</p>
+            <p class="stat-card-value">{{ number_format((int) ($stats['perempuan'] ?? 0), 0, ',', '.') }} Jiwa</p>
         </div>
         <div class="stat-card color-orange">
             <h3 class="stat-card-title">Total KK</h3>
-            <p class="stat-card-value">39.520 KK</p>
+            <p class="stat-card-value">{{ number_format((int) ($stats['totalKk'] ?? 0), 0, ',', '.') }} KK</p>
         </div>
         <div class="stat-card color-blue">
             <h3 class="stat-card-title">Wajib KTP</h3>
-            <p class="stat-card-value">94.780 Jiwa</p>
+            <p class="stat-card-value">{{ number_format((int) ($stats['wajibKtp'] ?? 0), 0, ',', '.') }} Jiwa</p>
         </div>
         <div class="stat-card color-green">
             <h3 class="stat-card-title">Usia Produktif</h3>
-            <p class="stat-card-value">86.240 Jiwa</p>
+            <p class="stat-card-value">{{ number_format((int) ($stats['usiaProduktif'] ?? 0), 0, ',', '.') }} Jiwa</p>
         </div>
         <div class="stat-card color-purple">
-            <h3 class="stat-card-title">Kelahiran Tahun Ini</h3>
-            <p class="stat-card-value">412 Jiwa</p>
+            <h3 class="stat-card-title">Kelahiran Tahun {{ $filters['tahun'] ?? now()->year }}</h3>
+            <p class="stat-card-value">{{ number_format((int) ($stats['kelahiranTahunIni'] ?? 0), 0, ',', '.') }} Jiwa</p>
         </div>
         <div class="stat-card color-orange">
-            <h3 class="stat-card-title">Kematian Tahun Ini</h3>
-            <p class="stat-card-value">185 Jiwa</p>
+            <h3 class="stat-card-title">Kematian Tahun {{ $filters['tahun'] ?? now()->year }}</h3>
+            <p class="stat-card-value">{{ number_format((int) ($stats['kematianTahunIni'] ?? 0), 0, ',', '.') }} Jiwa</p>
         </div>
     </div>
 
-    <div class="dashboard-filter-bar">
+    <form class="dashboard-filter-bar" method="GET" action="{{ route('layanan') }}">
+        <input type="hidden" name="dept" value="kependudukan">
         <div class="filter-dropdowns">
-            <select class="filter-select"><option value="">Pilih Kecamatan</option></select>
-            <select class="filter-select"><option value="">Pilih Kelurahan</option></select>
-            <select class="filter-select"><option value="">Pilih Tahun</option></select>
-            <select class="filter-select"><option value="">Pilih Agama</option></select>
-            <select class="filter-select"><option value="">Pilih Status</option></select>
+            <select class="filter-select" name="kecamatan" id="population-kecamatan" aria-label="Pilih Kecamatan">
+                <option value="">Semua Kecamatan</option>
+                @foreach($kecamatanOptions as $kecamatan)
+                    <option value="{{ $kecamatan }}" @selected(($filters['kecamatan'] ?? '') === $kecamatan)>{{ $kecamatan }}</option>
+                @endforeach
+            </select>
+            <select class="filter-select" name="kelurahan" id="population-kelurahan" aria-label="Pilih Kelurahan">
+                <option value="">Semua Kelurahan</option>
+                @foreach($kelurahanOptions as $kelurahan)
+                    @if(empty($filters['kecamatan']) || in_array($kelurahan, $kelurahanByKecamatan[$filters['kecamatan']] ?? [], true))
+                        <option value="{{ $kelurahan }}" @selected(($filters['kelurahan'] ?? '') === $kelurahan)>{{ $kelurahan }}</option>
+                    @endif
+                @endforeach
+            </select>
+            <select class="filter-select" name="tahun" aria-label="Pilih Tahun">
+                <option value="">Semua Tahun</option>
+                @foreach($tahunOptions as $tahun)
+                    <option value="{{ $tahun }}" @selected((string) ($filters['tahun'] ?? '') === (string) $tahun)>{{ $tahun }}</option>
+                @endforeach
+            </select>
+            <select class="filter-select" name="agama" aria-label="Pilih Agama">
+                <option value="">Semua Agama</option>
+                @foreach($agamaOptions as $agama)
+                    <option value="{{ $agama }}" @selected(($filters['agama'] ?? '') === $agama)>{{ $agama }}</option>
+                @endforeach
+            </select>
+            <select class="filter-select" name="status" aria-label="Pilih Status">
+                @foreach($statusOptions as $status)
+                    <option value="{{ $status }}" @selected(($filters['status'] ?? 'Aktif') === $status)>{{ $status }}</option>
+                @endforeach
+            </select>
         </div>
-        <button type="button" class="btn btn-primary">Terapkan Filter</button>
-    </div>
+        <div style="display:flex; gap:8px; align-items:center;">
+            <button type="submit" class="btn btn-primary">Terapkan Filter</button>
+            <a href="{{ route('layanan', ['dept' => 'kependudukan']) }}" class="btn btn-outline">Reset</a>
+        </div>
+    </form>
 
     <div class="dashboard-layout-sidebar">
         <div class="dashboard-main-col">
@@ -84,6 +114,14 @@
             <div class="dashboard-chart-card" style="padding-bottom: 20px;">
                 <h3 class="chart-header">Peta Wilayah Kota Magelang</h3>
                 <div id="map3" class="dashboard-map" style="height: 320px;"></div>
+                <div style="margin: 12px 4px 0; font-size: 12px; color: #64748b;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span>Sedikit</span>
+                        <span aria-hidden="true" style="height: 10px; flex: 1; border-radius: 999px; background: linear-gradient(90deg, #fee2e2, #b91c1c);"></span>
+                        <span>Banyak penduduk</span>
+                    </div>
+                    <p style="margin: 8px 0 0;">Warna menunjukkan jumlah penduduk per kecamatan. Titik lokasi masih perkiraan dan belum menunjukkan batas administratif.</p>
+                </div>
             </div>
             <div class="summary-widget" style="margin-top: 24px;">
                 <h3 class="summary-widget-title">Informasi Terbaru</h3>
@@ -120,65 +158,32 @@
                         <th>Kelurahan</th>
                         <th>Jumlah Penduduk</th>
                         <th>Jumlah KK</th>
-                        <th>Agama Mayoritas</th>
+                        <th>Agama</th>
                         <th>Keterangan</th>
-                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>2026</td>
-                        <td>Magelang Tengah</td>
-                        <td>Panjang</td>
-                        <td>8.240</td>
-                        <td>2.340 KK</td>
-                        <td>Islam</td>
-                        <td><span class="table-badge success">Aktif</span></td>
-                        <td><a href="#" onclick="window.showDummyDetail(this); return false;" class="action-link">Lihat Detail</a></td>
-                    </tr>
-                    <tr>
-                        <td>2026</td>
-                        <td>Magelang Selatan</td>
-                        <td>Jurangombo Utara</td>
-                        <td>7.850</td>
-                        <td>2.180 KK</td>
-                        <td>Islam</td>
-                        <td><span class="table-badge success">Aktif</span></td>
-                        <td><a href="#" onclick="window.showDummyDetail(this); return false;" class="action-link">Lihat Detail</a></td>
-                    </tr>
-                    <tr>
-                        <td>2026</td>
-                        <td>Magelang Utara</td>
-                        <td>Kedungsari</td>
-                        <td>6.730</td>
-                        <td>1.920 KK</td>
-                        <td>Islam</td>
-                        <td><span class="table-badge success">Aktif</span></td>
-                        <td><a href="#" onclick="window.showDummyDetail(this); return false;" class="action-link">Lihat Detail</a></td>
-                    </tr>
-                    <tr>
-                        <td>2026</td>
-                        <td>Magelang Tengah</td>
-                        <td>Kemirirejo</td>
-                        <td>5.980</td>
-                        <td>1.710 KK</td>
-                        <td>Islam</td>
-                        <td><span class="table-badge success">Aktif</span></td>
-                        <td><a href="#" onclick="window.showDummyDetail(this); return false;" class="action-link">Lihat Detail</a></td>
-                    </tr>
-                    <tr>
-                        <td>2026</td>
-                        <td>Magelang Selatan</td>
-                        <td>Tidar Selatan</td>
-                        <td>6.410</td>
-                        <td>1.860 KK</td>
-                        <td>Islam</td>
-                        <td><span class="table-badge success">Aktif</span></td>
-                        <td><a href="#" onclick="window.showDummyDetail(this); return false;" class="action-link">Lihat Detail</a></td>
-                    </tr>
+                    @forelse($filteredPenduduk as $row)
+                        <tr>
+                            <td>{{ $row->tahun }}</td>
+                            <td>{{ $row->kecamatan }}</td>
+                            <td>{{ $row->kelurahan }}</td>
+                            <td>{{ number_format((int) $row->penduduk, 0, ',', '.') }}</td>
+                            <td>{{ number_format((int) $row->kk, 0, ',', '.') }} KK</td>
+                            <td>{{ $row->agama }}</td>
+                            <td><span class="table-badge {{ $row->status === 'Aktif' ? 'success' : 'warning' }}">{{ $row->status }}</span></td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" style="text-align:center; color:#94A3B8;">Tidak ada data untuk filter yang dipilih.</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
+        @if($filteredPenduduk->hasPages())
+            <div class="dashboard-table-footer">{{ $filteredPenduduk->links() }}</div>
+        @endif
     </div>
 </div>
 @endsection
@@ -193,9 +198,10 @@
 <script>
 const pieOpts = (labels, series, colors) => ({
     chart: { type: 'donut', height: 260 },
-    labels: labels && labels.length > 0 ? labels : ['Data Kosong'],
-    series: series && series.length > 0 ? series.map(Number) : [1],
+    labels: labels ?? [],
+    series: series ? series.map(Number) : [],
     colors: colors,
+    noData: { text: 'Belum ada data' },
     legend: { position: 'bottom', fontSize: '12px', markers: { radius: 12 } },
     plotOptions: {
         pie: {
@@ -221,27 +227,28 @@ const pieOpts = (labels, series, colors) => ({
 });
 
 new ApexCharts(document.querySelector('#chartAgama'), pieOpts(
-    {!! json_encode($chartAgamaLabels ?? ['Islam', 'Kristen', 'Katolik', 'Hindu', 'Buddha', 'Konghucu']) !!},
-    {!! json_encode($chartAgamaData ?? [0, 0, 0, 0, 0, 0]) !!},
+    {{ Illuminate\Support\Js::from($chartAgamaLabels ?? ['Islam', 'Kristen', 'Katolik', 'Hindu', 'Buddha', 'Konghucu']) }},
+    {{ Illuminate\Support\Js::from($chartAgamaData ?? [0, 0, 0, 0, 0, 0]) }},
     ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4']
 )).render();
 
 new ApexCharts(document.querySelector('#chartGender'), pieOpts(
-    {!! json_encode($chartGenderLabels ?? ['Laki-laki', 'Perempuan']) !!},
-    {!! json_encode($chartGenderData ?? [0, 0]) !!},
+    {{ Illuminate\Support\Js::from($chartGenderLabels ?? ['Laki-laki', 'Perempuan']) }},
+    {{ Illuminate\Support\Js::from($chartGenderData ?? [0, 0]) }},
     ['#3b82f6', '#ec4899']
 )).render();
 
 new ApexCharts(document.querySelector('#chartKecamatan'), pieOpts(
-    {!! json_encode($chartKecamatanLabels ?? []) !!},
-    {!! json_encode($chartKecamatanData ?? []) !!},
+    {{ Illuminate\Support\Js::from($chartKecamatanLabels ?? []) }},
+    {{ Illuminate\Support\Js::from($chartKecamatanData ?? []) }},
     ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4']
 )).render();
 
 const pieKelurahanOpts = (labels, series) => ({
     chart: { type: 'donut', height: 350 },
-    labels: labels && labels.length > 0 ? labels : ['Data Kosong'],
-    series: series && series.length > 0 ? series.map(Number) : [1],
+    labels: labels ?? [],
+    series: series ? series.map(Number) : [],
+    noData: { text: 'Belum ada data' },
     theme: { palette: 'palette1' },
     legend: {
         position: 'right',
@@ -284,12 +291,76 @@ const pieKelurahanOpts = (labels, series) => ({
 });
 
 new ApexCharts(document.querySelector('#chartKelurahan'), pieKelurahanOpts(
-    {!! json_encode($chartKelurahanLabels ?? []) !!},
-    {!! json_encode($chartKelurahanData ?? []) !!}
+    {{ Illuminate\Support\Js::from($chartKelurahanLabels ?? []) }},
+    {{ Illuminate\Support\Js::from($chartKelurahanData ?? []) }}
 )).render();
+
+const populationKecamatan = document.querySelector('#population-kecamatan');
+const populationKelurahan = document.querySelector('#population-kelurahan');
+const kelurahanByKecamatan = {{ Illuminate\Support\Js::from($kelurahanByKecamatan) }};
+const selectedKelurahan = {{ Illuminate\Support\Js::from($filters['kelurahan'] ?? '') }};
+
+populationKecamatan.addEventListener('change', () => {
+    const availableKelurahan = populationKecamatan.value
+        ? kelurahanByKecamatan[populationKecamatan.value] ?? []
+        : Object.values(kelurahanByKecamatan).flat();
+    const uniqueKelurahan = [...new Set(availableKelurahan)];
+
+    populationKelurahan.replaceChildren(new Option('Semua Kelurahan', ''));
+    uniqueKelurahan.forEach(kelurahan => {
+        populationKelurahan.add(new Option(kelurahan, kelurahan));
+    });
+});
+
+if (selectedKelurahan) {
+    populationKelurahan.value = selectedKelurahan;
+}
 
 const map3 = L.map('map3').setView([-7.4797, 110.2177], 13);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(map3);
+
+const kecamatanLocations = {
+    'Magelang Utara': [-7.4625, 110.2200],
+    'Magelang Tengah': [-7.4785, 110.2175],
+    'Magelang Selatan': [-7.4945, 110.2160]
+};
+const kecamatanLabels = {{ Illuminate\Support\Js::from($chartKecamatanLabels ?? []) }};
+const kecamatanTotals = {{ Illuminate\Support\Js::from($chartKecamatanData ?? []) }};
+const kecamatanValues = kecamatanLabels
+    .map((label, index) => ({ label, total: Number(kecamatanTotals[index]) }))
+    .filter(({ label, total }) => kecamatanLocations[label] && Number.isFinite(total));
+const minPopulation = Math.min(...kecamatanValues.map(({ total }) => total));
+const maxPopulation = Math.max(...kecamatanValues.map(({ total }) => total));
+const lowColor = [254, 226, 226];
+const highColor = [185, 28, 28];
+
+function populationColor(total) {
+    const range = maxPopulation - minPopulation;
+    const intensity = range > 0 ? (total - minPopulation) / range : 0.5;
+    const color = lowColor.map((channel, index) => Math.round(channel + (highColor[index] - channel) * intensity));
+    return `rgb(${color.join(',')})`;
+}
+
+function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, character => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    })[character]);
+}
+
+kecamatanValues.forEach(({ label, total }) => {
+    L.circleMarker(kecamatanLocations[label], {
+        radius: 18,
+        color: '#ffffff',
+        weight: 2,
+        fillColor: populationColor(total),
+        fillOpacity: 0.85
+    })
+        .bindTooltip(`${escapeHtml(label)}<br>${total.toLocaleString('id-ID')} jiwa`)
+        .addTo(map3);
+});
 </script>
 @endsection
-
