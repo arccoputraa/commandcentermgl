@@ -20,6 +20,7 @@ Route::get('/login', function () {
 })->name('login');
 
 Route::get('/layanan', [\App\Http\Controllers\LayananPublikController::class, 'index'])->name('layanan');
+Route::get('/dashboard-eksekutif', [\App\Http\Controllers\DashboardController::class, 'eksekutif'])->name('dashboard.eksekutif');
 
 Route::post('/login', [\App\Http\Controllers\AuthController::class, 'authenticate'])->name('login.post');
 Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout');

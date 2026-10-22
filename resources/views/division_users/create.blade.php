@@ -3,7 +3,7 @@
 @section('title', 'Tambah User Divisi ' . $division->name)
 
 @section('content')
-    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <div class="page-header division-user-page-header">
         <div>
             <h1 class="page-title">Tambah User Baru - {{ $division->name }}</h1>
             <p class="page-subtitle">Buat akun pengguna baru khusus untuk divisi ini.</p>
@@ -13,11 +13,11 @@
         </a>
     </div>
 
-    <div class="admin-card" style="max-width: 800px;">
+    <div class="admin-card division-user-card">
         <form action="{{ route('division.users.store', $division_slug) }}" method="POST">
             @csrf
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+            <div class="division-user-fields">
                 <div class="form-group">
                     <label class="form-label" for="name">Nama Lengkap</label>
                     <input type="text" id="name" name="name" class="form-control" value="{{ old('name') }}" required>
@@ -31,7 +31,7 @@
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+            <div class="division-user-fields">
                 <div class="form-group">
                     <label class="form-label" for="password">Password</label>
                     <input type="password" id="password" name="password" class="form-control" required>
@@ -44,7 +44,7 @@
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+            <div class="division-user-fields">
                 <div class="form-group">
                     <label class="form-label" for="nip">NIP / Username</label>
                     <input type="text" id="nip" name="nip" class="form-control" value="{{ old('nip') }}">
@@ -61,7 +61,7 @@
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+            <div class="division-user-fields">
                 <div class="form-group">
                     <label class="form-label" for="status">Status Akun</label>
                     <select id="status" name="status" class="form-control" required>
@@ -74,7 +74,7 @@
 
             <div class="form-group">
                 <label class="form-label">Hak Akses (Permissions)</label>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; background: #f8fafc; padding: 16px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <div class="division-user-permissions">
                     @php
                         $availablePermissions = ['lihat_data', 'tambah_data', 'edit_data', 'hapus_data', 'kelola_publikasi'];
                         if (strtolower($division->name) === 'sig') {
@@ -83,7 +83,7 @@
                     @endphp
                     @foreach($availablePermissions as $perm)
                         <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #334155; cursor: pointer;">
-                            <input type="checkbox" name="permissions[]" value="{{ $perm }}" style="width: 16px; height: 16px;">
+                            <input type="checkbox" name="permissions[]" value="{{ $perm }}" style="width: 16px; height: 16px;" @checked(in_array($perm, old('permissions', []), true))>
                             {{ ucwords(str_replace('_', ' ', $perm)) }}
                         </label>
                     @endforeach

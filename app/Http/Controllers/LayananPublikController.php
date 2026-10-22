@@ -523,16 +523,40 @@ class LayananPublikController extends Controller
                 $queryAgama = \App\Models\KependudukanAgama::query();
                 $queryMutasi = \App\Models\KependudukanMutasi::query();
                 
-                // Fetch options for filters (using Cache to optimize)
-                $kecamatanOptions = \App\Models\KependudukanPenduduk::distinct()->pluck('kecamatan')->filter()->toArray();
-                $kelurahanOptions = \App\Models\KependudukanPenduduk::distinct()->pluck('kelurahan')->filter()->toArray();
-                $tahunOptions = \App\Models\KependudukanPenduduk::distinct()->pluck('tahun')->filter()->toArray();
-                $agamaOptions = \App\Models\KependudukanAgama::distinct()->pluck('agama')->filter()->toArray();
+                $wilayahOptions = \App\Models\KependudukanPenduduk::query()
+                    ->select('kecamatan', 'kelurahan')
+                    ->distinct()
+                    ->orderBy('kecamatan')
+                    ->orderBy('kelurahan')
+                    ->get()
+                    ->groupBy('kecamatan');
+                $kecamatanOptions = $wilayahOptions->keys()->all();
+                $kelurahanByKecamatan = $wilayahOptions
+                    ->map(fn ($kelurahan) => $kelurahan->pluck('kelurahan')->values()->all())
+                    ->all();
+                $kelurahanOptions = \App\Models\KependudukanPenduduk::distinct()
+                    ->orderBy('kelurahan')
+                    ->pluck('kelurahan')
+                    ->filter()
+                    ->values()
+                    ->all();
+                $tahunOptions = \App\Models\KependudukanPenduduk::distinct()
+                    ->orderByDesc('tahun')
+                    ->pluck('tahun')
+                    ->filter()
+                    ->values()
+                    ->all();
+                $agamaOptions = \App\Models\KependudukanPenduduk::distinct()
+                    ->orderBy('agama')
+                    ->pluck('agama')
+                    ->filter()
+                    ->values()
+                    ->all();
                 $statusOptions = ['Aktif', 'Nonaktif'];
                 
                 $filters = $request->only(['kecamatan', 'kelurahan', 'tahun', 'agama', 'status']);
-                
-                // Apply Filters
+                $filters['status'] = $filters['status'] ?? 'Aktif';
+
                 if (!empty($filters['kecamatan'])) {
                     $queryPenduduk->where('kecamatan', $filters['kecamatan']);
                     $queryAgama->where('kecamatan', $filters['kecamatan']);
@@ -557,26 +581,25 @@ class LayananPublikController extends Controller
                     $queryPenduduk->where('agama', $filters['agama']);
                     $queryAgama->where('agama', $filters['agama']);
                 }
-                
-                // OPTIMIZATION: Database Level Aggregations instead of ->get()->sum()
-                $qPendudukAktif = clone $queryPenduduk;
-                $qPendudukAktif->where('status', 'Aktif');
-                
+
                 $stats = [
-                    'totalPenduduk' => $qPendudukAktif->sum('penduduk'),
-                    'lakiLaki' => $qPendudukAktif->sum('laki_laki'),
-                    'perempuan' => $qPendudukAktif->sum('perempuan'),
-                    'totalKk' => $qPendudukAktif->sum('kk'),
-                    'wajibKtp' => $qPendudukAktif->sum('wajib_ktp'),
-                    'usiaProduktif' => $qPendudukAktif->sum('usia_produktif'),
-                    'kelahiranTahunIni' => (clone $queryMutasi)->where('status', 'Aktif')->sum('kelahiran'),
-                    'kematianTahunIni' => (clone $queryMutasi)->where('status', 'Aktif')->sum('kematian'),
+                    'totalPenduduk' => (clone $queryPenduduk)->sum('penduduk'),
+                    'lakiLaki' => (clone $queryPenduduk)->sum('laki_laki'),
+                    'perempuan' => (clone $queryPenduduk)->sum('perempuan'),
+                    'totalKk' => (clone $queryPenduduk)->sum('kk'),
+                    'wajibKtp' => (clone $queryPenduduk)->sum('wajib_ktp'),
+                    'usiaProduktif' => (clone $queryPenduduk)->sum('usia_produktif'),
+                    'kelahiranTahunIni' => (clone $queryMutasi)
+                        ->where('tahun', $filters['tahun'] ?? now()->year)
+                        ->sum('kelahiran'),
+                    'kematianTahunIni' => (clone $queryMutasi)
+                        ->where('tahun', $filters['tahun'] ?? now()->year)
+                        ->sum('kematian'),
                 ];
                 
-                // Charts Data via Database Grouping
                 $chartAgamaLabels = [];
                 $chartAgamaData = [];
-                $agamaGroups = (clone $queryAgama)->where('status', 'Aktif')
+                $agamaGroups = (clone $queryAgama)
                                 ->selectRaw('agama, SUM(penduduk) as total')
                                 ->groupBy('agama')->get();
                 foreach($agamaGroups as $g) {
@@ -588,14 +611,14 @@ class LayananPublikController extends Controller
                 
                 $chartKecamatanLabels = [];
                 $chartKecamatanData = [];
-                $kecGroups = (clone $qPendudukAktif)->selectRaw('kecamatan, SUM(penduduk) as total')->groupBy('kecamatan')->get();
+                $kecGroups = (clone $queryPenduduk)->selectRaw('kecamatan, SUM(penduduk) as total')->groupBy('kecamatan')->get();
                 foreach($kecGroups as $g) {
                     if($g->kecamatan) { $chartKecamatanLabels[] = $g->kecamatan; $chartKecamatanData[] = $g->total; }
                 }
                 
                 $chartKelurahanLabels = [];
                 $chartKelurahanData = [];
-                $kelGroups = (clone $qPendudukAktif)->selectRaw('kelurahan, SUM(penduduk) as total')->groupBy('kelurahan')->orderByDesc('total')->get();
+                $kelGroups = (clone $queryPenduduk)->selectRaw('kelurahan, SUM(penduduk) as total')->groupBy('kelurahan')->orderByDesc('total')->get();
                 foreach($kelGroups as $g) {
                     if($g->kelurahan) { $chartKelurahanLabels[] = $g->kelurahan; $chartKelurahanData[] = $g->total; }
                 }
@@ -606,8 +629,12 @@ class LayananPublikController extends Controller
                     ->limit(4)
                     ->get();
                 
-                // Data table (limit for performance, instead of fetching millions of rows)
-                $filteredPenduduk = $queryPenduduk->limit(100)->get();
+                $filteredPenduduk = (clone $queryPenduduk)
+                    ->orderByDesc('tahun')
+                    ->orderBy('kecamatan')
+                    ->orderBy('kelurahan')
+                    ->paginate(25)
+                    ->withQueryString();
                 $dataPenduduk = $filteredPenduduk;
                 
                 if (view()->exists('layanan.kependudukan')) {
@@ -615,7 +642,8 @@ class LayananPublikController extends Controller
                         'stats', 'filteredPenduduk', 'dataPenduduk', 'chartAgamaLabels', 'chartAgamaData',
                         'chartGenderLabels', 'chartGenderData', 'chartKecamatanLabels', 'chartKecamatanData',
                         'chartKelurahanLabels', 'chartKelurahanData', 'informasiTerbaru', 'kecamatanOptions',
-                        'kelurahanOptions', 'tahunOptions', 'agamaOptions', 'statusOptions', 'filters', 'dept'
+                        'kelurahanOptions', 'kelurahanByKecamatan', 'tahunOptions', 'agamaOptions', 'statusOptions',
+                        'filters', 'dept'
                     ))->render();
                 }
             }

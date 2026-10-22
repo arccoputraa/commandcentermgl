@@ -210,6 +210,34 @@ body {
     font-size: 14px;
 }
 
+.division-user-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.division-user-card {
+    width: 100%;
+    max-width: 800px;
+}
+
+.division-user-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.division-user-permissions {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    background: #f8fafc;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
 /* Cards */
 .admin-card {
     background: var(--admin-card-bg);
@@ -600,5 +628,27 @@ select.form-control {
     }
     .admin-topbar {
         padding: 0 16px;
+    }
+}
+
+@media (max-width: 640px) {
+    .division-user-page-header {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .division-user-fields {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0;
+    }
+
+    .division-user-permissions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        padding: 12px;
+    }
+
+    .division-user-permissions label {
+        min-width: 0;
+        overflow-wrap: anywhere;
     }
 }
