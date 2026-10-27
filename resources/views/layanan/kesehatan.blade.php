@@ -17,13 +17,13 @@
     </div>
 
     <!-- Stats Row 1 -->
-    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:16px;">
+    <div class="health-stats-grid" style="gap:16px; margin-bottom:16px;">
         <div style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:20px 24px; display:flex; align-items:center; gap:16px;">
             <div style="background:#eff6ff; width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
                 <i class="fa-regular fa-file-lines" style="color:#3b82f6; font-size:20px;"></i>
             </div>
             <div>
-                <div style="font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.5px;">Total Program</div>
+                <div style="font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.5px;">Publikasi Dirilis</div>
                 <div style="font-size:26px; font-weight:700; color:#0f172a;">{{ number_format($stats['total'] ?? 0) }}</div>
             </div>
         </div>
@@ -32,8 +32,8 @@
                 <i class="fa-solid fa-users-viewfinder" style="color:#10b981; font-size:20px;"></i>
             </div>
             <div>
-                <div style="font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.5px;">Pasien Terpantau</div>
-                <div style="font-size:26px; font-weight:700; color:#0f172a;">{{ number_format($stats['pasien'] ?? 0) }}</div>
+                <div style="font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.5px;">Jumlah Kasus Terdata</div>
+                <div style="font-size:20px; font-weight:700; color:#0f172a;">{{ $stats['pasien'] === null ? 'Belum tersedia' : number_format($stats['pasien']) }}</div>
             </div>
         </div>
         <div style="background:#fff; border:1px solid #fecaca; border-radius:12px; padding:20px 24px; display:flex; align-items:center; gap:16px;">
@@ -42,20 +42,20 @@
             </div>
             <div>
                 <div style="font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.5px;">Kasus Aktif / Rawat</div>
-                <div style="font-size:26px; font-weight:700; color:#0f172a;">{{ number_format($stats['kasus'] ?? 0) }}</div>
+                <div style="font-size:20px; font-weight:700; color:#0f172a;">{{ $stats['kasus'] === null ? 'Belum tersedia' : number_format($stats['kasus']) }}</div>
             </div>
         </div>
     </div>
 
     <!-- Stats Row 2 -->
-    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:24px;">
+    <div class="health-stats-grid" style="gap:16px; margin-bottom:24px;">
         <div style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:20px 24px; display:flex; align-items:center; gap:16px;">
             <div style="background:#faf5ff; width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
                 <i class="fa-solid fa-shield-virus" style="color:#a855f7; font-size:20px;"></i>
             </div>
             <div>
                 <div style="font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.5px;">Vaksinasi / Imunisasi</div>
-                <div style="font-size:26px; font-weight:700; color:#0f172a;">{{ number_format($stats['vaksinasi'] ?? 0) }}</div>
+                <div style="font-size:20px; font-weight:700; color:#0f172a;">Belum tersedia</div>
             </div>
         </div>
         <div style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:20px 24px; display:flex; align-items:center; gap:16px;">
@@ -64,7 +64,7 @@
             </div>
             <div>
                 <div style="font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.5px;">Pencegahan Stunting</div>
-                <div style="font-size:26px; font-weight:700; color:#0f172a;">{{ number_format($stats['pencegahan_stunting'] ?? 0) }}</div>
+                <div style="font-size:20px; font-weight:700; color:#0f172a;">Belum tersedia</div>
             </div>
         </div>
         <div style="background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:20px 24px; display:flex; align-items:center; gap:16px;">
@@ -73,7 +73,7 @@
             </div>
             <div>
                 <div style="font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.5px;">Distribusi Kartu Sehat</div>
-                <div style="font-size:26px; font-weight:700; color:#0f172a;">{{ number_format($stats['kartu_sehat'] ?? 0) }}</div>
+                <div style="font-size:20px; font-weight:700; color:#0f172a;">Belum tersedia</div>
             </div>
         </div>
     </div>
@@ -83,56 +83,61 @@
         <input type="hidden" name="dept" value="kesehatan">
         <select name="tahun" style="border:1px solid #e2e8f0; border-radius:8px; padding:9px 16px; font-size:13px; color:#64748b; background:#fff; min-width:130px; outline:none;">
             <option value="">Semua Tahun</option>
-            <option value="2026" {{ request('tahun') == '2026' ? 'selected' : '' }}>Tahun 2026</option>
-            <option value="2025" {{ request('tahun') == '2025' ? 'selected' : '' }}>Tahun 2025</option>
-            <option value="2024" {{ request('tahun') == '2024' ? 'selected' : '' }}>Tahun 2024</option>
-        </select>
-        <select name="faskes" style="border:1px solid #e2e8f0; border-radius:8px; padding:9px 16px; font-size:13px; color:#64748b; background:#fff; min-width:130px; outline:none;">
-            <option value="">Semua Faskes</option>
-            <option value="rsud_tidar" {{ request('faskes') == 'rsud_tidar' ? 'selected' : '' }}>RSUD Tidar</option>
-            <option value="puskesmas_utara" {{ request('faskes') == 'puskesmas_utara' ? 'selected' : '' }}>Puskesmas Magelang Utara</option>
-            <option value="puskesmas_tengah" {{ request('faskes') == 'puskesmas_tengah' ? 'selected' : '' }}>Puskesmas Magelang Tengah</option>
-            <option value="puskesmas_selatan" {{ request('faskes') == 'puskesmas_selatan' ? 'selected' : '' }}>Puskesmas Magelang Selatan</option>
+            @foreach($tahunOptions as $tahun)
+                <option value="{{ $tahun }}" @selected(request('tahun') == $tahun)>Tahun {{ $tahun }}</option>
+            @endforeach
         </select>
         <select name="wilayah" style="border:1px solid #e2e8f0; border-radius:8px; padding:9px 16px; font-size:13px; color:#64748b; background:#fff; min-width:130px; outline:none;">
             <option value="">Semua Wilayah</option>
-            <option value="Magelang Utara" {{ request('wilayah') == 'Magelang Utara' ? 'selected' : '' }}>Magelang Utara</option>
-            <option value="Magelang Tengah" {{ request('wilayah') == 'Magelang Tengah' ? 'selected' : '' }}>Magelang Tengah</option>
-            <option value="Magelang Selatan" {{ request('wilayah') == 'Magelang Selatan' ? 'selected' : '' }}>Magelang Selatan</option>
+            @foreach($wilayahOptions as $wilayah)
+                <option value="{{ $wilayah }}" @selected(request('wilayah') == $wilayah)>{{ $wilayah }}</option>
+            @endforeach
         </select>
         <input type="text" name="keyword" value="{{ request('keyword') }}" placeholder="Cari indikator / penyakit..." style="border:1px solid #e2e8f0; border-radius:8px; padding:9px 16px; font-size:13px; color:#64748b; background:#fff; flex:1; min-width:180px; outline:none;">
         <button type="submit" style="background:#009966; color:#fff; border:none; border-radius:8px; padding:9px 22px; font-weight:600; font-size:13px; cursor:pointer;">Terapkan Filter</button>
-        @if(request('tahun') || request('faskes') || request('wilayah') || request('keyword'))
+        @if(request('tahun') || request('wilayah') || request('keyword'))
             <a href="{{ route('layanan', ['dept' => 'kesehatan']) }}" style="font-size:13px; color:#ef4444; text-decoration:none; font-weight:600; padding:0 8px;">Reset</a>
         @endif
     </form>
 
     <!-- Main 2-column layout -->
-    <div style="display:grid; grid-template-columns:1fr 340px; gap:24px; align-items:start;">
+    <div class="health-content-grid" style="gap:24px; align-items:start;">
 
         <!-- Left Column -->
         <div style="display:flex; flex-direction:column; gap:24px;">
 
             <!-- Tren Pasien Per Bulan -->
             <div style="background:#fff; border:1px solid #f1f5f9; border-radius:12px; padding:24px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
-                <h3 style="font-size:15px; font-weight:700; color:#1e293b; margin:0 0 20px 0;">Tren Pasien Per Bulan</h3>
+                <h3 style="font-size:15px; font-weight:700; color:#1e293b; margin:0 0 20px 0;">Tren Kasus Terdata Per Bulan</h3>
                 <div style="position:relative; height:220px;">
-                    <canvas id="trenPasienChart"></canvas>
+                    @if($hasHealthCaseData)
+                        <canvas id="trenPasienChart"></canvas>
+                    @else
+                        <p style="color:#64748b; text-align:center; padding-top:80px;">Data kasus kesehatan belum tersedia.</p>
+                    @endif
                 </div>
             </div>
 
             <!-- 2 charts row -->
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+            <div class="health-charts-grid" style="gap:20px;">
                 <div style="background:#fff; border:1px solid #f1f5f9; border-radius:12px; padding:24px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
                     <h3 style="font-size:15px; font-weight:700; color:#1e293b; margin:0 0 16px 0;">Top 5 Penyakit</h3>
                     <div style="position:relative; height:220px;">
-                        <canvas id="topPenyakitChart"></canvas>
+                        @if($penyakit->isNotEmpty())
+                            <canvas id="topPenyakitChart"></canvas>
+                        @else
+                            <p style="color:#64748b; text-align:center; padding-top:80px;">Data penyakit belum tersedia.</p>
+                        @endif
                     </div>
                 </div>
                 <div style="background:#fff; border:1px solid #f1f5f9; border-radius:12px; padding:24px; box-shadow:0 1px 3px rgba(0,0,0,.05);">
                     <h3 style="font-size:15px; font-weight:700; color:#1e293b; margin:0 0 16px 0;">Kasus Aktif Berdasarkan Wilayah</h3>
                     <div style="position:relative; height:220px;">
-                        <canvas id="kasusWilayahChart"></canvas>
+                        @if($kasusWilayah->isNotEmpty())
+                            <canvas id="kasusWilayahChart"></canvas>
+                        @else
+                            <p style="color:#64748b; text-align:center; padding-top:80px;">Data wilayah belum tersedia.</p>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -165,7 +170,7 @@
                             <div style="min-width:0;">
                                 <div style="font-size:13px; font-weight:600; color:#1e293b; line-clamp:2; overflow:hidden;">{{ $info->judul }}</div>
                                 <div style="font-size:11px; color:#64748b; margin-top:2px;">
-                                    Dokumen PDF · {{ $info->file_pdf ? str_replace(['public/kesehatan/informasi/', 'kesehatan/informasi/'], '', $info->file_pdf) : '-' }}
+                                    Dokumen · {{ $info->file_pdf ? basename($info->file_pdf) : 'Belum tersedia' }}
                                 </div>
                             </div>
                         </div>
@@ -174,12 +179,14 @@
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
                         <span style="font-size:11px; color:#94a3b8;">Diperbarui {{ \Carbon\Carbon::parse($info->updated_at)->diffForHumans() }}</span>
                         @php
-                            $pdfPath = $info->file_pdf ? storage_path('app/public/kesehatan/informasi/' . basename($info->file_pdf)) : null;
-                            $pdfUrl = ($pdfPath && file_exists($pdfPath))
-                                ? Storage::url('kesehatan/informasi/' . $info->file_pdf)
-                                : asset('dokumen/sample-laporan-keuangan.pdf');
+                            $pdfPath = ltrim(str_replace('public/', '', (string) $info->file_pdf), '/');
+                            $pdfExists = $pdfPath !== '' && Storage::disk('public')->exists($pdfPath);
                         @endphp
-                        <a href="{{ $pdfUrl }}" target="_blank" style="font-size:12px; font-weight:600; color:#009966; text-decoration:none;">Lihat PDF</a>
+                        @if($pdfExists)
+                            <a href="{{ Storage::disk('public')->url($pdfPath) }}" target="_blank" rel="noopener noreferrer" style="font-size:12px; font-weight:600; color:#009966; text-decoration:none;">Lihat dokumen</a>
+                        @else
+                            <span style="font-size:12px; color:#64748b;">Dokumen belum tersedia.</span>
+                        @endif
                     </div>
                 </div>
                 @empty
@@ -205,8 +212,8 @@
         // 1. Tren Pasien Per Bulan
         const canvasTren = document.getElementById('trenPasienChart');
         if (canvasTren) {
-            const bulanLabels = {!! json_encode($bulanList ?? ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des']) !!};
-            const trenData    = {!! json_encode(array_values($trenBulanan ?? array_fill(0, 12, 0))) !!};
+            const bulanLabels = @json($bulanList);
+            const trenData    = @json(array_values($trenBulanan));
             new Chart(canvasTren.getContext('2d'), {
                 type: 'bar',
                 data: {
@@ -233,8 +240,8 @@
         // 2. Top 5 Penyakit (Horizontal Bar)
         const canvasTop = document.getElementById('topPenyakitChart');
         if (canvasTop) {
-            const penyakitLabels = {!! isset($penyakit) && $penyakit->count() ? json_encode($penyakit->pluck('nama')) : json_encode(['ISPA','Hipertensi','Diabetes','Diare','DBD']) !!};
-            const penyakitData   = {!! isset($penyakit) && $penyakit->count() ? json_encode($penyakit->pluck('jumlah')) : json_encode([1200,950,780,450,320]) !!};
+            const penyakitLabels = @json($penyakit->pluck('nama'));
+            const penyakitData   = @json($penyakit->pluck('jumlah'));
             new Chart(canvasTop.getContext('2d'), {
                 type: 'bar',
                 data: {
@@ -262,8 +269,8 @@
         // 3. Kasus Aktif per Wilayah (Donut)
         const canvasWilayah = document.getElementById('kasusWilayahChart');
         if (canvasWilayah) {
-            const wilayahLabels = {!! isset($kasusWilayah) && $kasusWilayah->count() ? json_encode($kasusWilayah->pluck('wilayah')) : json_encode(['Magelang Utara','Magelang Tengah','Magelang Selatan']) !!};
-            const wilayahData   = {!! isset($kasusWilayah) && $kasusWilayah->count() ? json_encode($kasusWilayah->pluck('total')) : json_encode([45,25,16]) !!};
+            const wilayahLabels = @json($kasusWilayah->pluck('wilayah'));
+            const wilayahData   = @json($kasusWilayah->pluck('total'));
             new Chart(canvasWilayah.getContext('2d'), {
                 type: 'doughnut',
                 data: {
@@ -292,4 +299,3 @@
 </script>
 
 @endsection
-

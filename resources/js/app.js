@@ -30,7 +30,7 @@ const ICONS = {
   file: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>`
 };
 
-// ---------- Department (Layanan Publik) dataset ----------
+// ---------- Public department directory ----------
 const DEPARTMENTS = {
   perizinan: {
     name: 'Perizinan',
@@ -38,12 +38,6 @@ const DEPARTMENTS = {
     short: 'Layanan izin usaha, IMB, dan perizinan terpadu satu pintu.',
     icon: 'perizinan',
     about: 'DPMPTSP mengelola seluruh proses perizinan dan non-perizinan Kota Magelang secara terpadu, mulai dari izin usaha mikro kecil hingga izin mendirikan bangunan, dengan target percepatan waktu layanan dan transparansi proses.',
-    stats: [ ['12', 'Jenis izin daring'], ['3-7', 'Hari proses rata-rata'], ['24/7', 'Pendaftaran online'], ['0', 'Biaya calo'] ],
-    datasets: [
-      { name: 'Rekap Izin Usaha 2026 (Semester 1)', meta: 'XLSX · Diperbarui 2 Agu 2026' },
-      { name: 'Data IMB Terbit per Kecamatan', meta: 'CSV · Diperbarui 30 Jul 2026' },
-      { name: 'Panduan Alur Perizinan OSS-RBA', meta: 'PDF · Diperbarui 15 Jun 2026' }
-    ]
   },
   kesehatan: {
     name: 'Kesehatan',
@@ -51,12 +45,6 @@ const DEPARTMENTS = {
     short: 'Data fasilitas kesehatan, imunisasi, dan indikator kesehatan warga.',
     icon: 'kesehatan',
     about: 'Dinas Kesehatan Kota Magelang menyediakan data terbuka seputar puskesmas, cakupan imunisasi, gizi balita, dan indikator kesehatan masyarakat untuk mendukung pengambilan kebijakan berbasis data.',
-    stats: [ ['12', 'Puskesmas aktif'], ['98%', 'Cakupan imunisasi dasar'], ['4', 'Rumah sakit rujukan'], ['150+', 'Posyandu aktif'] ],
-    datasets: [
-      { name: 'Sebaran Fasilitas Kesehatan', meta: 'XLSX · Diperbarui 28 Jul 2026' },
-      { name: 'Cakupan Imunisasi per Kelurahan', meta: 'CSV · Diperbarui 20 Jul 2026' },
-      { name: 'Laporan Status Gizi Balita', meta: 'PDF · Diperbarui 5 Jul 2026' }
-    ]
   },
   keuangan: {
     name: 'Keuangan',
@@ -64,12 +52,6 @@ const DEPARTMENTS = {
     short: 'Transparansi APBD, realisasi anggaran, dan aset daerah.',
     icon: 'keuangan',
     about: 'BPKAD mempublikasikan realisasi APBD, laporan keuangan, dan data aset daerah secara berkala sebagai bentuk akuntabilitas dan transparansi pengelolaan keuangan Kota Magelang.',
-    stats: [ ['4', 'Triwulan laporan/tahun'], ['100%', 'Opini WTP terakhir'], ['1.2rb+', 'Item aset tercatat'], ['Terbuka', 'Akses publik'] ],
-    datasets: [
-      { name: 'Realisasi APBD Triwulan II 2026', meta: 'XLSX · Diperbarui 1 Agu 2026' },
-      { name: 'Laporan Keuangan Daerah 2025 (Audited)', meta: 'PDF · Diperbarui 12 Mei 2026' },
-      { name: 'Daftar Aset Tetap Pemerintah Kota', meta: 'CSV · Diperbarui 10 Jul 2026' }
-    ]
   },
   kepegawaian: {
     name: 'Kepegawaian',
@@ -77,12 +59,6 @@ const DEPARTMENTS = {
     short: 'Data ASN, formasi jabatan, dan pengembangan kompetensi pegawai.',
     icon: 'kepegawaian',
     about: 'BKPSDM mengelola data kepegawaian ASN Kota Magelang, formasi jabatan, mutasi, serta program pengembangan kompetensi aparatur sipil negara.',
-    stats: [ ['3.400+', 'ASN aktif'], ['62', 'Formasi CASN 2026'], ['48', 'Pelatihan/tahun'], ['27', 'OPD terdata'] ],
-    datasets: [
-      { name: 'Formasi CASN & PPPK 2026', meta: 'PDF · Diperbarui 22 Jul 2026' },
-      { name: 'Rekap Jumlah ASN per OPD', meta: 'XLSX · Diperbarui 18 Jul 2026' },
-      { name: 'Jadwal Diklat & Pengembangan SDM', meta: 'PDF · Diperbarui 3 Jul 2026' }
-    ]
   },
   kependudukan: {
     name: 'Kependudukan',
@@ -90,12 +66,6 @@ const DEPARTMENTS = {
     short: 'Layanan KTP, KK, akta, dan statistik kependudukan.',
     icon: 'kependudukan',
     about: 'Disdukcapil menyediakan layanan administrasi kependudukan — KTP-el, Kartu Keluarga, akta kelahiran dan kematian — serta data agregat kependudukan Kota Magelang.',
-    stats: [ ['121rb+', 'Penduduk terdaftar'], ['99.1%', 'Perekaman KTP-el'], ['5', 'Kecamatan'], ['37', 'Kelurahan'] ],
-    datasets: [
-      { name: 'Jumlah Penduduk per Kelurahan 2026', meta: 'XLSX · Diperbarui 25 Jul 2026' },
-      { name: 'Statistik Kelahiran & Kematian', meta: 'CSV · Diperbarui 15 Jul 2026' },
-      { name: 'Panduan Layanan Adminduk Daring', meta: 'PDF · Diperbarui 1 Jun 2026' }
-    ]
   },
   pembangunan: {
     name: 'Pembangunan',
@@ -103,12 +73,6 @@ const DEPARTMENTS = {
     short: 'Data infrastruktur, tata ruang, dan proyek pembangunan kota.',
     icon: 'pembangunan',
     about: 'DPUPR mengawal pembangunan infrastruktur jalan, drainase, dan penataan ruang Kota Magelang, serta mempublikasikan progres proyek strategis daerah.',
-    stats: [ ['86 km', 'Panjang jalan kota'], ['14', 'Proyek berjalan'], ['92%', 'Jalan kondisi baik'], ['1', 'RTRW aktif'] ],
-    datasets: [
-      { name: 'Progres Proyek Infrastruktur 2026', meta: 'PDF · Diperbarui 4 Agu 2026' },
-      { name: 'Peta Rencana Tata Ruang Wilayah', meta: 'PDF · Diperbarui 10 Mar 2026' },
-      { name: 'Data Kondisi Jalan per Ruas', meta: 'XLSX · Diperbarui 29 Jul 2026' }
-    ]
   },
   perhubungan: {
     name: 'Perhubungan',
@@ -116,12 +80,6 @@ const DEPARTMENTS = {
     short: 'Data lalu lintas, angkutan umum, dan titik parkir kota.',
     icon: 'perhubungan',
     about: 'Dinas Perhubungan mengelola manajemen lalu lintas, trayek angkutan umum, dan fasilitas perparkiran, termasuk pemantauan titik rawan kemacetan di Kota Magelang.',
-    stats: [ ['9', 'Trayek angkutan kota'], ['24', 'Titik parkir resmi'], ['6', 'Simpang ber-ATCS'], ['3.2rb', 'Kendaraan/hari terpantau'] ],
-    datasets: [
-      { name: 'Peta Trayek Angkutan Umum', meta: 'PDF · Diperbarui 8 Jul 2026' },
-      { name: 'Data Titik Parkir & Kapasitas', meta: 'CSV · Diperbarui 2 Agu 2026' },
-      { name: 'Laporan Volume Lalu Lintas', meta: 'XLSX · Diperbarui 27 Jul 2026' }
-    ]
   },
   sig: {
     name: 'SIG',
@@ -129,12 +87,6 @@ const DEPARTMENTS = {
     short: 'Peta digital dan data spasial terpadu Kota Magelang.',
     icon: 'sig',
     about: 'Layanan SIG menyediakan basis data spasial terpadu — batas administrasi, tata guna lahan, dan lapisan infrastruktur — untuk mendukung perencanaan lintas dinas.',
-    stats: [ ['18', 'Lapisan data spasial'], ['1:5.000', 'Skala peta dasar'], ['37', 'Kelurahan terpetakan'], ['2026', 'Pemutakhiran terakhir'] ],
-    datasets: [
-      { name: 'Peta Batas Administrasi Kelurahan', meta: 'GeoJSON · Diperbarui 20 Jul 2026' },
-      { name: 'Peta Tata Guna Lahan', meta: 'PDF · Diperbarui 5 Jun 2026' },
-      { name: 'Basis Data Infrastruktur Kota', meta: 'SHP · Diperbarui 30 Jun 2026' }
-    ]
   }
 };
 
@@ -190,7 +142,7 @@ window.showCctvLive = function(camId) {
   if (!cam) return;
   
   const isOnline = cam.status === 'online';
-  
+
   // Hide grid and hero
   const gridContainer = document.querySelector('[data-cctv-grid]');
   if(gridContainer) gridContainer.style.display = 'none';
@@ -274,19 +226,15 @@ function renderDeptPage() {
   document.querySelector('[data-dept-office]').textContent = dept.office;
   document.querySelector('[data-dept-about]').textContent = dept.about;
 
-  document.querySelector('[data-dept-stats]').innerHTML = dept.stats.map(([num, lbl]) => `
-    <div class="stat-card"><div class="num">${num}</div><div class="lbl">${lbl}</div></div>
-  `).join('');
+  const stats = document.querySelector('[data-dept-stats]');
+  if (stats) {
+    stats.innerHTML = '<p class="empty-state">Statistik resmi belum terhubung untuk halaman ini.</p>';
+  }
 
-  document.querySelector('[data-dept-datasets]').innerHTML = dept.datasets.map(d => `
-    <li>
-      <div>
-        <div class="file-name">${d.name}</div>
-        <div class="file-meta">${d.meta}</div>
-      </div>
-      <a class="dl" href="#" onclick="alert('Demo: unduhan berkas akan dimulai di sini.'); return false;">${ICONS.file} Unduh</a>
-    </li>
-  `).join('');
+  const datasets = document.querySelector('[data-dept-datasets]');
+  if (datasets) {
+    datasets.innerHTML = '<li class="empty-state">Belum ada dataset publik yang terhubung untuk diunduh.</li>';
+  }
 
   // quick-switch chips to browse other departments
   const nav = document.querySelector('[data-dept-nav]');
@@ -326,4 +274,3 @@ document.addEventListener('DOMContentLoaded', () => {
   renderDeptPage();
   bindLoginForm();
 });
-

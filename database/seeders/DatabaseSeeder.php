@@ -13,6 +13,10 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        if (app()->environment('production')) {
+            throw new \RuntimeException('DatabaseSeeder contains development data and cannot run in production.');
+        }
+
         $faker = Faker::create('id_ID');
 
         // Setup Divisions

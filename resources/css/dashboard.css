@@ -85,15 +85,83 @@
     margin-top: 40px;
 }
 
+.finance-stats-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.health-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.health-content-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+}
+
+.health-charts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.sig-main-grid {
+    display: grid;
+    grid-template-columns: 300px minmax(0, 1fr);
+}
+
+.sig-bottom-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+}
+
+.sig-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
 @media (max-width: 1024px) {
     .dashboard-stats-grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .finance-stats-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+
+    .sig-main-grid,
+    .sig-bottom-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .sig-stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     }
 }
 
 @media (max-width: 640px) {
     .dashboard-stats-grid {
         grid-template-columns: 1fr;
+    }
+
+    .finance-stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .health-stats-grid,
+    .health-content-grid,
+    .health-charts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .sig-stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 420px) {
+    .finance-stats-grid,
+    .sig-stats-grid {
+        grid-template-columns: 1fr !important;
     }
 }
 

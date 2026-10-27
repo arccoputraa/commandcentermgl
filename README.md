@@ -47,10 +47,13 @@ New-Item -ItemType File database\database.sqlite -Force
 touch database/database.sqlite
 ```
 
-Jalankan migrasi tabel dan seeding data dummy awal:
+Untuk lingkungan lokal, jalankan migrasi dan seeding data contoh:
+
 ```bash
 php artisan migrate:fresh --seed
 ```
+
+`migrate:fresh` menghapus seluruh tabel dan data. Perintah ini hanya untuk database lokal yang boleh direset; jangan jalankan pada database staging atau produksi. Seeder proyek membuat data contoh dan akun pengujian dengan kredensial bawaan, sehingga hasil seeding tidak boleh digunakan atau diekspos pada deployment.
 
 ### 5. Build Aset Frontend (Vite)
 Compile aset CSS dan JS:
@@ -67,31 +70,13 @@ Akses aplikasi melalui browser di: [http://127.0.0.1:8000](http://127.0.0.1:8000
 
 ---
 
-## Akun Login Default (Super Admin & Admin Divisi)
+## Akun Pengujian Lokal
 
-Setelah menjalankan `php artisan migrate:fresh --seed`, seluruh akun berikut otomatis dibuat dengan **password default:** `password`
-
-### 1. Super Administrator (Dashboard Utama)
-- **Email:** `admin@magelangkota.go.id`
-- **Password:** `password`
-*(Akan diarahkan ke `/admin`)*
-
-### 2. Admin Per Divisi
-Setiap akun admin divisi otomatis langsung diarahkan ke dashboard internal divisinya masing-masing saat login:
-
-| Divisi | Email Login | Password | Dashboard Tujuan |
-|---|---|---|---|
-| **Perizinan** | `admin_perizinan@magelangkota.go.id` | `password` | `/perizinan` |
-| **Kesehatan** | `admin_kesehatan@magelangkota.go.id` | `password` | `/kesehatan` |
-| **Keuangan** | `admin_keuangan@magelangkota.go.id` | `password` | `/keuangan` |
-| **Kepegawaian** | `admin_kepegawaian@magelangkota.go.id` | `password` | `/kepegawaian` |
-| **Pembangunan** | `admin_pembangunan@magelangkota.go.id` | `password` | `/pembangunan` |
-| **Kependudukan** | `admin_kependudukan@magelangkota.go.id` | `password` | `/kependudukan` |
-| **Perhubungan** | `admin_perhubungan@magelangkota.go.id` | `password` | `/admin/perhubungan` |
-| **SIG** | `admin_sig@magelangkota.go.id` | `password` | `/admin/sig` |
+Seeder lokal membuat akun administrator dan admin divisi untuk pengujian. Kredensial bawaan hanya boleh digunakan pada mesin lokal; detailnya ada di seeder proyek. Akun tersebut bukan akun operasional dan seeder yang membuat akun bawaan ditolak pada `APP_ENV=production`.
 
 ---
 
 ## Catatan Penting
-- **PHP Version:** Memerlukan PHP versi **>= 8.2** (disarankan PHP 8.3).
+- **PHP Version:** Memerlukan PHP versi **>= 8.5**.
 - **HTTPS vs HTTP:** Konfigurasi `forceScheme('https')` pada `AppServiceProvider` hanya aktif saat `APP_ENV=production`. Untuk local development, aplikasi berjalan menggunakan protokol HTTP standar.
+- **Deployment:** Sebelum deployment, siapkan database produksi, `.env`, kredensial administrator baru, penyimpanan dokumen, serta proses backup dan migrasi yang disetujui pengelola sistem. Jangan memakai data contoh dari seeder sebagai data resmi.

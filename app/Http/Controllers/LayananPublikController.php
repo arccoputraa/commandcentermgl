@@ -126,7 +126,7 @@ class LayananPublikController extends Controller
                 $tahunOptions = \App\Models\FinanceBudget::distinct()->pluck('tahun')->filter()->toArray();
                 $sektorOptions = \App\Models\FinanceBudget::distinct()->pluck('sub_bidang')->filter()->toArray();
                 
-                $filters = $request->only(['tahun', 'sektor']);
+                $filters = $request->only(['tahun', 'sektor', 'search']);
                 if (!empty($filters['tahun'])) {
                     $qBudget->where('tahun', $filters['tahun']);
                     $qPad->where('tahun', $filters['tahun']);
@@ -136,11 +136,28 @@ class LayananPublikController extends Controller
                     $qPad->where('sub_bidang', $filters['sektor']);
                 }
                 
-                $totalAnggaran = (clone $qBudget)->sum('total_anggaran') ?: 22400000000;
-                $totalRealisasi = (clone $qBudget)->sum('total_realisasi') ?: 18900000000;
-                $persentaseRealisasi = $totalAnggaran > 0 ? round(($totalRealisasi / $totalAnggaran) * 100, 1) : 84.3;
-                $totalPad = (clone $qPad)->sum('realisasi_pad') ?: 2300000000;
-                $totalPajak = (clone $qTax)->sum('jumlah_pendapatan') ?: 1600000000;
+                if (!empty($filters['tahun'])) {
+                    $qTax->where('tahun', $filters['tahun']);
+                }
+                if (!empty($filters['search'])) {
+                    $search = $filters['search'];
+                    $qBudget->where(fn($query) => $query->where('nama_anggaran', 'like', '%' . $search . '%')
+                        ->orWhere('sub_bidang', 'like', '%' . $search . '%'));
+                    $qPad->where(fn($query) => $query->where('sumber_pendapatan', 'like', '%' . $search . '%')
+                        ->orWhere('sub_bidang', 'like', '%' . $search . '%'));
+                    $qTax->where('jenis_pajak', 'like', '%' . $search . '%');
+                }
+
+                $totalAnggaran = (clone $qBudget)->sum('total_anggaran');
+                $totalRealisasi = (clone $qBudget)->sum('total_realisasi');
+                $persentaseRealisasi = $totalAnggaran > 0 ? round(($totalRealisasi / $totalAnggaran) * 100, 1) : null;
+                $totalPad = (clone $qPad)->sum('realisasi_pad');
+                $totalPajak = (clone $qTax)->sum('jumlah_pendapatan');
+                $lastUpdatedAt = collect([
+                    (clone $qBudget)->max('updated_at'),
+                    (clone $qPad)->max('updated_at'),
+                    (clone $qTax)->max('updated_at'),
+                ])->filter()->max();
 
                 $stats = [
                     'total_anggaran' => $totalAnggaran,
@@ -148,32 +165,30 @@ class LayananPublikController extends Controller
                     'persentase_realisasi' => $persentaseRealisasi,
                     'pad' => $totalPad,
                     'pajak' => $totalPajak,
-                    'update_terakhir' => '03 Juli 2026'
+                    'update_terakhir' => $lastUpdatedAt ? Carbon::parse($lastUpdatedAt)->timezone('Asia/Jakarta')->format('d M Y') : null,
+                    'has_budget_data' => (clone $qBudget)->exists(),
+                    'has_pad_data' => (clone $qPad)->exists(),
+                    'has_tax_data' => (clone $qTax)->exists(),
                 ];
 
-                // 1. Grafik Anggaran vs Realisasi (Horizontal Bar)
-                $budgets = (clone $qBudget)->selectRaw('sub_bidang, SUM(total_anggaran) as total_anggaran, SUM(total_realisasi) as total_realisasi')
-                    ->groupBy('sub_bidang')
+                $budgets = (clone $qBudget)->selectRaw('tahun, sub_bidang, nama_anggaran, SUM(total_anggaran) as total_anggaran, SUM(total_realisasi) as total_realisasi')
+                    ->groupBy('tahun', 'sub_bidang', 'nama_anggaran')
                     ->get();
 
-                if ($budgets->isNotEmpty()) {
-                    $chartAnggaran = [
-                        'labels' => $budgets->pluck('sub_bidang')->map(fn($v) => str_replace('Bidang ', '', $v))->toArray(),
-                        'anggaran' => $budgets->map(fn($b) => round($b->total_anggaran / 1000000000, 1))->toArray(),
-                        'realisasi' => $budgets->map(fn($b) => round($b->total_realisasi / 1000000000, 1))->toArray(),
-                    ];
-                } else {
-                    $chartAnggaran = [
-                        'labels' => ['Sekretariat', 'Anggaran', 'Akuntansi', 'Aset', 'Pajak'],
-                        'anggaran' => [5.2, 5.0, 4.0, 2.8, 6.0],
-                        'realisasi' => [4.4, 4.2, 3.2, 2.1, 5.5]
-                    ];
-                }
+                $chartAnggaran = [
+                    'labels' => $budgets->pluck('sub_bidang')->unique()->values()->toArray(),
+                    'anggaran' => $budgets->groupBy('sub_bidang')->map(fn($items) => round($items->sum('total_anggaran') / 1000000000, 1))->values()->toArray(),
+                    'realisasi' => $budgets->groupBy('sub_bidang')->map(fn($items) => round($items->sum('total_realisasi') / 1000000000, 1))->values()->toArray(),
+                ];
 
-                // 2. Grafik Trend Realisasi Anggaran (Line Chart Bulanan)
+                $trend = (clone $qBudget)->selectRaw('tahun, periode, SUM(total_realisasi) as total_realisasi')
+                    ->groupBy('tahun', 'periode')
+                    ->orderBy('tahun')
+                    ->orderBy('periode')
+                    ->get();
                 $chartTrend = [
-                    'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
-                    'data' => [58, 66, 74, 92, 110, 120]
+                    'labels' => $trend->map(fn($item) => trim(($item->periode ?? '') . ' ' . $item->tahun))->toArray(),
+                    'data' => $trend->map(fn($item) => round($item->total_realisasi / 1000000000, 1))->toArray(),
                 ];
 
                 // 3. Grafik Pendapatan Asli Daerah (PAD per Sektor)
@@ -181,78 +196,37 @@ class LayananPublikController extends Controller
                     ->groupBy('sumber_pendapatan')
                     ->get();
 
-                if ($pads->isNotEmpty()) {
-                    $chartPAD = [
-                        'labels' => $pads->pluck('sumber_pendapatan')->map(function($s) {
-                            if (str_contains($s, 'Pajak')) return 'Pajak Daerah';
-                            if (str_contains($s, 'Retribusi')) return 'Retribusi Daerah';
-                            if (str_contains($s, 'Pengelolaan') || str_contains($s, 'Kekayaan') || str_contains($s, 'Hasil')) return 'Hasil Kekayaan';
-                            if (str_contains($s, 'Lain-lain') || str_contains($s, 'Sah')) return 'Lain-lain PAD';
-                            return $s;
-                        })->toArray(),
-                        'target' => $pads->map(fn($p) => round(($p->total_target ?: $p->total_realisasi * 1.1) / 1000000000, 1))->toArray(),
-                        'realisasi' => $pads->map(fn($p) => round($p->total_realisasi / 1000000000, 1))->toArray()
-                    ];
-                } else {
-                    $chartPAD = [
-                        'labels' => ['Pajak Daerah', 'Retribusi Daerah', 'Hasil Kekayaan', 'Lain-lain PAD'],
-                        'target' => [10.0, 1.2, 0.6, 0.5],
-                        'realisasi' => [9.5, 0.8, 0.4, 0.3]
-                    ];
-                }
+                $chartPAD = [
+                    'labels' => $pads->pluck('sumber_pendapatan')->toArray(),
+                    'target' => $pads->map(fn($pad) => round($pad->total_target / 1000000000, 1))->toArray(),
+                    'realisasi' => $pads->map(fn($pad) => round($pad->total_realisasi / 1000000000, 1))->toArray(),
+                ];
 
-                // 4. Grafik Pendapatan Pajak Daerah (Horizontal Clustered Bar: Target vs Realisasi)
+                // Tax records contain realized revenue only, not a verified target.
                 $taxes = (clone $qTax)->selectRaw('jenis_pajak, SUM(jumlah_pendapatan) as total_pendapatan')
                     ->groupBy('jenis_pajak')
                     ->get();
-
-                if ($taxes->isNotEmpty()) {
-                    $chartPajak = [
-                        'labels' => $taxes->pluck('jenis_pajak')->toArray(),
-                        'target' => $taxes->map(fn($t) => round(($t->total_pendapatan * 1.15) / 1000000, 0))->toArray(),
-                        'realisasi' => $taxes->map(fn($t) => round($t->total_pendapatan / 1000000, 0))->toArray()
-                    ];
-                } else {
-                    $chartPajak = [
-                        'labels' => ['PBB', 'PB1', 'Pajak Restoran', 'Pajak Hotel', 'BPHTB'],
-                        'target' => [900, 700, 550, 400, 800],
-                        'realisasi' => [850, 620, 480, 310, 740]
-                    ];
-                }
-
-                // Data Keuangan Terbaru (Tabel)
-                $tabelKeuangan = [
-                    [
-                        'tahun' => '2026',
-                        'kategori' => 'Anggaran Operasional',
-                        'unit' => 'Badan Keuangan Daerah',
-                        'anggaran' => 'Rp6,5 M',
-                        'realisasi' => 'Rp7,1 M',
-                        'persentase' => '83%',
-                        'keterangan' => 'Berjalan',
-                        'badge' => 'success'
-                    ],
-                    [
-                        'tahun' => '2026',
-                        'kategori' => 'PAD',
-                        'unit' => 'Pajak Daerah',
-                        'anggaran' => 'Rp2,1 M',
-                        'realisasi' => 'Rp2,3 M',
-                        'persentase' => '105%',
-                        'keterangan' => 'Melebihi Target',
-                        'badge' => 'success'
-                    ],
-                    [
-                        'tahun' => '2026',
-                        'kategori' => 'Pajak PBB',
-                        'unit' => 'Kecamatan Magelang Selatan',
-                        'anggaran' => 'Rp750 Juta',
-                        'realisasi' => 'Rp680 Juta',
-                        'persentase' => '91%',
-                        'keterangan' => 'Berjalan',
-                        'badge' => 'success'
-                    ],
+                $chartPajak = [
+                    'labels' => $taxes->pluck('jenis_pajak')->toArray(),
+                    'realisasi' => $taxes->map(fn($tax) => round($tax->total_pendapatan / 1000000, 0))->toArray(),
                 ];
+
+                $tabelKeuangan = $budgets->map(function ($budget) {
+                    $percentage = (float) $budget->total_anggaran > 0
+                        ? round(((float) $budget->total_realisasi / (float) $budget->total_anggaran) * 100, 1)
+                        : null;
+
+                    return [
+                        'tahun' => $budget->tahun,
+                        'kategori' => $budget->nama_anggaran,
+                        'unit' => $budget->sub_bidang,
+                        'anggaran' => 'Rp' . number_format((float) $budget->total_anggaran, 0, ',', '.'),
+                        'realisasi' => 'Rp' . number_format((float) $budget->total_realisasi, 0, ',', '.'),
+                        'persentase' => $percentage === null ? 'Belum tersedia' : number_format($percentage, 1, ',', '.') . '%',
+                        'keterangan' => $budget->status ?? 'Tercatat',
+                        'badge' => 'success',
+                    ];
+                });
 
                 // Informasi Dokumen Publikasi
                 $informasiTerbaru = \App\Models\FinanceInformation::where('status_publikasi', 'Rilis')->orderBy('created_at', 'desc')->limit(5)->get();
@@ -306,7 +280,9 @@ class LayananPublikController extends Controller
             if ($dept === 'kesehatan') {
                 $queryPenyakit = \App\Models\KesehatanPenyakit::query();
 
-                // Handle filter jika disubmit
+                $tahunOptions = \App\Models\KesehatanPenyakit::query()->distinct()->orderByDesc('tahun')->pluck('tahun');
+                $wilayahOptions = \App\Models\KesehatanPenyakit::query()->distinct()->orderBy('wilayah')->pluck('wilayah');
+
                 if ($request->filled('tahun')) {
                     $queryPenyakit->where('tahun', $request->input('tahun'));
                 }
@@ -324,14 +300,15 @@ class LayananPublikController extends Controller
 
                 $informasi = \App\Models\KesehatanInformasi::orderBy('created_at', 'desc')->limit(5)->get();
                 $penyakit = (clone $queryPenyakit)->orderBy('jumlah', 'desc')->limit(5)->get();
+                $hasHealthCaseData = (clone $queryPenyakit)->exists();
 
                 $stats = [
-                    'total'               => \App\Models\KesehatanInformasi::count(),
-                    'pasien'              => (clone $queryPenyakit)->sum('jumlah'),
-                    'kasus'               => (clone $queryPenyakit)->where('status', 'Aktif')->sum('jumlah'),
-                    'vaksinasi'           => 120400,
-                    'pencegahan_stunting' => 1240,
-                    'kartu_sehat'         => 32150,
+                    'total' => \App\Models\KesehatanInformasi::count(),
+                    'pasien' => $hasHealthCaseData ? (clone $queryPenyakit)->sum('jumlah') : null,
+                    'kasus' => $hasHealthCaseData ? (clone $queryPenyakit)->where('status', 'Aktif')->sum('jumlah') : null,
+                    'vaksinasi' => null,
+                    'pencegahan_stunting' => null,
+                    'kartu_sehat' => null,
                 ];
 
                 // Tren Pasien Per Bulan (dari data real penyakit di database)
@@ -361,11 +338,11 @@ class LayananPublikController extends Controller
                 }
 
                 // Kasus per wilayah (donut chart) dari data real di database
-                $kasusWilayah = (clone $queryPenyakit)->selectRaw('wilayah, SUM(jumlah) as total')
+                $kasusWilayah = (clone $queryPenyakit)->where('status', 'Aktif')->selectRaw('wilayah, SUM(jumlah) as total')
                     ->groupBy('wilayah')->orderByDesc('total')->limit(4)->get();
 
                 if (view()->exists('layanan.kesehatan')) {
-                    return view('layanan.kesehatan', compact('informasi', 'penyakit', 'stats', 'dept', 'bulanList', 'trenBulanan', 'kasusWilayah'))->render();
+                    return view('layanan.kesehatan', compact('informasi', 'penyakit', 'stats', 'dept', 'bulanList', 'trenBulanan', 'kasusWilayah', 'tahunOptions', 'wilayahOptions', 'hasHealthCaseData'))->render();
                 }
             }
 
@@ -425,97 +402,56 @@ class LayananPublikController extends Controller
             }
 
             if ($dept === 'sig') {
-                $qSpasial = \App\Models\DataSpasial::query();
-                $qLayer = \App\Models\LayerSig::query();
+                $qSpasial = \App\Models\DataSpasial::whereHas('layer', fn($query) => $query->where('status_aktif', true));
                 
-                $kecamatanOptions = \App\Models\DataSpasial::distinct()->pluck('wilayah')->filter()->toArray();
-                $kategoriOptions = \App\Models\DataSpasial::distinct()->pluck('kategori')->filter()->toArray();
-                $tahunOptions = $this->distinctDateParts(\App\Models\DataSpasial::class, 'created_at', 'year');
-                $statusOptions = ['Aktif', 'Nonaktif'];
+                $kecamatanOptions = (clone $qSpasial)->distinct()->pluck('wilayah')->filter()->toArray();
+                $kategoriOptions = (clone $qSpasial)->distinct()->pluck('kategori')->filter()->toArray();
+                $tahunOptions = (clone $qSpasial)->whereNotNull('created_at')->pluck('created_at')
+                    ->map(fn($date) => (int) Carbon::parse($date)->format('Y'))
+                    ->unique()
+                    ->sortDesc()
+                    ->values()
+                    ->all();
                 
-                $filters = $request->only(['kecamatan', 'kategori', 'tahun', 'status', 'search']);
+                $filters = $request->only(['kecamatan', 'kategori', 'tahun', 'search']);
                 if (!empty($filters['kecamatan'])) $qSpasial->where('wilayah', $filters['kecamatan']);
                 if (!empty($filters['kategori'])) $qSpasial->where('kategori', $filters['kategori']);
                 if (!empty($filters['tahun'])) $qSpasial->whereYear('created_at', $filters['tahun']);
                 if (!empty($filters['search'])) $qSpasial->where('nama_data', 'like', '%' . $filters['search'] . '%');
-                if (!empty($filters['status'])) {
-                    $isActive = $filters['status'] == 'Aktif' ? 1 : 0;
-                    $qLayer->where('status_aktif', $isActive);
-                }
 
-                $layersRaw = $qLayer->where('status_aktif', true)->get();
-                $defaultLayers = [
-                    'Mata Air',
-                    'Kemiskinan',
-                    'Bahaya Banjir',
-                    'Distribusi Pangan',
-                    'Bahaya Genangan',
-                    'Distribusi Sanitasi',
-                    'Kerentanan Pangan',
-                    'Volume to Capacity Ratio',
-                    'Batas Wilayah Administrasi'
-                ];
-                $layerPublik = $layersRaw->isNotEmpty() ? $layersRaw->pluck('nama_layer')->toArray() : $defaultLayers;
-                // Merge if any default layer is missing to guarantee full 9 items shown in design
-                foreach ($defaultLayers as $dl) {
-                    if (!in_array($dl, $layerPublik)) {
-                        $layerPublik[] = $dl;
-                    }
-                }
-
-                $statsSIG = [
-                    ['label' => 'RUMAH SANITASI', 'value' => 15],
-                    ['label' => 'SUMUR RESAPAN', 'value' => 15],
-                    ['label' => 'WIFI', 'value' => 15],
-                    ['label' => 'RUANG TERBUKA HIJAU', 'value' => 15],
-                    ['label' => 'UMKM', 'value' => 15],
-                    ['label' => 'CCTV', 'value' => 15],
-                ];
+                $layerPublik = \App\Models\LayerSig::where('status_aktif', true)->orderBy('nama_layer')->get(['id', 'nama_layer']);
+                $statsSIG = (clone $qSpasial)->selectRaw('kategori, SUM(nilai_jumlah) as total')
+                    ->groupBy('kategori')
+                    ->orderBy('kategori')
+                    ->get()
+                    ->map(fn($stat) => ['label' => $stat->kategori, 'value' => $stat->total]);
+                $mapData = (clone $qSpasial)->whereNotNull('latitude')->whereNotNull('longitude')
+                    ->get(['layer_id', 'nama_data', 'latitude', 'longitude']);
 
                 $tabelSIGRaw = (clone $qSpasial)->with('layer')->orderBy('created_at', 'desc')->limit(10)->get();
-                if ($tabelSIGRaw->isNotEmpty()) {
-                    $tabelSIG = $tabelSIGRaw->map(function($row) {
-                        return [
-                            'nama_data' => $row->nama_data,
-                            'kategori' => $row->kategori,
-                            'wilayah' => $row->wilayah,
-                            'nilai_jumlah' => $row->nilai_jumlah . ' Titik',
-                            'update_terakhir' => Carbon::parse($row->updated_at)->format('d M Y')
-                        ];
-                    });
-                } else {
-                    $tabelSIG = collect([
-                        ['nama_data' => 'Sanitasi Tidar Selatan 01', 'kategori' => 'Rumah Sanitasi', 'wilayah' => 'Tidar Selatan', 'nilai_jumlah' => '1 Titik', 'update_terakhir' => '03 Jul 2026'],
-                        ['nama_data' => 'Sumur Resapan Panjang 02', 'kategori' => 'Sumur Resapan', 'wilayah' => 'Panjang', 'nilai_jumlah' => '1 Titik', 'update_terakhir' => '03 Jul 2026'],
-                        ['nama_data' => 'WIFI Alun-Alun Kota', 'kategori' => 'WIFI', 'wilayah' => 'Kemirirejo', 'nilai_jumlah' => '1 Titik', 'update_terakhir' => '02 Jul 2026'],
-                        ['nama_data' => 'Taman Kedungsari Hijau', 'kategori' => 'Ruang Terbuka Hijau', 'wilayah' => 'Kedungsari', 'nilai_jumlah' => '1 Titik', 'update_terakhir' => '02 Jul 2026'],
-                        ['nama_data' => 'Sentra UMKM Rejowinangun', 'kategori' => 'UMKM', 'wilayah' => 'Rejowinangun', 'nilai_jumlah' => '1 Titik', 'update_terakhir' => '01 Jul 2026'],
-                        ['nama_data' => 'CCTV Simpang Trio', 'kategori' => 'CCTV', 'wilayah' => 'Panjang', 'nilai_jumlah' => '1 Titik', 'update_terakhir' => '01 Jul 2026'],
-                    ]);
-                }
+                $tabelSIG = $tabelSIGRaw->map(function($row) {
+                    return [
+                        'nama_data' => $row->nama_data,
+                        'kategori' => $row->kategori,
+                        'wilayah' => $row->wilayah,
+                        'nilai_jumlah' => $row->nilai_jumlah . ' Titik',
+                        'update_terakhir' => Carbon::parse($row->updated_at)->format('d M Y')
+                    ];
+                });
 
-                $informasiRaw = \App\Models\DokumenSig::orderBy('tanggal_rilis', 'desc')->limit(4)->get();
-                if ($informasiRaw->isNotEmpty()) {
-                    $infoTerbaruSIG = $informasiRaw->map(function($info) {
-                        return [
-                            'judul' => $info->judul,
-                            'kategori' => $info->status_tag,
-                            'tanggal' => Carbon::parse($info->tanggal_rilis)->format('d M Y'),
-                            'status' => str_contains(strtolower($info->status_tag), 'draft') ? 'Draft' : 'Rilis',
-                            'badge' => str_contains(strtolower($info->status_tag), 'draft') ? 'warning' : 'success',
-                            'file_path' => $info->file_path
-                        ];
-                    });
-                } else {
-                    $infoTerbaruSIG = collect([
-                        ['judul' => 'Laporan SIG Kota Semester I 2026', 'kategori' => 'Laporan SIG', 'tanggal' => '03 Jul 2026', 'status' => 'Rilis', 'badge' => 'success', 'file_path' => 'sample-document.pdf'],
-                        ['judul' => 'Peta Tematik Sanitasi Kota', 'kategori' => 'Peta Tematik', 'tanggal' => '02 Jul 2026', 'status' => 'Rilis', 'badge' => 'success', 'file_path' => 'sample-document.pdf'],
-                        ['judul' => 'Analisis Kerentanan Pangan 2026', 'kategori' => 'Analisis Spasial', 'tanggal' => '01 Jul 2026', 'status' => 'Draft', 'badge' => 'warning', 'file_path' => 'sample-document.pdf'],
-                        ['judul' => 'Publikasi Titik CCTV Kota', 'kategori' => 'Publikasi Fasilitas Kota', 'tanggal' => '30 Jun 2026', 'status' => 'Rilis', 'badge' => 'success', 'file_path' => 'sample-document.pdf'],
-                    ]);
-                }
+                $informasiRaw = \App\Models\DokumenSig::where('status_tag', 'Rilis')->orderBy('tanggal_rilis', 'desc')->limit(4)->get();
+                $infoTerbaruSIG = $informasiRaw->map(function($info) {
+                    return [
+                        'judul' => $info->judul,
+                        'kategori' => $info->status_tag,
+                        'tanggal' => Carbon::parse($info->tanggal_rilis)->format('d M Y'),
+                        'status' => str_contains(strtolower($info->status_tag), 'draft') ? 'Draft' : 'Rilis',
+                        'badge' => str_contains(strtolower($info->status_tag), 'draft') ? 'warning' : 'success',
+                        'file_path' => $info->file_path
+                    ];
+                });
                 
-                if (view()->exists('layanan.sig')) return view('layanan.sig', compact('statsSIG', 'layerPublik', 'tabelSIG', 'infoTerbaruSIG', 'dept', 'kecamatanOptions', 'kategoriOptions', 'tahunOptions', 'statusOptions', 'filters'))->render();
+                if (view()->exists('layanan.sig')) return view('layanan.sig', compact('statsSIG', 'layerPublik', 'mapData', 'tabelSIG', 'infoTerbaruSIG', 'dept', 'kecamatanOptions', 'kategoriOptions', 'tahunOptions', 'filters'))->render();
             }
 
             if ($dept === 'kependudukan') {

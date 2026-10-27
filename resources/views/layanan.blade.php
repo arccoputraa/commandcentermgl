@@ -70,8 +70,8 @@
       <h1 data-dept-name>...</h1>
       <p data-dept-office>...</p>
       <div class="dept-meta">
-        <span class="chip">Data terbuka</span>
-        <span class="chip">Diperbarui berkala</span>
+        <span class="chip">Informasi layanan</span>
+        <span class="chip">Data publik belum terhubung</span>
       </div>
     </div>
   </section>
@@ -84,7 +84,7 @@
       <div class="stat-grid" data-dept-stats></div>
 
       <h2>Dataset &amp; Dokumen Publik</h2>
-      <p>Unduh dataset terbaru yang dipublikasikan oleh perangkat daerah terkait.</p>
+      <p>Dataset dan dokumen baru ditampilkan setelah sumber publik resminya terhubung.</p>
       <ul class="dataset-list" data-dept-datasets></ul>
 
       <h2>Layanan Lain</h2>
@@ -123,4 +123,3 @@
 </footer>
 </body>
 </html>
-

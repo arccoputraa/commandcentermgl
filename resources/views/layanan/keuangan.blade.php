@@ -14,57 +14,57 @@
     </div>
 
     <!-- 6 Stats Cards -->
-    <div class="dashboard-stats-grid" style="grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px; margin-top: 32px;">
+    <div class="dashboard-stats-grid finance-stats-grid" style="gap: 16px; margin-top: 32px;">
         <div class="stat-card" style="padding: 18px 16px; border-top: 3px solid #E2E8F0;">
             <h3 class="stat-card-title" style="font-size: 11px; font-weight: 700; color: #64748B; margin-bottom: 6px;">TOTAL ANGGARAN</h3>
             <p class="stat-card-value" style="font-size: 20px; font-weight: 800; color: #0F172A; margin: 0;">
-                @if(isset($stats['total_anggaran']))
+                @if($stats['has_budget_data'])
                     Rp{{ number_format($stats['total_anggaran'] / 1000000000, 1, ',', '.') }} M
                 @else
-                    Rp22,4 M
+                    Belum tersedia
                 @endif
             </p>
         </div>
         <div class="stat-card" style="padding: 18px 16px; border-top: 3px solid #E2E8F0;">
             <h3 class="stat-card-title" style="font-size: 11px; font-weight: 700; color: #64748B; margin-bottom: 6px;">TOTAL REALISASI</h3>
             <p class="stat-card-value" style="font-size: 20px; font-weight: 800; color: #0F172A; margin: 0;">
-                @if(isset($stats['total_realisasi']))
+                @if($stats['has_budget_data'])
                     Rp{{ number_format($stats['total_realisasi'] / 1000000000, 1, ',', '.') }} M
                 @else
-                    Rp18,9 M
+                    Belum tersedia
                 @endif
             </p>
         </div>
         <div class="stat-card" style="padding: 18px 16px; border-top: 3px solid #E2E8F0;">
             <h3 class="stat-card-title" style="font-size: 11px; font-weight: 700; color: #64748B; margin-bottom: 6px;">PERSENTASE REALISASI</h3>
             <p class="stat-card-value" style="font-size: 20px; font-weight: 800; color: #0F172A; margin: 0;">
-                {{ number_format($stats['persentase_realisasi'] ?? 84.3, 1, ',', '.') }}%
+                {{ $stats['persentase_realisasi'] === null ? 'Belum tersedia' : number_format($stats['persentase_realisasi'], 1, ',', '.') . '%' }}
             </p>
         </div>
         <div class="stat-card" style="padding: 18px 16px; border-top: 3px solid #E2E8F0;">
             <h3 class="stat-card-title" style="font-size: 11px; font-weight: 700; color: #64748B; margin-bottom: 6px;">PENDAPATAN ASLI DAERAH</h3>
             <p class="stat-card-value" style="font-size: 20px; font-weight: 800; color: #0F172A; margin: 0;">
-                @if(isset($stats['pad']))
+                @if($stats['has_pad_data'])
                     Rp{{ number_format($stats['pad'] / 1000000000, 1, ',', '.') }} M
                 @else
-                    Rp2,3 M
+                    Belum tersedia
                 @endif
             </p>
         </div>
         <div class="stat-card" style="padding: 18px 16px; border-top: 3px solid #E2E8F0;">
             <h3 class="stat-card-title" style="font-size: 11px; font-weight: 700; color: #64748B; margin-bottom: 6px;">PENDAPATAN PAJAK DAERAH</h3>
             <p class="stat-card-value" style="font-size: 20px; font-weight: 800; color: #0F172A; margin: 0;">
-                @if(isset($stats['pajak']))
+                @if($stats['has_tax_data'])
                     Rp{{ number_format($stats['pajak'] / 1000000000, 1, ',', '.') }} M
                 @else
-                    Rp1,6 M
+                    Belum tersedia
                 @endif
             </p>
         </div>
         <div class="stat-card" style="padding: 18px 16px; border-top: 3px solid #E2E8F0;">
             <h3 class="stat-card-title" style="font-size: 11px; font-weight: 700; color: #64748B; margin-bottom: 6px;">UPDATE TERAKHIR</h3>
             <p class="stat-card-value" style="font-size: 18px; font-weight: 800; color: #0F172A; margin: 0; line-height: 24px;">
-                {{ $stats['update_terakhir'] ?? '03 Juli 2026' }}
+                {{ $stats['update_terakhir'] ?? 'Belum tersedia' }}
             </p>
         </div>
     </div>
@@ -108,9 +108,13 @@
                     </span>
                 </div>
             </div>
-            <div class="chart-container" style="position: relative; height: 260px; width: 100%;">
-                <canvas id="chartAnggaranVsRealisasi"></canvas>
-            </div>
+            @if(count($chartAnggaran['labels']) > 0)
+                <div class="chart-container" style="position: relative; height: 260px; width: 100%;">
+                    <canvas id="chartAnggaranVsRealisasi"></canvas>
+                </div>
+            @else
+                <p style="color:#64748b; text-align:center; padding:80px 0;">Data anggaran belum tersedia.</p>
+            @endif
         </div>
 
         <!-- 2. Grafik Trend Realisasi Anggaran (Line Chart) -->
@@ -123,9 +127,13 @@
                     </span>
                 </div>
             </div>
-            <div class="chart-container" style="position: relative; height: 260px; width: 100%;">
-                <canvas id="chartTrendRealisasi"></canvas>
-            </div>
+            @if(count($chartTrend['labels']) > 0)
+                <div class="chart-container" style="position: relative; height: 260px; width: 100%;">
+                    <canvas id="chartTrendRealisasi"></canvas>
+                </div>
+            @else
+                <p style="color:#64748b; text-align:center; padding:80px 0;">Tren realisasi belum tersedia.</p>
+            @endif
         </div>
 
         <!-- 3. Grafik Pendapatan Asli Daerah (Vertical Bar Chart) -->
@@ -141,9 +149,13 @@
                     </span>
                 </div>
             </div>
-            <div class="chart-container" style="position: relative; height: 260px; width: 100%;">
-                <canvas id="chartPAD"></canvas>
-            </div>
+            @if(count($chartPAD['labels']) > 0)
+                <div class="chart-container" style="position: relative; height: 260px; width: 100%;">
+                    <canvas id="chartPAD"></canvas>
+                </div>
+            @else
+                <p style="color:#64748b; text-align:center; padding:80px 0;">Data PAD belum tersedia.</p>
+            @endif
         </div>
 
         <!-- 4. Grafik Pendapatan Pajak Daerah (Clustered Horizontal Bar Chart) -->
@@ -152,16 +164,17 @@
                 <h3 class="chart-header" style="margin: 0; font-size: 13px; font-weight: 700; color: #0F172A; text-transform: uppercase; letter-spacing: 0.5px;">GRAFIK PENDAPATAN PAJAK DAERAH</h3>
                 <div style="display: flex; align-items: center; gap: 12px; font-size: 11px; color: #64748B;">
                     <span style="display: inline-flex; align-items: center; gap: 4px;">
-                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #FDBA74;"></span> Target
-                    </span>
-                    <span style="display: inline-flex; align-items: center; gap: 4px;">
                         <span style="width: 8px; height: 8px; border-radius: 50%; background: #F59E0B;"></span> Realisasi
                     </span>
                 </div>
             </div>
-            <div class="chart-container" style="position: relative; height: 260px; width: 100%;">
-                <canvas id="chartPajakDaerah"></canvas>
-            </div>
+            @if(count($chartPajak['labels']) > 0)
+                <div class="chart-container" style="position: relative; height: 260px; width: 100%;">
+                    <canvas id="chartPajakDaerah"></canvas>
+                </div>
+            @else
+                <p style="color:#64748b; text-align:center; padding:80px 0;">Data realisasi pajak belum tersedia.</p>
+            @endif
         </div>
 
     </div>
@@ -217,67 +230,38 @@
             <div class="summary-widget" style="background: #fff; border: 1px solid var(--slate-100); border-radius: 18px; padding: 24px; box-shadow: var(--shadow-card);">
                 <h3 class="summary-widget-title" style="font-size: 16px; font-weight: 700; color: #0F172A; margin: 0 0 16px;">Informasi Terbaru</h3>
                 <div class="summary-list" style="display: flex; flex-direction: column; gap: 14px;">
-                    @if(isset($informasiTerbaru) && count($informasiTerbaru) > 0)
-                        @foreach($informasiTerbaru as $info)
+                    @forelse($informasiTerbaru as $info)
+                        @php
+                            $documentPath = ltrim(str_replace('public/', '', (string) $info->dokumen), '/');
+                            $publicDocument = $documentPath !== '' ? realpath(public_path($documentPath)) : false;
+                            $publicRoot = realpath(public_path());
+                            $isPublicDocument = $publicDocument && $publicRoot
+                                && str_starts_with($publicDocument, $publicRoot . DIRECTORY_SEPARATOR)
+                                && is_file($publicDocument);
+                            $isStoredDocument = $documentPath !== '' && Storage::disk('public')->exists($documentPath);
+                        @endphp
                         <div class="pub-info-item" style="margin-bottom: 0; padding: 16px; border-radius: 14px; background: #F8FAFC; border: 1px solid #F1F5F9; display: flex; flex-direction: column; gap: 8px;">
                             <div>
                                 <p class="pub-info-title" style="font-size: 14px; font-weight: 700; color: #0F172A; margin: 0 0 4px;">{{ $info->judul }}</p>
-                                <p class="pub-info-meta" style="font-size: 11px; color: #94A3B8; margin: 0;">{{ basename($info->dokumen ?? 'dokumen.pdf') }}</p>
+                                <p class="pub-info-meta" style="font-size: 11px; color: #94A3B8; margin: 0;">{{ $info->dokumen ? basename($info->dokumen) : 'Dokumen belum tersedia' }}</p>
                             </div>
                             <div style="display: flex; justify-content: flex-end; margin-top: 4px;">
-                                <a href="{{ $info->dokumen ? (str_starts_with($info->dokumen, 'http') || str_starts_with($info->dokumen, '/') ? $info->dokumen : Storage::url($info->dokumen)) : '#' }}" target="_blank" style="padding: 6px 16px; font-size: 12px; font-weight: 600; color: #155DFC; border: 1px solid #BFDBFE; border-radius: 8px; background: #fff; text-decoration: none; display: inline-flex; align-items: center;">
-                                    Lihat {{ $info->format ?? 'PDF' }}
-                                </a>
+                                @if($isStoredDocument)
+                                    <a href="{{ Storage::disk('public')->url($documentPath) }}" target="_blank" rel="noopener noreferrer" style="padding: 6px 16px; font-size: 12px; font-weight: 600; color: #155DFC; border: 1px solid #BFDBFE; border-radius: 8px; background: #fff; text-decoration: none; display: inline-flex; align-items: center;">
+                                        Lihat {{ $info->format ?? 'dokumen' }}
+                                    </a>
+                                @elseif($isPublicDocument)
+                                    <a href="{{ asset($documentPath) }}" target="_blank" rel="noopener noreferrer" style="padding: 6px 16px; font-size: 12px; font-weight: 600; color: #155DFC; border: 1px solid #BFDBFE; border-radius: 8px; background: #fff; text-decoration: none; display: inline-flex; align-items: center;">
+                                        Lihat {{ $info->format ?? 'dokumen' }}
+                                    </a>
+                                @else
+                                    <span style="font-size:12px; color:#64748b;">Dokumen belum tersedia.</span>
+                                @endif
                             </div>
                         </div>
-                        @endforeach
-                    @else
-                        <!-- Fallback default matching design -->
-                        <div class="pub-info-item" style="margin-bottom: 0; padding: 16px; border-radius: 14px; background: #F8FAFC; border: 1px solid #F1F5F9; display: flex; flex-direction: column; gap: 8px;">
-                            <div>
-                                <p class="pub-info-title" style="font-size: 14px; font-weight: 700; color: #0F172A; margin: 0 0 4px;">Laporan Realisasi Anggaran Semester I 2026</p>
-                                <p class="pub-info-meta" style="font-size: 11px; color: #94A3B8; margin: 0;">realisasi-anggaran-semester-1.pdf</p>
-                            </div>
-                            <div style="display: flex; justify-content: flex-end; margin-top: 4px;">
-                                <a href="/sample-document.pdf" target="_blank" style="padding: 6px 16px; font-size: 12px; font-weight: 600; color: #155DFC; border: 1px solid #BFDBFE; border-radius: 8px; background: #fff; text-decoration: none;">
-                                    Lihat PDF
-                                </a>
-                            </div>
-                        </div>
-                        <div class="pub-info-item" style="margin-bottom: 0; padding: 16px; border-radius: 14px; background: #F8FAFC; border: 1px solid #F1F5F9; display: flex; flex-direction: column; gap: 8px;">
-                            <div>
-                                <p class="pub-info-title" style="font-size: 14px; font-weight: 700; color: #0F172A; margin: 0 0 4px;">Publikasi PAD Triwulan II 2026</p>
-                                <p class="pub-info-meta" style="font-size: 11px; color: #94A3B8; margin: 0;">publikasi-pad-triwulan-2-2026.pdf</p>
-                            </div>
-                            <div style="display: flex; justify-content: flex-end; margin-top: 4px;">
-                                <a href="/sample-document.pdf" target="_blank" style="padding: 6px 16px; font-size: 12px; font-weight: 600; color: #155DFC; border: 1px solid #BFDBFE; border-radius: 8px; background: #fff; text-decoration: none;">
-                                    Lihat PDF
-                                </a>
-                            </div>
-                        </div>
-                        <div class="pub-info-item" style="margin-bottom: 0; padding: 16px; border-radius: 14px; background: #F8FAFC; border: 1px solid #F1F5F9; display: flex; flex-direction: column; gap: 8px;">
-                            <div>
-                                <p class="pub-info-title" style="font-size: 14px; font-weight: 700; color: #0F172A; margin: 0 0 4px;">Rekap Pajak Daerah Juni 2026</p>
-                                <p class="pub-info-meta" style="font-size: 11px; color: #94A3B8; margin: 0;">rekap-pajak-juni-2026.pdf</p>
-                            </div>
-                            <div style="display: flex; justify-content: flex-end; margin-top: 4px;">
-                                <a href="/sample-document.pdf" target="_blank" style="padding: 6px 16px; font-size: 12px; font-weight: 600; color: #155DFC; border: 1px solid #BFDBFE; border-radius: 8px; background: #fff; text-decoration: none;">
-                                    Lihat PDF
-                                </a>
-                            </div>
-                        </div>
-                        <div class="pub-info-item" style="margin-bottom: 0; padding: 16px; border-radius: 14px; background: #F8FAFC; border: 1px solid #F1F5F9; display: flex; flex-direction: column; gap: 8px;">
-                            <div>
-                                <p class="pub-info-title" style="font-size: 14px; font-weight: 700; color: #0F172A; margin: 0 0 4px;">Laporan Keuangan Triwulan II</p>
-                                <p class="pub-info-meta" style="font-size: 11px; color: #94A3B8; margin: 0;">laporan-keuangan-tw2.pdf</p>
-                            </div>
-                            <div style="display: flex; justify-content: flex-end; margin-top: 4px;">
-                                <a href="/sample-document.pdf" target="_blank" style="padding: 6px 16px; font-size: 12px; font-weight: 600; color: #155DFC; border: 1px solid #BFDBFE; border-radius: 8px; background: #fff; text-decoration: none;">
-                                    Lihat PDF
-                                </a>
-                            </div>
-                        </div>
-                    @endif
+                    @empty
+                        <p style="font-size:13px; color:#64748b; text-align:center; padding:20px 0;">Belum ada informasi keuangan yang dipublikasikan.</p>
+                    @endforelse
                 </div>
             </div>
         </div>
@@ -287,12 +271,12 @@
 
 <style>
 @media (max-width: 1200px) {
-    .dashboard-stats-grid[style*="repeat(6"] {
+    .finance-stats-grid {
         grid-template-columns: repeat(3, 1fr) !important;
     }
 }
 @media (max-width: 768px) {
-    .dashboard-stats-grid[style*="repeat(6"] {
+    .finance-stats-grid {
         grid-template-columns: repeat(2, 1fr) !important;
     }
     .dashboard-charts-grid {
@@ -303,7 +287,7 @@
     }
 }
 @media (max-width: 480px) {
-    .dashboard-stats-grid[style*="repeat(6"] {
+    .finance-stats-grid {
         grid-template-columns: 1fr !important;
     }
 }
@@ -358,11 +342,11 @@ document.addEventListener('DOMContentLoaded', function() {
         new Chart(ctxAnggaran.getContext('2d'), {
             type: 'bar',
             data: {
-                labels: {!! json_encode($chartAnggaran['labels'] ?? ['Sekretariat', 'Anggaran', 'Akuntansi', 'Aset', 'Pajak']) !!},
+                labels: @json($chartAnggaran['labels']),
                 datasets: [
                     {
                         label: 'Anggaran',
-                        data: {!! json_encode($chartAnggaran['anggaran'] ?? [5.2, 5.0, 4.0, 2.8, 6.0]) !!},
+                        data: @json($chartAnggaran['anggaran']),
                         backgroundColor: '#155DFC',
                         borderRadius: 6,
                         barThickness: 9,
@@ -371,7 +355,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     {
                         label: 'Realisasi',
-                        data: {!! json_encode($chartAnggaran['realisasi'] ?? [4.4, 4.2, 3.2, 2.1, 5.5]) !!},
+                        data: @json($chartAnggaran['realisasi']),
                         backgroundColor: '#00BC7D',
                         borderRadius: 6,
                         barThickness: 9,
@@ -401,11 +385,11 @@ document.addEventListener('DOMContentLoaded', function() {
         new Chart(trendCanvas, {
             type: 'line',
             data: {
-                labels: {!! json_encode($chartTrend['labels'] ?? ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun']) !!},
+                labels: @json($chartTrend['labels']),
                 datasets: [
                     {
                         label: 'Realisasi Anggaran',
-                        data: {!! json_encode($chartTrend['data'] ?? [58, 66, 74, 92, 110, 120]) !!},
+                        data: @json($chartTrend['data']),
                         borderColor: '#00BC7D',
                         backgroundColor: gradientTrend,
                         fill: true,
@@ -460,18 +444,18 @@ document.addEventListener('DOMContentLoaded', function() {
         new Chart(ctxPAD.getContext('2d'), {
             type: 'bar',
             data: {
-                labels: {!! json_encode($chartPAD['labels'] ?? ['Pajak Daerah', 'Retribusi Daerah', 'Hasil Kekayaan', 'Lain-lain PAD']) !!},
+                labels: @json($chartPAD['labels']),
                 datasets: [
                     {
                         label: 'Target',
-                        data: {!! json_encode($chartPAD['target'] ?? [10.0, 1.2, 0.6, 0.5]) !!},
+                        data: @json($chartPAD['target']),
                         backgroundColor: '#CBD5E1',
                         borderRadius: { topLeft: 6, topRight: 6 },
                         barThickness: 16
                     },
                     {
                         label: 'Realisasi',
-                        data: {!! json_encode($chartPAD['realisasi'] ?? $chartPAD['data'] ?? [9.5, 0.8, 0.4, 0.3]) !!},
+                        data: @json($chartPAD['realisasi']),
                         backgroundColor: '#00BC7D',
                         borderRadius: { topLeft: 6, topRight: 6 },
                         barThickness: 16
@@ -519,20 +503,11 @@ document.addEventListener('DOMContentLoaded', function() {
         new Chart(ctxPajak.getContext('2d'), {
             type: 'bar',
             data: {
-                labels: {!! json_encode($chartPajak['labels'] ?? ['PBB', 'PB1', 'Pajak Restoran', 'Pajak Hotel', 'BPHTB']) !!},
+                labels: @json($chartPajak['labels']),
                 datasets: [
                     {
-                        label: 'Target (Juta)',
-                        data: {!! json_encode($chartPajak['target'] ?? [900, 700, 550, 400, 800]) !!},
-                        backgroundColor: '#FDBA74',
-                        borderRadius: 6,
-                        barThickness: 8,
-                        categoryPercentage: 0.8,
-                        barPercentage: 0.9
-                    },
-                    {
                         label: 'Realisasi (Juta)',
-                        data: {!! json_encode($chartPajak['realisasi'] ?? $chartPajak['data'] ?? [850, 620, 480, 310, 740]) !!},
+                        data: @json($chartPajak['realisasi']),
                         backgroundColor: '#F59E0B',
                         borderRadius: 6,
                         barThickness: 8,
@@ -553,4 +528,3 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endsection
-

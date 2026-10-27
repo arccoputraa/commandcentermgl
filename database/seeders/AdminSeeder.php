@@ -12,6 +12,10 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
+        if (app()->environment('production')) {
+            throw new \RuntimeException('AdminSeeder creates default credentials and cannot run in production.');
+        }
+
         $divisionsList = [
             'Perizinan',
             'Kesehatan',
